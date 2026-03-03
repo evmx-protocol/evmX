@@ -1,38 +1,38 @@
 /**
  * ============================================================================
- *  evmX â€” Add Liquidity Script (Base Mainnet)
+ *  evmX — Add Liquidity Script (Base Mainnet)
  * ============================================================================
  *
- *  HasznĂˇlat:
+ *  Usage:
  *    evmX_ADDRESS=0x... LIQUIDITY_ETH=1.0 LIQUIDITY_TOKENS=50000000 \
  *      npx hardhat run scripts/add-liquidity.js --network base
  *
- *  Vagy .env fĂˇjlbĂłl:
+ *  Or from .env file:
  *    evmX_ADDRESS=0x...contractAddress...
  *    LIQUIDITY_ETH=1.0
  *    LIQUIDITY_TOKENS=50000000
  *
- *  FONTOS:
- *    - A deployer wallet-ben kell evmX token + ETH a liquidity-hez
- *    - Az owner (deployer) excluded from fees, tehĂˇt nincs tax a transfer-en
- *    - A pair is excluded from limits, tehĂˇt nincs maxTx/maxWallet limit
+ *  IMPORTANT:
+ *    - Deployer wallet must hold evmX tokens + ETH for liquidity
+ *    - Owner (deployer) is excluded from fees, so no tax on transfer
+ *    - The pair is excluded from limits, so no maxTx/maxWallet restriction
  * ============================================================================
  */
 
 const hre = require("hardhat");
 
 async function main() {
-  console.log("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
-  console.log("  evmX â€” Add Liquidity (Base Mainnet)");
-  console.log("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n");
+  console.log("=".repeat(55));
+  console.log("  evmX — Add Liquidity (Base Mainnet)");
+  console.log("=".repeat(55) + "\n");
 
-  // â”€â”€ ParamĂ©terek â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Parameters ────────────────────────────────────────────────────────
   const evmX_ADDRESS = process.env.evmX_ADDRESS;
   const LIQUIDITY_ETH = process.env.LIQUIDITY_ETH || "1.0";
   const LIQUIDITY_TOKENS = process.env.LIQUIDITY_TOKENS || "50000000"; // 50% of supply
 
   if (!evmX_ADDRESS) {
-    throw new Error("âťŚ evmX_ADDRESS nincs beĂˇllĂ­tva!");
+    throw new Error("evmX_ADDRESS not set in environment!");
   }
 
   const ethAmount = hre.ethers.parseEther(LIQUIDITY_ETH);
@@ -45,7 +45,7 @@ async function main() {
   console.log(`  Token amount:   ${LIQUIDITY_TOKENS} evmX`);
   console.log(`  Router:         ${UNISWAP_V2_ROUTER}`);
 
-  // â”€â”€ Deployer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Deployer ──────────────────────────────────────────────────────────
   const [deployer] = await hre.ethers.getSigners();
   console.log(`  Deployer:       ${deployer.address}`);
 
@@ -53,67 +53,66 @@ async function main() {
   console.log(`  ETH balance:    ${hre.ethers.formatEther(ethBalance)} ETH`);
 
   if (ethBalance < ethAmount + hre.ethers.parseEther("0.005")) {
-    throw new Error(`âťŚ Nincs elĂ©g ETH! Kell: ${LIQUIDITY_ETH} ETH + gas`);
+    throw new Error(`Not enough ETH! Need: ${LIQUIDITY_ETH} ETH + gas`);
   }
 
-  // â”€â”€ Contract-ok betĂ¶ltĂ©se â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Load contracts ────────────────────────────────────────────────────
   const evmX = await hre.ethers.getContractAt("evmX", evmX_ADDRESS);
   const tokenBalance = await evmX.balanceOf(deployer.address);
   console.log(`  Token balance:  ${hre.ethers.formatEther(tokenBalance)} evmX`);
 
   if (tokenBalance < tokenAmount) {
-    throw new Error(`âťŚ Nincs elĂ©g evmX! Kell: ${LIQUIDITY_TOKENS}, van: ${hre.ethers.formatEther(tokenBalance)}`);
+    throw new Error(`Not enough evmX! Need: ${LIQUIDITY_TOKENS}, have: ${hre.ethers.formatEther(tokenBalance)}`);
   }
 
-  // â”€â”€ Router ABI (csak ami kell) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Router ABI (minimal) ─────────────────────────────────────────────
   const routerAbi = [
     "function addLiquidityETH(address token, uint256 amountTokenDesired, uint256 amountTokenMin, uint256 amountETHMin, address to, uint256 deadline) external payable returns (uint256 amountToken, uint256 amountETH, uint256 liquidity)",
     "function WETH() external pure returns (address)",
   ];
   const router = new hre.ethers.Contract(UNISWAP_V2_ROUTER, routerAbi, deployer);
 
-  // â”€â”€ Approve â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  console.log("\nâ”€â”€â”€ 1/2: Approve token a Router-nek â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€\n");
+  // ── Approve ───────────────────────────────────────────────────────────
+  console.log("\n--- 1/2: Approve tokens for Router ---\n");
   const approveTx = await evmX.approve(UNISWAP_V2_ROUTER, tokenAmount);
   await approveTx.wait();
-  console.log(`  âś… Approved ${hre.ethers.formatEther(tokenAmount)} evmX`);
+  console.log(`  Approved ${hre.ethers.formatEther(tokenAmount)} evmX`);
 
-  // â”€â”€ Add Liquidity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  console.log("\nâ”€â”€â”€ 2/2: Add Liquidity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€\n");
+  // ── Add Liquidity ─────────────────────────────────────────────────────
+  console.log("\n--- 2/2: Add Liquidity ---\n");
 
   const block = await hre.ethers.provider.getBlock("latest");
-  const deadline = block.timestamp + 600; // 10 perc
+  const deadline = block.timestamp + 600; // 10 minutes
 
   const tx = await router.addLiquidityETH(
     evmX_ADDRESS,
     tokenAmount,
-    (tokenAmount * 95n) / 100n, // 5% slippage token-re
-    (ethAmount * 95n) / 100n,   // 5% slippage ETH-re
-    deployer.address,           // LP token-ek a deployer-nek
+    (tokenAmount * 95n) / 100n, // 5% slippage on tokens
+    (ethAmount * 95n) / 100n,   // 5% slippage on ETH
+    deployer.address,           // LP tokens to deployer
     deadline,
     { value: ethAmount }
   );
 
   const receipt = await tx.wait();
-  console.log(`  âś… Liquidity hozzĂˇadva!`);
+  console.log(`  Liquidity added successfully!`);
   console.log(`  TX hash: ${receipt.hash}`);
   console.log(`  Gas used: ${receipt.gasUsed}`);
 
-  // â”€â”€ Pair info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Pair info ─────────────────────────────────────────────────────────
   const pairAddress = await evmX.uniswapPair();
   console.log(`\n  Uniswap V2 Pair: ${pairAddress}`);
   console.log(`  DexScreener:     https://dexscreener.com/base/${pairAddress}`);
   console.log(`  BaseScan Pair:   https://basescan.org/address/${pairAddress}`);
 
-  console.log("\nâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
-  console.log("  LIQUIDITY HOZZĂADVA! đźŽ‰");
-  console.log("â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n");
+  console.log("\n" + "=".repeat(55));
+  console.log("  LIQUIDITY ADDED SUCCESSFULLY!");
+  console.log("=".repeat(55) + "\n");
 }
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("\n  âťŚ HIBA:", error.message || error);
+    console.error("\n  ERROR:", error.message || error);
     process.exit(1);
   });
-

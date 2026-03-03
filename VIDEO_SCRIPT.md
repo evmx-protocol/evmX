@@ -141,7 +141,7 @@ Foundry (121 tests):
 - Invariant testing (stateful properties)
 - Economic stress testing
 
-Hardhat (53 tests)::
+Hardhat (53 tests):
 - Unit & integration tests
 - 50-bot stress simulation
 - Base Mainnet fork tests
