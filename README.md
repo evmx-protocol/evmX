@@ -76,7 +76,7 @@ User buys evmX → 3% tax fills reward pools → CRE monitors thresholds
            │                              │
            │  ┌────────────────────────┐  │
            │  │  evmx-event-monitor    │  │  EVM Log Trigger
-           │  │    (CRE Workflow #2)   │  │  → Monitor AllocationCompleted
+           │  │    (CRE Workflow #2)   │  │  → Monitor PoolAllocated
            │  └────────────────────────┘  │  → Log Winners
            └──────────────────────────────┘
 ```
@@ -150,7 +150,7 @@ const onCronTrigger = (runtime: Runtime<Config>, _payload: CronPayload): string 
 
 ### CRE Workflow #2: Event Monitor
 
-Processes `AllocationCompleted` events in real-time via EVM Log Trigger:
+Processes `PoolAllocated` events in real-time via EVM Log Trigger:
 - Decodes winner address, pool type, and payout amount
 - Enables automated notifications and analytics dashboards
 - Provides a real-time event stream for the frontend winner feed

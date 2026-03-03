@@ -1,7 +1,7 @@
 # ==========================================================================
 # evmX Event Monitor - CRE Workflow Settings
 # ==========================================================================
-# Monitors AllocationCompleted events from the evmX contract.
+# Monitors PoolAllocated events from the evmX contract.
 # Uses EVM Log Trigger for real-time event processing.
 # ==========================================================================
 
