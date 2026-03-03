@@ -6,7 +6,7 @@ solc_version = "0.8.28"
 via_ir = true
 optimizer = true
 optimizer_runs = 50
-evm_version = "paris"
+evm_version = "cancun"
 gas_limit = 30_000_000
 block_gas_limit = 30_000_000
 

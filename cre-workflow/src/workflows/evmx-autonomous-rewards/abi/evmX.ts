@@ -4,7 +4,7 @@
 // Only includes functions and events needed by the CRE autonomous workflow:
 // - Pool state reading (getPoolInfo, getUserStatus)
 // - Cycle triggering (runAutonomousCycle)
-// - Event monitoring (AllocationTriggered, AllocationCompleted, etc.)
+// - Event monitoring (AllocationRequested, PoolAllocated, EntryIssued)
 // ==========================================================================
 
 export const EVMX_ABI = [
@@ -14,11 +14,11 @@ export const EVMX_ABI = [
     name: 'getPoolInfo',
     outputs: [
       { internalType: 'uint256', name: 'balance', type: 'uint256' },
-      { internalType: 'uint256', name: 'threshold', type: 'uint256' },
-      { internalType: 'uint256', name: 'lastTriggerTime', type: 'uint256' },
-      { internalType: 'uint256', name: 'cooldownEnd', type: 'uint256' },
-      { internalType: 'uint256', name: 'totalEntries', type: 'uint256' },
-      { internalType: 'uint256', name: 'roundStartIndex', type: 'uint256' },
+      { internalType: 'uint256', name: 'entryRequirementETH', type: 'uint256' },
+      { internalType: 'uint256', name: 'currentThreshold', type: 'uint256' },
+      { internalType: 'uint256', name: 'timeUntilExpiry', type: 'uint256' },
+      { internalType: 'uint256', name: 'cycleId', type: 'uint256' },
+      { internalType: 'uint256', name: 'participantCount', type: 'uint256' },
     ],
     stateMutability: 'view',
     type: 'function',
@@ -75,29 +75,32 @@ export const EVMX_ABI = [
       { indexed: true, internalType: 'uint8', name: 'poolType', type: 'uint8' },
       { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
       { indexed: false, internalType: 'uint256', name: 'requestId', type: 'uint256' },
+      { indexed: false, internalType: 'uint256', name: 'cycleId', type: 'uint256' },
     ],
-    name: 'AllocationTriggered',
+    name: 'AllocationRequested',
     type: 'event',
   },
   {
     anonymous: false,
     inputs: [
       { indexed: true, internalType: 'uint8', name: 'poolType', type: 'uint8' },
-      { indexed: true, internalType: 'address', name: 'winner', type: 'address' },
+      { indexed: true, internalType: 'address', name: 'recipient', type: 'address' },
       { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      { indexed: false, internalType: 'uint256', name: 'cycleId', type: 'uint256' },
     ],
-    name: 'AllocationCompleted',
+    name: 'PoolAllocated',
     type: 'event',
   },
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'address', name: 'buyer', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'ethAmount', type: 'uint256' },
+      { indexed: true, internalType: 'address', name: 'user', type: 'address' },
       { indexed: false, internalType: 'uint8', name: 'poolType', type: 'uint8' },
-      { indexed: false, internalType: 'uint8', name: 'entryCount', type: 'uint8' },
+      { indexed: false, internalType: 'uint256', name: 'entryIndex', type: 'uint256' },
+      { indexed: false, internalType: 'uint256', name: 'count', type: 'uint256' },
+      { indexed: false, internalType: 'uint256', name: 'cycleId', type: 'uint256' },
     ],
-    name: 'EntryGranted',
+    name: 'EntryIssued',
     type: 'event',
   },
   {

@@ -2,7 +2,7 @@
 // evmX Event Monitor CRE Workflow
 // ==========================================================================
 // This CRE workflow uses EVM Log Triggers to react to on-chain events:
-// - AllocationCompleted → logs winner info for dashboards and analytics
+// - PoolAllocated → logs winner info for dashboards and analytics
 //
 // Provides real-time event processing for the evmX reward protocol,
 // enabling automated notifications and analytics.
@@ -30,9 +30,9 @@ function toHex(bytes: Uint8Array): string {
 }
 
 // ── Event Signatures (keccak256 hashes) ──────────────────────────────────
-// AllocationCompleted(uint8 indexed poolType, address indexed winner, uint256 amount)
-const ALLOCATION_COMPLETED_TOPIC =
-  '0x5e10276cd2dbd60edf572e88e81a404db1b1e74e42f8da140188e80960488754'
+// PoolAllocated(uint8 indexed poolType, address indexed recipient, uint256 amount, uint256 cycleId)
+const POOL_ALLOCATED_TOPIC =
+  '0x24c8111ef1a268c2ff62267f4885d8f9308cfab83074791a7bf83e18318c135d'
 
 // ── Log Trigger Callback ─────────────────────────────────────────────────
 
@@ -40,7 +40,7 @@ const onAllocationEvent = (
   runtime: Runtime<Config>,
   log: EVMLog
 ): string => {
-  runtime.log('=== evmX Event Monitor: AllocationCompleted ===')
+  runtime.log('=== evmX Event Monitor: PoolAllocated ===')
   runtime.log(`TX Hash: ${toHex(log.txHash)}`)
   runtime.log(`Contract: ${toHex(log.address)}`)
 
@@ -60,16 +60,20 @@ const onAllocationEvent = (
     const winnerHex = toHex(topics[2])
     const winnerAddress = '0x' + winnerHex.slice(-40)
 
-    // Amount from non-indexed data
+    // Non-indexed data: amount (uint256) + cycleId (uint256)
     const dataHex = toHex(log.data)
-    const amount = BigInt(dataHex)
+    // First 32 bytes = amount, next 32 bytes = cycleId
+    const amountHex = '0x' + dataHex.slice(2, 66)
+    const cycleIdHex = '0x' + dataHex.slice(66, 130)
+    const amount = BigInt(amountHex)
+    const cycleId = BigInt(cycleIdHex)
     const amountETH = Number(amount) / 1e18
 
-    runtime.log(`[WINNER] Pool: ${poolName}`)
+    runtime.log(`[WINNER] Pool: ${poolName} (Cycle #${cycleId})`)
     runtime.log(`[WINNER] Address: ${winnerAddress}`)
     runtime.log(`[WINNER] Amount: ${amountETH.toFixed(4)} ETH`)
 
-    return `winner: ${poolName} ${winnerAddress} ${amountETH.toFixed(4)} ETH`
+    return `winner: ${poolName} ${winnerAddress} ${amountETH.toFixed(4)} ETH cycle#${cycleId}`
   } catch (error) {
     runtime.log(`[ERROR] Failed to decode event: ${error}`)
     return `error: ${error}`
@@ -87,7 +91,7 @@ const initWorkflow = (config: Config) => {
   const addressBase64 = btoa(String.fromCharCode(...addressBytes))
 
   // Convert topic to base64
-  const topicHex = ALLOCATION_COMPLETED_TOPIC.replace('0x', '')
+  const topicHex = POOL_ALLOCATED_TOPIC.replace('0x', '')
   const topicBytes = new Uint8Array(topicHex.match(/.{1,2}/g)!.map(b => parseInt(b, 16)))
   const topicBase64 = btoa(String.fromCharCode(...topicBytes))
 

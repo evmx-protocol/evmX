@@ -510,7 +510,7 @@ var BASE_RPC='https://sepolia.base.org';
 var CHAIN_ID=84532;
 var CHAIN_NAME='Base Sepolia';
 var PRICE_FEED_ADDRESS='0x4aDC67D868764F6022B3cD50e6dB3c7aaBc36578';
-var ABI=['function getPoolInfo(uint8) view returns (uint256,uint256,uint256,uint256,uint256,uint256)','function getUserStatus(address) view returns (bool,uint8,bool,uint8,bool,uint8)','function balanceOf(address) view returns (uint256)','function runAutonomousCycle() external','event AllocationCompleted(uint8 indexed,address indexed,uint256)'];
+var ABI=['function getPoolInfo(uint8) view returns (uint256,uint256,uint256,uint256,uint256,uint256)','function getUserStatus(address) view returns (bool,uint8,bool,uint8,bool,uint8)','function balanceOf(address) view returns (uint256)','function runAutonomousCycle() external','event PoolAllocated(uint8 indexed,address indexed,uint256,uint256)'];
 var PRICE_ABI=['function latestRoundData() view returns (uint80,int256,uint256,uint256,uint80)','function decimals() view returns (uint8)'];
 var provider,signer,contract,ro,priceFeed,userAddr=null,usdPrice=0;
 var cache={micro:null,mid:null,mega:null};
@@ -547,7 +547,7 @@ function setElig(t,ok,cnt){var row=document.getElementById(t+'EligRow'),tag=docu
 
 function runCycle(){if(!contract)return;var btn=document.getElementById('cycleBtn');btn.textContent='Sending...';contract.runAutonomousCycle().then(function(tx){btn.textContent='Confirming...';return tx.wait();}).then(function(){showToast('⚡ Cycle executed!');refreshPools();refreshUser();loadWinners();}).catch(function(){showToast('Transaction failed');}).finally(function(){btn.textContent='⚡ Run Autonomous Cycle';});}
 
-function loadWinners(){var c=contract||ro;if(!c)return;c.queryFilter(c.filters.AllocationCompleted(),-5000).then(function(evs){if(!evs.length)return;var box=document.getElementById('winnersList');box.innerHTML='';var cls=['q','p','n'],lb=['Micro','Mid','Mega'];evs.slice(-10).reverse().forEach(function(ev){var pt=Number(ev.args[0]),w=ev.args[1],amt=Number(ethers.formatEther(ev.args[2]));var u=usdPrice>0?' ≈ $'+(amt*usdPrice).toFixed(2):'';var row=document.createElement('div');row.className='w-row';row.innerHTML='<span class="w-badge '+cls[pt]+'">'+lb[pt]+'</span><span class="w-addr">'+w.slice(0,6)+'...'+w.slice(-4)+'</span><span class="w-amt">+'+amt.toFixed(4)+' ETH'+u+'</span>';box.appendChild(row);});}).catch(function(){});}
+function loadWinners(){var c=contract||ro;if(!c)return;c.queryFilter(c.filters.PoolAllocated(),-5000).then(function(evs){if(!evs.length)return;var box=document.getElementById('winnersList');box.innerHTML='';var cls=['q','p','n'],lb=['Micro','Mid','Mega'];evs.slice(-10).reverse().forEach(function(ev){var pt=Number(ev.args[0]),w=ev.args[1],amt=Number(ethers.formatEther(ev.args[2]));var u=usdPrice>0?' ≈ $'+(amt*usdPrice).toFixed(2):'';var row=document.createElement('div');row.className='w-row';row.innerHTML='<span class="w-badge '+cls[pt]+'">'+lb[pt]+'</span><span class="w-addr">'+w.slice(0,6)+'...'+w.slice(-4)+'</span><span class="w-amt">+'+amt.toFixed(4)+' ETH'+u+'</span>';box.appendChild(row);});}).catch(function(){});}
 
 /* ═══ AI PROTOCOL INTELLIGENCE ═══ */
 function aiUpdate(){if(!cache.micro&&!cache.mid&&!cache.mega)return;var now=Math.floor(Date.now()/1000);var pools=[{name:'Micro',col:'var(--quasar)',data:cache.micro,cycle:7200},{name:'Mid',col:'var(--pulsar)',data:cache.mid,cycle:21600},{name:'Mega',col:'var(--nova)',data:cache.mega,cycle:604800}];

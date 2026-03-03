@@ -37,14 +37,14 @@ const POOL_NAMES = ['Micro', 'Mid', 'Mega'] as const
 // ── Base Sepolia chain selector ──────────────────────────────────────────
 const BASE_SEPOLIA_SELECTOR = EVMClient.SUPPORTED_CHAIN_SELECTORS['ethereum-testnet-sepolia-base-1']
 
-// ── Pool Info Type ───────────────────────────────────────────────────────
+// ── Pool Info Type (matches contract getPoolInfo return values) ──────────
 type PoolInfo = {
   balance: bigint
-  threshold: bigint
-  lastTriggerTime: bigint
-  cooldownEnd: bigint
-  totalEntries: bigint
-  roundStartIndex: bigint
+  entryRequirementETH: bigint
+  currentThreshold: bigint
+  timeUntilExpiry: bigint
+  cycleId: bigint
+  participantCount: bigint
 }
 
 // ── Helper: Read Pool Info ───────────────────────────────────────────────
@@ -97,11 +97,11 @@ function readPoolInfo(
 
     return {
       balance: decoded[0],
-      threshold: decoded[1],
-      lastTriggerTime: decoded[2],
-      cooldownEnd: decoded[3],
-      totalEntries: decoded[4],
-      roundStartIndex: decoded[5],
+      entryRequirementETH: decoded[1],
+      currentThreshold: decoded[2],
+      timeUntilExpiry: decoded[3],
+      cycleId: decoded[4],
+      participantCount: decoded[5],
     }
   } catch (error) {
     runtime.log(`[ERROR] Failed to read ${POOL_NAMES[poolType]} pool: ${error}`)
@@ -111,11 +111,15 @@ function readPoolInfo(
 
 // ── Helper: Check if Pool is Ready for Allocation ────────────────────────
 
-function isPoolReady(pool: PoolInfo, currentTime: bigint): boolean {
-  const hasBalance = pool.balance >= pool.threshold && pool.threshold > 0n
-  const cooldownExpired = currentTime >= pool.cooldownEnd
-  const hasEntries = pool.totalEntries > pool.roundStartIndex
-  return hasBalance && cooldownExpired && hasEntries
+function isPoolReady(pool: PoolInfo, poolType: number): boolean {
+  // Micro/Mid: balance >= currentThreshold AND timer expired
+  // Mega: timeUntilExpiry == 0 (7-day cycle ended)
+  const hasBalance = poolType === POOL_MEGA
+    ? pool.balance > 0n
+    : pool.balance >= pool.currentThreshold && pool.currentThreshold > 0n
+  const timerExpired = pool.timeUntilExpiry === 0n
+  const hasParticipants = pool.participantCount > 0n
+  return hasBalance && timerExpired && hasParticipants
 }
 
 // ── Main Workflow Callback ───────────────────────────────────────────────
@@ -142,20 +146,19 @@ const onCronTrigger = (
 
     if (info) {
       const balanceETH = Number(info.balance) / 1e18
-      const thresholdETH = Number(info.threshold) / 1e18
-      const entries = Number(info.totalEntries - info.roundStartIndex)
+      const thresholdETH = Number(info.currentThreshold) / 1e18
+      const timeLeft = Number(info.timeUntilExpiry)
       runtime.log(
-        `  ${POOL_NAMES[i]}: ${balanceETH.toFixed(4)} ETH / ${thresholdETH.toFixed(4)} ETH threshold | ${entries} entries`
+        `  ${POOL_NAMES[i]}: ${balanceETH.toFixed(4)} ETH / ${thresholdETH.toFixed(4)} ETH threshold | ${info.participantCount} participants | ${timeLeft}s left`
       )
     }
   }
 
   // ── Step 3: Check if Any Pool Needs Allocation ─────────────────────
-  const currentTime = BigInt(Math.floor(Date.now() / 1000))
   const readyPools: string[] = []
 
   for (let i = 0; i <= POOL_MEGA; i++) {
-    if (pools[i] && isPoolReady(pools[i]!, currentTime)) {
+    if (pools[i] && isPoolReady(pools[i]!, i)) {
       readyPools.push(POOL_NAMES[i])
     }
   }

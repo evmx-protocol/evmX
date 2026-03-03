@@ -36,8 +36,8 @@ nul
 # Claude Code sessions
 .claude/
 
-# Verification (local only)
-verification/
+# Verification reports (included for hackathon judges)
+# verification/
 
 # CRE workflow build artifacts
 cre-workflow/node_modules/
