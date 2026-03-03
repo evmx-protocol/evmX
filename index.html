@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>evmX — Autonomous Reward Protocol</title>
+<meta name="description" content="evmX: Autonomous 3-tier reward ERC-20 on Base L2. Chainlink CRE + VRF v2.5 + Data Feed.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.11.1/ethers.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--void:#020208;--abyss:#06061a;--pulsar:#C084FC;--pulsar2:#E879F9;--quasar:#38BDF8;--quasar2:#7DD3FC;--nova:#FB923C;--nova2:#FCD34D;--aurora:#34D399;--super:#F43F5E;--star:#F0F4FF;--dim:#6B7299;--ghost:#2E2E52;--f:'Outfit',sans-serif;--m:'Space Mono',monospace;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--star);font-family:var(--f);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+#starfield{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.nebula-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.nb{position:absolute;border-radius:50%;}
+.nb1{width:1200px;height:800px;top:-300px;left:-250px;background:radial-gradient(ellipse 55% 50% at 40% 40%,rgba(192,132,252,.09) 0%,rgba(80,30,180,.04) 45%,transparent 70%);animation:nb1d 34s ease-in-out infinite;}
+.nb2{width:900px;height:700px;top:10%;right:-250px;background:radial-gradient(ellipse 55% 50% at 60% 50%,rgba(56,189,248,.07) 0%,transparent 65%);animation:nb2d 27s ease-in-out infinite;}
+.nb3{width:700px;height:600px;bottom:-50px;left:20%;background:radial-gradient(ellipse 50% 45% at 50% 50%,rgba(251,146,60,.055) 0%,transparent 65%);animation:nb3d 41s ease-in-out infinite;}
+@keyframes nb1d{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(55px,-45px) scale(1.07);}66%{transform:translate(-30px,60px) scale(.95);}}
+@keyframes nb2d{0%,100%{transform:translate(0,0);}50%{transform:translate(-45px,55px) rotate(4deg);}}
+@keyframes nb3d{0%,100%{transform:translate(0,0);}42%{transform:translate(40px,-28px);}88%{transform:translate(-50px,38px);}}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");opacity:.5;}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:300;height:66px;display:flex;align-items:center;background:rgba(2,2,8,.72);backdrop-filter:blur(40px);border-bottom:1px solid rgba(192,132,252,.08);}
+.nav-inner{width:100%;max-width:1380px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.logo{display:flex;align-items:center;gap:13px;text-decoration:none;}
+.logo-icon{width:46px;height:46px;flex-shrink:0;filter:drop-shadow(0 0 14px rgba(192,132,252,.6));transition:filter .35s,transform .5s cubic-bezier(.34,1.56,.64,1);}
+.logo:hover .logo-icon{filter:drop-shadow(0 0 24px rgba(232,121,249,.95)) drop-shadow(0 0 55px rgba(192,132,252,.55));transform:rotate(65deg) scale(1.1);}
+.logo-text{display:flex;flex-direction:column;gap:2px;}
+.logo-name{font-size:1.3rem;font-weight:800;letter-spacing:-.5px;line-height:1;background:linear-gradient(120deg,#E879F9 0%,#C084FC 40%,#7DD3FC 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-sub{font-family:var(--m);font-size:.47rem;letter-spacing:3px;text-transform:uppercase;color:var(--ghost);}
+.nav-links{display:flex;gap:2px;}
+.nav-links a{font-size:.84rem;font-weight:500;color:var(--dim);text-decoration:none;padding:7px 13px;border-radius:10px;transition:all .15s;}
+.nav-links a:hover{color:var(--star);background:rgba(255,255,255,.06);}
+@media(max-width:860px){.nav-links{display:none;}}
+.btn-wallet{font-family:var(--f);font-size:.85rem;font-weight:600;padding:10px 22px;border-radius:12px;cursor:pointer;border:1px solid rgba(192,132,252,.35);background:linear-gradient(135deg,rgba(192,132,252,.15),rgba(192,132,252,.06));color:var(--pulsar);transition:all .2s;}
+.btn-wallet:hover{border-color:var(--pulsar);box-shadow:0 0 30px rgba(192,132,252,.3);}
+.btn-wallet.connected{border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.08);color:var(--aurora);}
+.btn-wallet.no-wallet{opacity:.5;cursor:not-allowed;border-color:rgba(255,255,255,.1);color:var(--ghost);}
+
+/* LAYOUT */
+.wrap{max-width:1380px;margin:0 auto;padding:0 40px;position:relative;z-index:1;}
+@media(max-width:600px){.wrap{padding:0 18px;}}
+.section{padding:100px 0 0;}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--m);font-size:.62rem;letter-spacing:2.8px;text-transform:uppercase;color:var(--pulsar);margin-bottom:14px;}
+.ew-dot{width:6px;height:6px;border-radius:50%;background:var(--pulsar2);box-shadow:0 0 10px var(--pulsar2);animation:ewP 2.5s ease-in-out infinite;}
+@keyframes ewP{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+.sec-title{font-size:1.95rem;font-weight:800;letter-spacing:-.7px;margin-bottom:6px;text-shadow:0 0 50px rgba(240,244,255,.1);}
+.sec-sub{font-size:.9rem;color:var(--dim);margin-bottom:0;}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .9s cubic-bezier(.4,0,.2,1),transform .9s cubic-bezier(.4,0,.2,1);}
+.reveal.revealed{opacity:1;transform:translateY(0);}
+.reveal-d1{transition-delay:.1s;}.reveal-d2{transition-delay:.2s;}.reveal-d3{transition-delay:.3s;}
+
+/* HERO */
+.hero{padding:106px 0 72px;display:grid;grid-template-columns:1fr 460px;gap:72px;align-items:center;}
+@media(max-width:1000px){.hero{grid-template-columns:1fr;padding:100px 0 56px;}.hero-cosmos{display:none;}}
+.orbit-badge{display:inline-flex;align-items:center;gap:9px;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.22);color:var(--aurora);padding:7px 16px;border-radius:99px;font-family:var(--m);font-size:.65rem;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:30px;}
+.orbit-dot{width:6px;height:6px;border-radius:50%;background:var(--aurora);animation:liveR 2s infinite;}
+@keyframes liveR{0%{box-shadow:0 0 0 0 rgba(52,211,153,.6);}70%{box-shadow:0 0 0 9px rgba(52,211,153,0);}100%{box-shadow:0 0 0 0;}}
+.hero-title{font-size:clamp(2.8rem,4.5vw,4.6rem);font-weight:900;line-height:1.04;letter-spacing:-2.5px;margin-bottom:22px;}
+.hero-title .cg{background:linear-gradient(110deg,#E879F9 0%,#C084FC 30%,#7DD3FC 65%,#34D399 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-title .dg{color:var(--dim);font-weight:700;}
+.hero-body{font-size:1.05rem;line-height:1.75;color:var(--dim);max-width:470px;margin-bottom:36px;}
+.hero-pills{display:flex;flex-wrap:wrap;gap:8px;}
+.pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);padding:7px 15px;border-radius:99px;font-size:.8rem;font-weight:500;color:var(--dim);transition:all .18s;}
+.pill:hover{border-color:rgba(255,255,255,.14);color:var(--star);background:rgba(255,255,255,.06);}
+.hero-cosmos{display:flex;align-items:center;justify-content:center;}
+.cosmos-wrap{position:relative;width:380px;height:380px;}
+.orb-ring{position:absolute;inset:0;border-radius:50%;border:1px solid transparent;}
+.orb-ring-1{border-color:rgba(192,132,252,.2);animation:ospin 18s linear infinite;}
+.orb-ring-2{inset:28px;border-color:rgba(56,189,248,.15);animation:ospin 28s linear infinite reverse;}
+.orb-ring-3{inset:58px;border-color:rgba(251,146,60,.12);animation:ospin 40s linear infinite;}
+@keyframes ospin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.planet{position:absolute;border-radius:50%;}
+.black-hole{position:absolute;inset:108px;border-radius:50%;background:radial-gradient(ellipse at 35% 35%,rgba(232,121,249,.18) 0%,rgba(120,50,200,.1) 30%,rgba(2,2,8,.92) 60%,#020208 100%);border:1px solid rgba(192,132,252,.28);box-shadow:0 0 60px rgba(192,132,252,.18),0 0 130px rgba(192,132,252,.09),inset 0 0 60px rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;}
+.bh-glow{position:absolute;inset:-20px;border-radius:50%;background:radial-gradient(ellipse 55% 30% at 50% 50%,rgba(232,121,249,.14) 0%,transparent 65%);animation:bhB 6s ease-in-out infinite;}
+@keyframes bhB{0%,100%{opacity:.6;transform:scale(1);}50%{opacity:1;transform:scale(1.12);}}
+.bh-eth{font-family:var(--m);font-size:1.9rem;color:var(--star);letter-spacing:-1px;z-index:1;}
+.bh-lbl{font-family:var(--m);font-size:.55rem;letter-spacing:3px;text-transform:uppercase;color:var(--ghost);z-index:1;}
+.bh-usd{font-family:var(--m);font-size:.75rem;color:var(--dim);z-index:1;}
+.cosmos-card{position:absolute;background:rgba(6,6,26,.88);border:1px solid rgba(255,255,255,.12);padding:10px 14px;border-radius:13px;backdrop-filter:blur(20px);z-index:10;font-family:var(--m);}
+.cc-v{font-size:1.05rem;color:var(--star);}.cc-l{font-size:.55rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--ghost);margin-top:2px;}
+.cc-tl{top:20px;left:-10px;}.cc-br{bottom:20px;right:-10px;}.cc-tr{top:70px;right:-5px;}
+
+/* ═══ POOLS — COSMIC NEBULAE ═══ */
+#poolsCanvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.pools-universe{position:relative;width:100%;padding:60px 0 80px;overflow:visible;}
+.pools-float{display:grid;grid-template-columns:1fr 1fr 1fr;position:relative;z-index:2;gap:0;}
+@media(max-width:820px){.pools-float{grid-template-columns:1fr;}#poolsCanvas{display:none;}}
+.pool-float{display:flex;flex-direction:column;align-items:center;padding:30px 20px 40px;cursor:pointer;position:relative;transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
+.pool-float:hover{transform:translateY(-8px);}
+.pf-star{width:76px;height:76px;border-radius:50%;position:relative;margin-bottom:32px;flex-shrink:0;}
+.pf-halo{position:absolute;inset:-32px;border-radius:50%;animation:haloBreathe 5s ease-in-out infinite;}
+.pool-float.q .pf-halo{background:radial-gradient(circle,rgba(56,189,248,.22) 0%,rgba(56,189,248,.06) 40%,transparent 70%);}
+.pool-float.p .pf-halo{background:radial-gradient(circle,rgba(192,132,252,.22) 0%,rgba(192,132,252,.06) 40%,transparent 70%);animation-delay:-1.7s;}
+.pool-float.n .pf-halo{background:radial-gradient(circle,rgba(251,146,60,.22) 0%,rgba(251,146,60,.06) 40%,transparent 70%);animation-delay:-3.4s;}
+@keyframes haloBreathe{0%,100%{transform:scale(1);opacity:.7;}50%{transform:scale(1.2);opacity:1;}}
+.pf-core{position:absolute;inset:0;border-radius:50%;}
+.pool-float.q .pf-core{background:radial-gradient(ellipse at 32% 32%,rgba(125,211,252,.95) 0%,rgba(14,165,233,.8) 38%,rgba(56,189,248,.5) 65%,transparent 100%);box-shadow:0 0 35px rgba(56,189,248,.7),0 0 80px rgba(56,189,248,.35),0 0 160px rgba(56,189,248,.15);animation:coreQ 4s ease-in-out infinite;}
+.pool-float.p .pf-core{background:radial-gradient(ellipse at 32% 32%,rgba(232,121,249,.95) 0%,rgba(168,85,247,.8) 38%,rgba(192,132,252,.5) 65%,transparent 100%);box-shadow:0 0 35px rgba(192,132,252,.7),0 0 80px rgba(192,132,252,.35),0 0 160px rgba(192,132,252,.15);animation:coreP 4.5s ease-in-out infinite;}
+.pool-float.n .pf-core{background:radial-gradient(ellipse at 32% 32%,rgba(252,211,77,.95) 0%,rgba(251,146,60,.8) 38%,rgba(217,119,6,.5) 65%,transparent 100%);box-shadow:0 0 35px rgba(251,146,60,.7),0 0 80px rgba(251,146,60,.35),0 0 160px rgba(251,146,60,.15);animation:coreN 5s ease-in-out infinite;}
+@keyframes coreQ{0%,100%{box-shadow:0 0 35px rgba(56,189,248,.6),0 0 80px rgba(56,189,248,.3),0 0 160px rgba(56,189,248,.12);}50%{box-shadow:0 0 55px rgba(56,189,248,1),0 0 120px rgba(56,189,248,.55),0 0 220px rgba(56,189,248,.25);}}
+@keyframes coreP{0%,100%{box-shadow:0 0 35px rgba(192,132,252,.6),0 0 80px rgba(192,132,252,.3),0 0 160px rgba(192,132,252,.12);}50%{box-shadow:0 0 55px rgba(192,132,252,1),0 0 120px rgba(192,132,252,.55),0 0 220px rgba(192,132,252,.25);}}
+@keyframes coreN{0%,100%{box-shadow:0 0 35px rgba(251,146,60,.6),0 0 80px rgba(251,146,60,.3),0 0 160px rgba(251,146,60,.12);}50%{box-shadow:0 0 55px rgba(251,146,60,1),0 0 120px rgba(251,146,60,.55),0 0 220px rgba(251,146,60,.25);}}
+.pf-gleam{position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.65);top:12px;left:14px;filter:blur(5px);}
+.pf-orbit{position:absolute;inset:-18px;border-radius:50%;border:1px solid;animation:orbitSpin 8s linear infinite;}
+.pf-orbit::before{content:'';position:absolute;width:7px;height:7px;border-radius:50%;top:-3.5px;left:50%;margin-left:-3.5px;}
+.pool-float.q .pf-orbit{border-color:rgba(56,189,248,.25);}.pool-float.q .pf-orbit::before{background:var(--quasar);box-shadow:0 0 10px var(--quasar);}
+.pool-float.p .pf-orbit{border-color:rgba(192,132,252,.25);animation-duration:11s;}.pool-float.p .pf-orbit::before{background:var(--pulsar);box-shadow:0 0 10px var(--pulsar);}
+.pool-float.n .pf-orbit{border-color:rgba(251,146,60,.25);animation-duration:9s;}.pool-float.n .pf-orbit::before{background:var(--nova);box-shadow:0 0 10px var(--nova);}
+@keyframes orbitSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.pf-orbit2{position:absolute;inset:-32px;border-radius:50%;border:1px dashed;animation:orbitSpin 16s linear infinite reverse;}
+.pool-float.q .pf-orbit2{border-color:rgba(56,189,248,.1);}
+.pool-float.p .pf-orbit2{border-color:rgba(192,132,252,.1);animation-duration:20s;}
+.pool-float.n .pf-orbit2{border-color:rgba(251,146,60,.1);animation-duration:18s;}
+.pf-label{font-family:var(--m);font-size:.62rem;letter-spacing:3.5px;text-transform:uppercase;margin-bottom:8px;opacity:.65;}
+.pool-float.q .pf-label{color:var(--quasar);text-shadow:0 0 20px rgba(56,189,248,.6);}
+.pool-float.p .pf-label{color:var(--pulsar);text-shadow:0 0 20px rgba(192,132,252,.6);}
+.pool-float.n .pf-label{color:var(--nova);text-shadow:0 0 20px rgba(251,146,60,.6);}
+.pf-eth{font-family:var(--m);font-size:2.8rem;letter-spacing:-2px;line-height:1;margin-bottom:3px;transition:text-shadow .4s;}
+.pool-float.q .pf-eth{color:var(--quasar);text-shadow:0 0 25px rgba(56,189,248,.55);}
+.pool-float.p .pf-eth{color:var(--pulsar);text-shadow:0 0 25px rgba(192,132,252,.55);}
+.pool-float.n .pf-eth{color:var(--nova);text-shadow:0 0 25px rgba(251,146,60,.55);}
+.pool-float:hover .pf-eth{text-shadow:0 0 50px currentColor;}
+.pf-ethlbl{font-family:var(--m);font-size:.55rem;letter-spacing:4px;text-transform:uppercase;color:var(--ghost);margin-bottom:6px;}
+.pf-usd{font-family:var(--m);font-size:.78rem;color:var(--dim);margin-bottom:22px;min-height:20px;}
+.pf-timer{display:inline-flex;align-items:center;gap:7px;font-family:var(--m);font-size:.7rem;letter-spacing:.5px;margin-bottom:24px;color:var(--dim);}
+.pf-timer-dot{width:5px;height:5px;border-radius:50%;animation:liveR 2s infinite;}
+.pool-float.q .pf-timer-dot{background:var(--quasar);}
+.pool-float.p .pf-timer-dot{background:var(--pulsar);animation-delay:-.8s;}
+.pool-float.n .pf-timer-dot{background:var(--nova);animation-delay:-1.6s;}
+.pf-prog{width:160px;margin-bottom:22px;}
+.pf-prog-meta{display:flex;justify-content:space-between;font-family:var(--m);font-size:.52rem;color:var(--ghost);margin-bottom:8px;}
+.pf-prog-track{height:2px;background:rgba(255,255,255,.05);border-radius:99px;overflow:visible;position:relative;}
+.pf-prog-fill{height:100%;border-radius:99px;transition:width 1.5s cubic-bezier(.4,0,.2,1);position:relative;}
+.pf-prog-fill::after{content:'';position:absolute;right:-4px;top:-4px;width:10px;height:10px;border-radius:50%;}
+.pool-float.q .pf-prog-fill{background:linear-gradient(90deg,#0ea5e9,var(--quasar),#7DD3FC);box-shadow:0 0 14px rgba(56,189,248,.8);}
+.pool-float.q .pf-prog-fill::after{background:var(--quasar);box-shadow:0 0 16px var(--quasar),0 0 30px rgba(56,189,248,.5);}
+.pool-float.p .pf-prog-fill{background:linear-gradient(90deg,#9333ea,var(--pulsar),var(--pulsar2));box-shadow:0 0 14px rgba(192,132,252,.8);}
+.pool-float.p .pf-prog-fill::after{background:var(--pulsar);box-shadow:0 0 16px var(--pulsar),0 0 30px rgba(192,132,252,.5);}
+.pool-float.n .pf-prog-fill{background:linear-gradient(90deg,#d97706,var(--nova),var(--nova2));box-shadow:0 0 14px rgba(251,146,60,.8);}
+.pool-float.n .pf-prog-fill::after{background:var(--nova);box-shadow:0 0 16px var(--nova),0 0 30px rgba(251,146,60,.5);}
+.pf-stats{display:flex;gap:28px;margin-bottom:16px;text-align:center;}
+.pf-sv{font-family:var(--m);font-size:.84rem;color:var(--star);margin-bottom:3px;}
+.pf-sl{font-family:var(--m);font-size:.5rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--ghost);}
+.pf-odds{font-family:var(--m);font-size:.72rem;margin-bottom:14px;letter-spacing:.3px;display:flex;align-items:center;gap:7px;}
+.pf-odds-num{font-weight:700;}
+.pool-float.q .pf-odds-num{color:var(--quasar);text-shadow:0 0 12px rgba(56,189,248,.7);}
+.pool-float.p .pf-odds-num{color:var(--pulsar);text-shadow:0 0 12px rgba(192,132,252,.7);}
+.pool-float.n .pf-odds-num{color:var(--nova);text-shadow:0 0 12px rgba(251,146,60,.7);}
+.pf-elig{display:none;align-items:center;justify-content:center;gap:12px;margin-top:6px;}
+.pf-elig.show{display:flex;}
+.pf-elig-txt{font-family:var(--m);font-size:.6rem;letter-spacing:.3px;}
+.elig-ok{color:var(--aurora);text-shadow:0 0 12px rgba(52,211,153,.6);}
+.elig-no{color:var(--ghost);}
+.elig-dots{display:flex;gap:6px;}
+.e-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.09);transition:all .3s;}
+.e-dot.lit{background:var(--aurora);border-color:var(--aurora);box-shadow:0 0 12px rgba(52,211,153,.8);animation:dotS 2s ease-in-out infinite;}
+@keyframes dotS{0%,100%{box-shadow:0 0 6px rgba(52,211,153,.55);}50%{box-shadow:0 0 20px rgba(52,211,153,1);}}
+.user-strip{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:14px;align-items:center;position:relative;padding:24px 0;margin-top:20px;}
+.user-strip::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(192,132,252,.25),rgba(56,189,248,.25),transparent);}
+.user-strip::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(56,189,248,.2),rgba(192,132,252,.2),transparent);}
+@media(max-width:700px){.user-strip{grid-template-columns:1fr 1fr;}}
+.us-v{font-family:var(--m);font-size:1.4rem;color:var(--star);}
+.us-l{font-family:var(--m);font-size:.55rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--ghost);margin-top:4px;}
+.btn-cycle{font-family:var(--f);font-size:.85rem;font-weight:700;padding:13px 22px;border-radius:12px;cursor:pointer;white-space:nowrap;border:1px solid rgba(192,132,252,.4);background:linear-gradient(135deg,rgba(192,132,252,.18),rgba(192,132,252,.08));color:var(--pulsar);transition:all .2s;}
+.btn-cycle:hover{border-color:var(--pulsar);box-shadow:0 0 30px rgba(192,132,252,.3);transform:translateY(-1px);}
+
+/* ═══ GAME THEORY — NO CARDS, FLOATING VOID DATA ═══ */
+.gt-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;position:relative;}
+@media(max-width:700px){.gt-grid{grid-template-columns:1fr;}}
+.gt-grid::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent 5%,rgba(192,132,252,.18) 25%,rgba(56,189,248,.18) 75%,transparent 95%);z-index:1;}
+@media(max-width:700px){.gt-grid::after{display:none;}}
+.gt-card{padding:30px 36px;position:relative;}
+.gt-card::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;}
+.gt-card.lit::before{background:linear-gradient(90deg,transparent,rgba(192,132,252,.25),transparent);}
+.gt-card:not(.lit)::before{background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);}
+.gt-head{font-family:var(--m);font-size:.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--pulsar);margin-bottom:22px;text-shadow:0 0 20px rgba(192,132,252,.4);}
+.gt-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;position:relative;font-size:.875rem;transition:all .2s;}
+.gt-row::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,rgba(255,255,255,.02),rgba(255,255,255,.04),rgba(255,255,255,.02));}
+.gt-row:last-child::after{display:none;}
+.gt-row:hover{transform:translateX(4px);}
+.gt-row:hover .gt-v{text-shadow:0 0 14px currentColor;}
+.gt-l{color:var(--dim);}.gt-v{font-family:var(--m);font-size:.8rem;transition:text-shadow .2s;}
+.c-q{color:var(--quasar);}.c-p{color:var(--pulsar);}.c-n{color:var(--nova);}.c-a{color:var(--aurora);}.c-s{color:var(--super);}
+.ev-wrap{margin-top:20px;}.ev-row{margin-bottom:14px;}
+.ev-meta{display:flex;justify-content:space-between;font-family:var(--m);font-size:.6rem;color:var(--ghost);margin-bottom:7px;}
+.ev-rail{height:4px;background:rgba(255,255,255,.04);border-radius:99px;overflow:hidden;}
+.ev-fill{height:100%;border-radius:99px;transition:width 1.4s cubic-bezier(.4,0,.2,1);}
+.ef-q{background:linear-gradient(90deg,#0ea5e9,var(--quasar),#7DD3FC);box-shadow:0 0 10px rgba(56,189,248,.5);}
+.ef-p{background:linear-gradient(90deg,#9333ea,var(--pulsar),var(--pulsar2));box-shadow:0 0 10px rgba(192,132,252,.5);}
+.ef-n{background:linear-gradient(90deg,#d97706,var(--nova),var(--nova2));box-shadow:0 0 10px rgba(251,146,60,.5);}
+
+/* ═══ HOW IT WORKS — CONSTELLATION NODES ═══ */
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);position:relative;padding-top:12px;}
+@media(max-width:720px){.how-grid{grid-template-columns:1fr;gap:48px;}}
+.how-grid::after{content:'';position:absolute;top:65px;left:16.7%;right:16.7%;height:1px;background:linear-gradient(90deg,rgba(56,189,248,.25),rgba(192,132,252,.2) 50%,rgba(251,146,60,.25));z-index:0;pointer-events:none;}
+@media(max-width:720px){.how-grid::after{display:none;}}
+.how-step{padding:38px 28px;text-align:center;transition:transform .3s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:1;}
+.how-step:hover{transform:translateY(-6px);}
+.how-num{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--m);font-size:1.1rem;font-weight:700;margin:0 auto 18px;position:relative;border:none;background:transparent;}
+.how-num::before{content:'';position:absolute;inset:-14px;border-radius:50%;animation:haloBreathe 5s ease-in-out infinite;}
+.how-step:nth-child(1) .how-num{color:var(--quasar);text-shadow:0 0 18px rgba(56,189,248,.9);}
+.how-step:nth-child(1) .how-num::before{background:radial-gradient(circle,rgba(56,189,248,.2) 0%,transparent 70%);}
+.how-step:nth-child(2) .how-num{color:var(--pulsar);text-shadow:0 0 18px rgba(192,132,252,.9);}
+.how-step:nth-child(2) .how-num::before{background:radial-gradient(circle,rgba(192,132,252,.2) 0%,transparent 70%);animation-delay:-1.7s;}
+.how-step:nth-child(3) .how-num{color:var(--nova);text-shadow:0 0 18px rgba(251,146,60,.9);}
+.how-step:nth-child(3) .how-num::before{background:radial-gradient(circle,rgba(251,146,60,.2) 0%,transparent 70%);animation-delay:-3.4s;}
+.how-step h4{font-size:1rem;font-weight:700;margin-bottom:10px;}
+.how-step p{font-size:.82rem;line-height:1.65;color:var(--dim);max-width:240px;margin:0 auto;}
+
+/* ═══ AUTONOMY — FLOATING COSMIC PILLARS ═══ */
+.auto-cosmos{position:relative;padding:10px 0 0;}
+.auto-top{padding:44px 0 38px;text-align:center;position:relative;}
+.auto-top::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(192,132,252,.18),rgba(56,189,248,.18),transparent);}
+.auto-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(192,132,252,.07);border:1px solid rgba(192,132,252,.2);color:var(--pulsar);padding:6px 16px;border-radius:99px;font-family:var(--m);font-size:.6rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
+.auto-title{font-size:1.75rem;font-weight:800;letter-spacing:-.5px;margin-bottom:10px;}
+.auto-title em{font-style:normal;background:linear-gradient(120deg,var(--pulsar),var(--pulsar2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.auto-desc{color:var(--dim);font-size:.88rem;line-height:1.65;max-width:500px;margin:0 auto;}
+.auto-cells{display:grid;grid-template-columns:repeat(4,1fr);padding-top:8px;}
+@media(max-width:700px){.auto-cells{grid-template-columns:1fr 1fr;}}
+.auto-cell{padding:32px 22px;text-align:center;transition:transform .3s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.auto-cell:hover{transform:translateY(-5px);}
+.auto-cell:not(:last-child)::after{content:'';position:absolute;right:0;top:25%;bottom:25%;width:1px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.05),transparent);}
+@media(max-width:700px){.auto-cell:nth-child(2)::after{display:none;}}
+.auto-ico{font-size:1.8rem;display:block;margin-bottom:14px;filter:drop-shadow(0 0 12px rgba(192,132,252,.5));transition:all .35s;}
+.auto-cell:hover .auto-ico{filter:drop-shadow(0 0 22px rgba(192,132,252,.9));transform:scale(1.15);}
+.auto-t{font-size:.9rem;font-weight:700;margin-bottom:7px;}
+.auto-d{font-size:.75rem;color:var(--dim);line-height:1.55;}
+
+/* ═══ WINNERS — FLOATING ETHEREAL ROWS ═══ */
+.winners-void{position:relative;padding:8px 0;}
+.w-row{display:grid;grid-template-columns:90px 1fr auto;gap:14px;align-items:center;padding:16px 24px;position:relative;transition:all .2s;}
+.w-row::after{content:'';position:absolute;bottom:0;left:5%;right:5%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.035),transparent);}
+.w-row:last-child::after{display:none;}
+.w-row:hover{transform:translateX(6px);}
+.w-badge{font-family:var(--m);font-size:.62rem;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:8px;border:1px solid;text-align:center;}
+.w-badge.q{color:var(--quasar);border-color:rgba(56,189,248,.22);background:rgba(56,189,248,.06);}
+.w-badge.p{color:var(--pulsar);border-color:rgba(192,132,252,.22);background:rgba(192,132,252,.06);}
+.w-badge.n{color:var(--nova);border-color:rgba(251,146,60,.22);background:rgba(251,146,60,.06);}
+.w-addr{font-family:var(--m);font-size:.8rem;color:var(--dim);}
+.w-amt{font-family:var(--m);font-size:.88rem;color:var(--aurora);text-shadow:0 0 14px rgba(52,211,153,.4);}
+.w-empty{padding:52px 0;text-align:center;font-family:var(--m);font-size:.78rem;letter-spacing:.5px;color:var(--ghost);}
+
+/* ═══ AI — FLOATING COSMIC NODES ═══ */
+.ai-cosmos{position:relative;}
+.ai-top{padding:34px 0 28px;text-align:center;position:relative;}
+.ai-top::before{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(192,132,252,.2),rgba(56,189,248,.2),transparent);}
+.ai-top::after{content:'';position:absolute;bottom:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);}
+.ai-title{font-size:1.4rem;font-weight:800;letter-spacing:-.3px;margin-bottom:8px;text-shadow:0 0 40px rgba(192,132,252,.15);}
+.ai-sub{color:var(--dim);font-size:.875rem;line-height:1.6;max-width:420px;margin:0 auto;}
+.ai-grid{display:grid;grid-template-columns:repeat(4,1fr);}
+@media(max-width:780px){.ai-grid{grid-template-columns:1fr 1fr;}}
+.ai-cell{padding:28px 20px;text-align:center;transition:transform .3s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.ai-cell:hover{transform:translateY(-5px);}
+.ai-cell:not(:last-child)::after{content:'';position:absolute;right:0;top:18%;bottom:18%;width:1px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.04),transparent);}
+@media(max-width:780px){.ai-cell:nth-child(2)::after{display:none;}}
+.ai-ico{font-size:1.4rem;display:inline-block;margin-bottom:10px;filter:drop-shadow(0 0 10px rgba(192,132,252,.5));animation:aiPulse 4s ease-in-out infinite;}
+.ai-cell:nth-child(2) .ai-ico{animation-delay:-1s;}.ai-cell:nth-child(3) .ai-ico{animation-delay:-2s;}.ai-cell:nth-child(4) .ai-ico{animation-delay:-3s;}
+@keyframes aiPulse{0%,100%{filter:drop-shadow(0 0 8px rgba(192,132,252,.4));}50%{filter:drop-shadow(0 0 18px rgba(56,189,248,.7));}}
+.ai-cell:hover .ai-ico{filter:drop-shadow(0 0 22px rgba(232,121,249,.9));}
+.ai-lbl{font-family:var(--m);font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--ghost);margin-bottom:6px;}
+.ai-val{font-family:var(--m);font-size:1.2rem;color:var(--star);margin-bottom:4px;transition:text-shadow .3s;}
+.ai-cell:hover .ai-val{text-shadow:0 0 16px currentColor;}
+.ai-note{font-size:.72rem;color:var(--dim);margin-bottom:10px;}
+.cbar{height:2px;background:rgba(255,255,255,.04);border-radius:99px;overflow:hidden;max-width:100px;margin:0 auto;}
+.cfill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--pulsar),var(--quasar));box-shadow:0 0 8px rgba(192,132,252,.5);transition:width 1s;}
+.ai-foot{padding:14px 0 0;text-align:center;font-family:var(--m);font-size:.62rem;letter-spacing:.5px;color:var(--ghost);position:relative;}
+.ai-foot::before{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);}
+.ai-foot b{color:var(--quasar);}
+
+/* ═══ CRE — VOID ANNOUNCEMENT ═══ */
+.cre-cosmos{padding:52px 0;text-align:center;position:relative;}
+.cre-cosmos::before{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(56,189,248,.2),rgba(192,132,252,.2),transparent);}
+.cre-live{display:inline-flex;align-items:center;gap:9px;font-family:var(--m);font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--quasar);margin-bottom:18px;}
+.cre-dot{width:7px;height:7px;border-radius:50%;background:var(--quasar);animation:liveR 2s infinite;}
+.cre-title{font-size:1.7rem;font-weight:800;letter-spacing:-.4px;margin-bottom:12px;text-shadow:0 0 50px rgba(56,189,248,.15);}
+.cre-desc{color:var(--dim);font-size:.9rem;line-height:1.7;max-width:520px;margin:0 auto 28px;}
+.cre-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:30px;}
+.cre-tag{background:rgba(56,189,248,.05);border:1px solid rgba(56,189,248,.14);color:var(--quasar);padding:6px 15px;border-radius:99px;font-family:var(--m);font-size:.68rem;transition:all .2s;}
+.cre-tag:hover{border-color:rgba(56,189,248,.35);box-shadow:0 0 18px rgba(56,189,248,.2);transform:translateY(-2px);}
+.contract-row{display:inline-flex;align-items:center;gap:12px;background:rgba(6,6,26,.4);border:1px solid rgba(255,255,255,.06);padding:12px 18px;border-radius:13px;position:relative;z-index:1;transition:border-color .2s;}
+.contract-row:hover{border-color:rgba(255,255,255,.12);}
+.contract-addr{font-family:var(--m);font-size:.78rem;color:var(--dim);}
+.copy-btn{font-family:var(--f);font-size:.75rem;font-weight:700;background:rgba(192,132,252,.14);border:1px solid rgba(192,132,252,.3);color:var(--pulsar);padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .15s;}
+.copy-btn:hover{background:rgba(192,132,252,.22);border-color:var(--pulsar);box-shadow:0 0 14px rgba(192,132,252,.3);}
+
+/* UTILITIES */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(6,6,26,.95);backdrop-filter:blur(24px);border:1px solid rgba(192,132,252,.22);padding:12px 24px;border-radius:12px;font-family:var(--m);font-size:.8rem;color:var(--star);z-index:9999;transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 8px 32px rgba(0,0,0,.6);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.spacer{height:100px;position:relative;z-index:1;}
+.footer{position:relative;z-index:1;padding:28px 36px;text-align:center;font-family:var(--m);font-size:.68rem;letter-spacing:.5px;color:var(--ghost);}
+.footer::before{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);}
+.footer a{color:var(--pulsar);text-decoration:none;}.footer a:hover{color:var(--pulsar2);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.fu{opacity:0;animation:fadeUp .7s cubic-bezier(.4,0,.2,1) forwards;}
+.fu-1{animation-delay:.05s;}.fu-2{animation-delay:.15s;}.fu-3{animation-delay:.25s;}.fu-4{animation-delay:.35s;}
+</style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="nebula-bg"><div class="nb nb1"></div><div class="nb nb2"></div><div class="nb nb3"></div></div>
+
+<nav class="nav"><div class="nav-inner">
+  <a class="logo" href="#">
+    <svg class="logo-icon" width="46" height="46" viewBox="0 0 46 46" fill="none">
+      <defs><radialGradient id="ng" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#E879F9" stop-opacity=".95"/><stop offset="40%" stop-color="#A855F7" stop-opacity=".75"/><stop offset="75%" stop-color="#38BDF8" stop-opacity=".55"/><stop offset="100%" stop-color="#0EA5E9" stop-opacity=".2"/></radialGradient><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E879F9" stop-opacity=".85"/><stop offset="50%" stop-color="#7DD3FC" stop-opacity=".65"/><stop offset="100%" stop-color="#E879F9" stop-opacity=".1"/></linearGradient><filter id="cg" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="sg" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2.5"/></filter></defs>
+      <circle cx="23" cy="23" r="20" fill="url(#ng)" opacity=".07" filter="url(#sg)"/><g transform="rotate(-35 23 23)"><ellipse cx="23" cy="23" rx="20" ry="7.5" fill="none" stroke="url(#rg)" stroke-width="1.4" stroke-dasharray="5 3" stroke-linecap="round" opacity=".8"/></g><g transform="rotate(35 23 23)"><ellipse cx="23" cy="23" rx="15" ry="6" fill="none" stroke="url(#rg)" stroke-width="1" opacity=".55"/></g><circle cx="23" cy="23" r="10" fill="#020208"/><circle cx="23" cy="23" r="12" fill="none" stroke="url(#ng)" stroke-width="3.5" opacity=".38" filter="url(#sg)"/><circle cx="23" cy="23" r="6" fill="url(#ng)" filter="url(#cg)" opacity=".98"/><circle cx="21.2" cy="21.2" r="2.2" fill="white" opacity=".6"/><line x1="23" y1="2" x2="23" y2="11" stroke="#E879F9" stroke-width="1.3" stroke-linecap="round" opacity=".6"/><line x1="23" y1="35" x2="23" y2="44" stroke="#38BDF8" stroke-width="1.3" stroke-linecap="round" opacity=".5"/><line x1="2" y1="23" x2="10" y2="23" stroke="#E879F9" stroke-width="1" stroke-linecap="round" opacity=".45"/><line x1="36" y1="23" x2="44" y2="23" stroke="#38BDF8" stroke-width="1" stroke-linecap="round" opacity=".45"/><circle cx="23" cy="3.5" r="1.6" fill="#F9A8D4" opacity=".9"/><circle cx="3.5" cy="23" r="1.2" fill="#7DD3FC" opacity=".7"/>
+    </svg>
+    <div class="logo-text"><span class="logo-name">evmX</span><span class="logo-sub">Reward Protocol</span></div>
+  </a>
+  <div class="nav-links"><a href="#pools">Pools</a><a href="#gametheory">Game Theory</a><a href="#how">How it Works</a><a href="#winners">Winners</a><a href="#ai">Analytics</a><a href="#cre">CRE</a></div>
+  <button id="connectBtn" class="btn-wallet">Connect Wallet</button>
+</div></nav>
+
+<!-- HERO -->
+<div class="wrap section"><div class="hero">
+  <div class="hero-left">
+    <div class="orbit-badge fu fu-1"><div class="orbit-dot"></div>Live · Base L2 · Chainlink</div>
+    <h1 class="hero-title fu fu-2"><span class="cg">Autonomous</span><br>Community<br><span class="dg">Reward</span> Protocol</h1>
+    <p class="hero-body fu fu-3">Three reward pools. Provably fair randomness. Fully autonomous execution. Buy evmX once — the protocol distributes ETH forever with zero human intervention.</p>
+    <div class="hero-pills fu fu-4">
+      <div class="pill">⚡ 3-Tier Pools</div><div class="pill">🔗 Chainlink VRF v2.5</div><div class="pill">🤖 CRE Automation</div><div class="pill">✅ 174 Tests · 0 Bugs</div><div class="pill">🔥 LP Burned</div><div class="pill">🔒 Ownership Renounced</div>
+    </div>
+  </div>
+  <div class="hero-cosmos fu fu-2"><div class="cosmos-wrap">
+    <div class="cosmos-card cc-tl"><div class="cc-v" id="chipEntries">0</div><div class="cc-l">Entries</div></div>
+    <div class="cosmos-card cc-br"><div class="cc-v" style="color:var(--aurora)">3%</div><div class="cc-l">Tax Rate</div></div>
+    <div class="cosmos-card cc-tr" id="chipPriceCard" style="display:none"><div class="cc-v" id="chipPrice" style="color:var(--quasar)">--</div><div class="cc-l">ETH/USD</div></div>
+    <div class="orb-ring orb-ring-1"><div class="planet" style="width:8px;height:8px;background:var(--quasar);box-shadow:0 0 14px var(--quasar);top:2px;left:50%;margin-left:-4px;"></div></div>
+    <div class="orb-ring orb-ring-2"><div class="planet" style="width:6px;height:6px;background:var(--pulsar);box-shadow:0 0 12px var(--pulsar);top:4px;left:50%;margin-left:-3px;"></div></div>
+    <div class="orb-ring orb-ring-3"><div class="planet" style="width:5px;height:5px;background:var(--nova);box-shadow:0 0 10px var(--nova);top:5px;left:50%;margin-left:-2.5px;"></div></div>
+    <div class="black-hole"><div class="bh-glow"></div><div class="bh-eth" id="totalEth">0.00</div><div class="bh-lbl">ETH</div><div class="bh-usd" id="totalUsd"></div></div>
+  </div></div>
+</div></div>
+
+<!-- POOLS -->
+<div class="wrap section" id="pools">
+  <div class="eyebrow"><div class="ew-dot"></div>Reward Pools</div>
+  <div class="sec-title">Three Stellar Bodies</div>
+  <div class="sec-sub">Three living nebulae. Each holds ETH. One winner per trigger.</div>
+  <div class="pools-universe" id="poolsUniverse"><canvas id="poolsCanvas"></canvas>
+    <div class="pools-float">
+      <div class="pool-float q" id="pf-micro" onclick="selectPool('micro',this)">
+        <div class="pf-star"><div class="pf-halo"></div><div class="pf-orbit"></div><div class="pf-orbit2"></div><div class="pf-core"></div><div class="pf-gleam"></div></div>
+        <div class="pf-label">⚡ Micro Pool</div><div class="pf-eth" id="microBalance">0.0000</div><div class="pf-ethlbl">ETH</div><div class="pf-usd" id="microUsd">&nbsp;</div>
+        <div class="pf-timer"><div class="pf-timer-dot"></div><span id="microTimer">-- : --</span></div>
+        <div class="pf-prog"><div class="pf-prog-meta"><span>Fill</span><span id="microThreshold">--</span></div><div class="pf-prog-track"><div class="pf-prog-fill" id="microFill" style="width:0%"></div></div></div>
+        <div class="pf-stats"><div><div class="pf-sv" id="microEntries">0</div><div class="pf-sl">Entries</div></div><div><div class="pf-sv">2 hrs</div><div class="pf-sl">Cycle</div></div><div><div class="pf-sv" style="color:var(--quasar)">1%</div><div class="pf-sl">Buy tax</div></div></div>
+        <div class="pf-odds"><span style="color:var(--ghost)">🎲</span><span class="pf-odds-num" id="microOdds">--</span><span style="color:var(--ghost);font-size:.6rem">/ entry</span></div>
+        <div class="pf-elig" id="microEligRow"><span class="pf-elig-txt elig-no" id="microEligTag">Not Eligible</span><div class="elig-dots"><div class="e-dot" id="microD1"></div><div class="e-dot" id="microD2"></div><div class="e-dot" id="microD3"></div></div></div>
+      </div>
+      <div class="pool-float p" id="pf-mid" onclick="selectPool('mid',this)">
+        <div class="pf-star"><div class="pf-halo"></div><div class="pf-orbit"></div><div class="pf-orbit2"></div><div class="pf-core"></div><div class="pf-gleam"></div></div>
+        <div class="pf-label">🔮 Mid Pool</div><div class="pf-eth" id="midBalance">0.0000</div><div class="pf-ethlbl">ETH</div><div class="pf-usd" id="midUsd">&nbsp;</div>
+        <div class="pf-timer"><div class="pf-timer-dot"></div><span id="midTimer">-- : --</span></div>
+        <div class="pf-prog"><div class="pf-prog-meta"><span>Fill</span><span id="midThreshold">--</span></div><div class="pf-prog-track"><div class="pf-prog-fill" id="midFill" style="width:0%"></div></div></div>
+        <div class="pf-stats"><div><div class="pf-sv" id="midEntries">0</div><div class="pf-sl">Entries</div></div><div><div class="pf-sv">6 hrs</div><div class="pf-sl">Cycle</div></div><div><div class="pf-sv" style="color:var(--pulsar)">1.5%</div><div class="pf-sl">Buy tax</div></div></div>
+        <div class="pf-odds"><span style="color:var(--ghost)">🎲</span><span class="pf-odds-num" id="midOdds">--</span><span style="color:var(--ghost);font-size:.6rem">/ entry</span></div>
+        <div class="pf-elig" id="midEligRow"><span class="pf-elig-txt elig-no" id="midEligTag">Not Eligible</span><div class="elig-dots"><div class="e-dot" id="midD1"></div><div class="e-dot" id="midD2"></div><div class="e-dot" id="midD3"></div></div></div>
+      </div>
+      <div class="pool-float n" id="pf-mega" onclick="selectPool('mega',this)">
+        <div class="pf-star"><div class="pf-halo"></div><div class="pf-orbit"></div><div class="pf-orbit2"></div><div class="pf-core"></div><div class="pf-gleam"></div></div>
+        <div class="pf-label">🏆 Mega Pool</div><div class="pf-eth" id="megaBalance">0.0000</div><div class="pf-ethlbl">ETH</div><div class="pf-usd" id="megaUsd">&nbsp;</div>
+        <div class="pf-timer"><div class="pf-timer-dot"></div><span id="megaTimer">--d --h</span></div>
+        <div class="pf-prog"><div class="pf-prog-meta"><span>Weekly</span><span id="megaCycle">Day 0 / 7</span></div><div class="pf-prog-track"><div class="pf-prog-fill" id="megaFill" style="width:0%"></div></div></div>
+        <div class="pf-stats"><div><div class="pf-sv" id="megaEntries">0</div><div class="pf-sl">Entries</div></div><div><div class="pf-sv">7 days</div><div class="pf-sl">Cycle</div></div><div><div class="pf-sv" style="color:var(--nova)">1.9%</div><div class="pf-sl">Sell tax</div></div></div>
+        <div class="pf-odds"><span style="color:var(--ghost)">🎲</span><span class="pf-odds-num" id="megaOdds">--</span><span style="color:var(--ghost);font-size:.6rem">/ entry</span></div>
+        <div class="pf-elig" id="megaEligRow"><span class="pf-elig-txt elig-no" id="megaEligTag">Not Eligible</span><div class="elig-dots"><div class="e-dot" id="megaD1"></div><div class="e-dot" id="megaD2"></div><div class="e-dot" id="megaD3"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div id="userDash" style="display:none"><div class="user-strip">
+    <div><div class="us-v" id="userBalance" style="color:var(--quasar)">0.00</div><div class="us-l">evmX Balance</div></div>
+    <div><div class="us-v" id="userTotalEntries">0 / 9</div><div class="us-l">Your Entries</div></div>
+    <div><div class="us-v" id="userElig" style="color:var(--aurora)">--</div><div class="us-l">Eligible Pools</div></div>
+    <button id="cycleBtn" class="btn-cycle">⚡ Run Autonomous Cycle</button>
+  </div></div>
+</div>
+
+<!-- GAME THEORY -->
+<div class="wrap section" id="gametheory">
+  <div class="eyebrow reveal"><div class="ew-dot"></div>Game Theory</div>
+  <div class="sec-title reveal reveal-d1">Pool Mechanics & Odds</div>
+  <div class="gt-grid reveal reveal-d2">
+    <div class="gt-card lit">
+      <div class="gt-head">Pool Fill Rates</div>
+      <div class="ev-wrap">
+        <div class="ev-row"><div class="ev-meta"><span class="c-q">⚡ Micro</span><span id="microFillPct">0%</span></div><div class="ev-rail"><div class="ev-fill ef-q" id="microEvBar" style="width:0%"></div></div></div>
+        <div class="ev-row"><div class="ev-meta"><span class="c-p">🔮 Mid</span><span id="midFillPct">0%</span></div><div class="ev-rail"><div class="ev-fill ef-p" id="midEvBar" style="width:0%"></div></div></div>
+        <div class="ev-row"><div class="ev-meta"><span class="c-n">🏆 Mega</span><span id="megaFillPct">0%</span></div><div class="ev-rail"><div class="ev-fill ef-n" id="megaEvBar" style="width:0%"></div></div></div>
+      </div>
+      <div style="margin-top:24px">
+        <div class="gt-row"><span class="gt-l">Micro Trigger</span><span class="gt-v c-q">Every 2 hours</span></div>
+        <div class="gt-row"><span class="gt-l">Mid Trigger</span><span class="gt-v c-p">Every 6 hours</span></div>
+        <div class="gt-row"><span class="gt-l">Mega Trigger</span><span class="gt-v c-n">Every 7 days</span></div>
+        <div class="gt-row"><span class="gt-l">Max Entries / Cycle</span><span class="gt-v c-a">3 per pool</span></div>
+        <div class="gt-row"><span class="gt-l">Min Hold</span><span class="gt-v">10,000 evmX</span></div>
+        <div class="gt-row"><span class="gt-l">Randomness</span><span class="gt-v c-q">VRF v2.5</span></div>
+      </div>
+    </div>
+    <div class="gt-card">
+      <div class="gt-head">Token Economics</div>
+      <div class="gt-row"><span class="gt-l">Symbol</span><span class="gt-v c-p">evmX</span></div>
+      <div class="gt-row"><span class="gt-l">Full Name</span><span class="gt-v">ETERNAL VIRTUAL MACHINE</span></div>
+      <div class="gt-row"><span class="gt-l">Total Supply</span><span class="gt-v">100,000,000</span></div>
+      <div class="gt-row"><span class="gt-l">Network</span><span class="gt-v c-q">Base L2</span></div>
+      <div class="gt-row"><span class="gt-l">Buy Tax</span><span class="gt-v c-a">3%</span></div>
+      <div class="gt-row"><span class="gt-l" style="padding-left:12px">↳ Micro Pool</span><span class="gt-v c-q">1.0%</span></div>
+      <div class="gt-row"><span class="gt-l" style="padding-left:12px">↳ Mid Pool</span><span class="gt-v c-p">1.5%</span></div>
+      <div class="gt-row"><span class="gt-l" style="padding-left:12px">↳ Marketing/VRF</span><span class="gt-v">0.5%</span></div>
+      <div class="gt-row"><span class="gt-l">Sell Tax</span><span class="gt-v c-s">3%</span></div>
+      <div class="gt-row"><span class="gt-l" style="padding-left:12px">↳ Mega Pool</span><span class="gt-v c-n">1.9%</span></div>
+      <div class="gt-row"><span class="gt-l">Max Wallet / TX</span><span class="gt-v">4% / 1.5%</span></div>
+      <div class="gt-row"><span class="gt-l">Ownership</span><span class="gt-v c-a">Renounced ✓</span></div>
+      <div class="gt-row"><span class="gt-l">LP Tokens</span><span class="gt-v c-a">Burned ✓</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="wrap section" id="how">
+  <div class="eyebrow reveal"><div class="ew-dot"></div>Protocol</div>
+  <div class="sec-title reveal reveal-d1">How It Works</div>
+  <div class="how-grid reveal reveal-d2">
+    <div class="how-step"><div class="how-num">01</div><h4>Buy evmX Tokens</h4><p>Purchase on Uniswap V2. A 3% tax splits automatically across all three pools. Every qualifying buy earns up to 3 entries per pool per cycle.</p></div>
+    <div class="how-step"><div class="how-num">02</div><h4>Pools Fill Autonomously</h4><p>The Smart Ladder dynamically adjusts thresholds. Micro triggers every 2h, Mid every 6h, Mega weekly. Chainlink CRE fires triggers 24/7.</p></div>
+    <div class="how-step"><div class="how-num">03</div><h4>VRF Picks a Winner</h4><p>Chainlink VRF v2.5 selects a provably random entry. Winner receives the entire pool in ETH — direct to wallet. No trust required.</p></div>
+  </div>
+</div>
+
+<!-- AUTONOMY -->
+<div class="wrap section">
+  <div class="auto-cosmos reveal">
+    <div class="auto-top">
+      <div class="auto-badge">✦ Trustless by Design</div>
+      <div class="auto-title">Fully <em>Autonomous</em> Protocol</div>
+      <div class="auto-desc">Multi-layer trigger architecture. Trades trigger during volume. CRE guarantees execution at zero activity. No admin. No pause. No upgrades. Unstoppable.</div>
+    </div>
+    <div class="auto-cells">
+      <div class="auto-cell"><span class="auto-ico">🔒</span><div class="auto-t">Ownership Renounced</div><div class="auto-d">Admin keys permanently burned. No one can modify, pause, or upgrade.</div></div>
+      <div class="auto-cell"><span class="auto-ico">🔥</span><div class="auto-t">LP Burned</div><div class="auto-d">Liquidity pool tokens destroyed forever. Rug-proof. No exit possible.</div></div>
+      <div class="auto-cell"><span class="auto-ico">🤖</span><div class="auto-t">CRE Guaranteed</div><div class="auto-d">Chainlink CRE handles swaps, VRF funding, and pool triggers 24/7.</div></div>
+      <div class="auto-cell"><span class="auto-ico">🎲</span><div class="auto-t">Provably Fair</div><div class="auto-d">VRF v2.5 cryptographic randomness. No manipulation. Fully verifiable.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WINNERS -->
+<div class="wrap section" id="winners">
+  <div class="eyebrow reveal"><div class="ew-dot"></div>Rewards Feed</div>
+  <div class="sec-title reveal reveal-d1">Recent Winners</div>
+  <div class="winners-void reveal reveal-d2" id="winnersList"><div class="w-empty">Pools filling up — first winner incoming 🌌</div></div>
+</div>
+
+<!-- AI ANALYTICS -->
+<div class="wrap section" id="ai">
+  <div class="ai-cosmos reveal">
+    <div class="ai-top">
+      <div class="eyebrow" style="justify-content:center"><div class="ew-dot"></div>Protocol Intelligence</div>
+      <div class="ai-title">AI-Powered Analytics</div>
+      <div class="ai-sub">Real-time on-chain analysis via Chainlink Data Feeds. Optimal entry timing and pool strategy.</div>
+    </div>
+    <div class="ai-grid">
+      <div class="ai-cell"><span class="ai-ico">⏱</span><div class="ai-lbl">Next Trigger</div><div class="ai-val" id="aiNextTrigger">--</div><div class="ai-note" id="aiNextPool">Analyzing...</div><div class="cbar"><div class="cfill" id="aiTriggerConf" style="width:0%"></div></div></div>
+      <div class="ai-cell"><span class="ai-ico">📈</span><div class="ai-lbl">Pool Trend</div><div class="ai-val" id="aiTrend">--</div><div class="ai-note" id="aiTrendDesc">Analyzing...</div><div class="cbar"><div class="cfill" id="aiTrendConf" style="width:0%"></div></div></div>
+      <div class="ai-cell"><span class="ai-ico">🎯</span><div class="ai-lbl">Best Entry</div><div class="ai-val" id="aiBestEntry">--</div><div class="ai-note" id="aiBestReason">Analyzing...</div><div class="cbar"><div class="cfill" id="aiBestConf" style="width:0%"></div></div></div>
+      <div class="ai-cell"><span class="ai-ico">💚</span><div class="ai-lbl">Health Score</div><div class="ai-val" id="aiHealth">--</div><div class="ai-note" id="aiHealthDesc">Analyzing...</div><div class="cbar"><div class="cfill" id="aiHealthConf" style="width:0%"></div></div></div>
+    </div>
+    <div class="ai-foot">Data: <b>Chainlink ETH/USD Feed</b> + on-chain state · Updated every 15s | <span id="ethPriceDisplay"></span></div>
+  </div>
+</div>
+
+<!-- CRE -->
+<div class="wrap section" id="cre">
+  <div class="cre-cosmos reveal">
+    <div class="cre-live"><div class="cre-dot"></div>Live on Chainlink CRE</div>
+    <div class="cre-title">Powered by Chainlink Runtime Environment</div>
+    <div class="cre-desc">Multi-layer trigger design: trades auto-trigger during active volume, CRE guarantees execution during zero activity. All covered 24/7, forever.</div>
+    <div class="cre-tags"><div class="cre-tag">Chainlink VRF v2.5</div><div class="cre-tag">CRE Workflows</div><div class="cre-tag">ETH/USD Data Feed</div><div class="cre-tag">EVM Log Triggers</div><div class="cre-tag">Base L2</div><div class="cre-tag">Autonomous Cycles</div></div>
+    <div class="contract-row"><span class="contract-addr" id="contractAddrDisplay">0x0000000000000000000000000000000000000000</span><button class="copy-btn" onclick="copyAddr()">Copy</button></div>
+  </div>
+</div>
+
+<div class="spacer"></div>
+<div class="toast" id="toast"></div>
+<footer class="footer">
+  <p>evmX Protocol · <a href="#" id="contractLink" target="_blank">View on BaseScan</a></p>
+  <p style="margin-top:7px">Built with Chainlink CRE + VRF + Data Feed · Convergence Hackathon 2026</p>
+</footer>
+
+<script>
+/* ═══ STARFIELD ═══ */
+(function(){var c=document.getElementById('starfield'),ctx=c.getContext('2d');var stars=[],meteors=[],W,H;function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}function mkStars(){stars=[];for(var i=0;i<300;i++){var r=Math.random();stars.push({x:Math.random()*W,y:Math.random()*H,r:r<.6?Math.random()*.65+.15:Math.random()*1.2+.45,a:Math.random(),da:(Math.random()-.5)*.007,vy:Math.random()*.025+.003,col:r<.15?'rgba(232,121,249,':r<.3?'rgba(125,211,252,':'rgba(240,244,255,'});}}function mkMeteor(){meteors.push({x:Math.random()>.5?-60:W+60,y:Math.random()*H*.6,vx:Math.random()>.5?5+Math.random()*4:-(5+Math.random()*4),vy:2.5+Math.random()*4,len:90+Math.random()*130,a:1,col:Math.random()<.5?'rgba(192,132,252,':'rgba(56,189,248,'});}setInterval(mkMeteor,3500+Math.random()*4500);function draw(){ctx.clearRect(0,0,W,H);stars.forEach(function(s){s.a+=s.da;if(s.a<.05||s.a>1)s.da*=-1;s.y+=s.vy;if(s.y>H){s.y=0;s.x=Math.random()*W;}ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=s.col+s.a+')';ctx.fill();});meteors=meteors.filter(function(m){m.x+=m.vx;m.y+=m.vy;m.a-=.016;if(m.a<=0)return false;var ang=Math.atan2(m.vy,m.vx),gr=ctx.createLinearGradient(m.x,m.y,m.x-Math.cos(ang)*m.len,m.y-Math.sin(ang)*m.len);gr.addColorStop(0,m.col+m.a+')');gr.addColorStop(1,m.col+'0)');ctx.beginPath();ctx.moveTo(m.x,m.y);ctx.lineTo(m.x-Math.cos(ang)*m.len,m.y-Math.sin(ang)*m.len);ctx.strokeStyle=gr;ctx.lineWidth=1.6;ctx.stroke();ctx.beginPath();ctx.arc(m.x,m.y,2.2,0,Math.PI*2);ctx.fillStyle=m.col+m.a+')';ctx.fill();return true;});requestAnimationFrame(draw);}window.addEventListener('resize',function(){resize();mkStars();});resize();mkStars();draw();})();
+
+/* ═══ POOLS NEBULA CANVAS ═══ */
+(function(){var canvas=document.getElementById('poolsCanvas'),ctx=canvas.getContext('2d'),universe=document.getElementById('poolsUniverse');var W,H,t=0;var sources=[{cx:1/6,cy:.22,rgb:[56,189,248],rgb2:[14,165,233]},{cx:3/6,cy:.22,rgb:[192,132,252],rgb2:[168,85,247]},{cx:5/6,cy:.22,rgb:[251,146,60],rgb2:[252,211,77]}];sources.forEach(function(s,si){s.blobs=[];var angles=[0,Math.PI*.7,Math.PI*1.3,Math.PI*1.8,Math.PI*.4];for(var i=0;i<5;i++){var ang=angles[i];s.blobs.push({ox:Math.cos(ang)*(.04+i*.012),oy:Math.sin(ang)*(.04+i*.01)+.04*i,baseR:.22-i*.025,speed:.0008+i*.0002+si*.0001,phase:i*1.4+si*2.1,alphaBase:.18-i*.025});}s.stars=[];for(var i=0;i<30;i++){s.stars.push({ox:(Math.random()-.5)*.22,oy:(Math.random()-.5)*.35+.15,r:Math.random()*.9+.2,a:Math.random()*.7+.1,da:(Math.random()-.5)*.018,vox:(Math.random()-.5)*.0003,voy:(Math.random()-.5)*.0003});}s.streaks=[];s.nextStreak=1000+Math.random()*2000+si*600;});function resize(){W=canvas.width=universe.offsetWidth;H=canvas.height=universe.offsetHeight;}function draw(){ctx.clearRect(0,0,W,H);sources.forEach(function(s){var bx=s.cx*W,by=s.cy*H;s.blobs.forEach(function(b){var dx=Math.sin(t*b.speed*1100+b.phase)*b.ox*W,dy=Math.cos(t*b.speed*900+b.phase+1.2)*b.oy*H;var bX=bx+dx,bY=by+dy,r=b.baseR*Math.min(W/3,H)*(1+.12*Math.sin(t*.4+b.phase));var alpha=b.alphaBase*(.75+.25*Math.sin(t*.5+b.phase));var gr=ctx.createRadialGradient(bX,bY,0,bX,bY,r);gr.addColorStop(0,'rgba('+s.rgb.join(',')+','+alpha+')');gr.addColorStop(.4,'rgba('+s.rgb2.join(',')+','+(alpha*.5)+')');gr.addColorStop(.75,'rgba('+s.rgb.join(',')+','+(alpha*.12)+')');gr.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=gr;ctx.beginPath();ctx.arc(bX,bY,r,0,Math.PI*2);ctx.fill();});s.stars.forEach(function(st){st.a+=st.da;if(st.a<.05||st.a>.85)st.da*=-1;st.ox+=st.vox;st.oy+=st.voy;if(Math.abs(st.ox)>.2)st.vox*=-1;if(Math.abs(st.oy-.15)>.22)st.voy*=-1;var sx=bx+st.ox*W*.33,sy=by+st.oy*H*.55;ctx.beginPath();ctx.arc(sx,sy,st.r,0,Math.PI*2);ctx.fillStyle='rgba(240,244,255,'+(st.a*.75)+')';ctx.fill();});s.nextStreak-=16;if(s.nextStreak<=0){s.nextStreak=1400+Math.random()*2200;if(s.streaks.length<3){var ang=Math.PI*.1+Math.random()*Math.PI*.6;s.streaks.push({x:bx+(Math.random()-.5)*W*.18,y:by+(Math.random()-.2)*H*.25,vx:Math.cos(ang)*1.8,vy:Math.sin(ang)*1.1,len:30+Math.random()*60,a:.7+Math.random()*.25,fade:.018+Math.random()*.012});}}s.streaks=s.streaks.filter(function(sk){sk.x+=sk.vx;sk.y+=sk.vy;sk.a-=sk.fade;if(sk.a<=0)return false;var ang2=Math.atan2(sk.vy,sk.vx);var gr2=ctx.createLinearGradient(sk.x,sk.y,sk.x-Math.cos(ang2)*sk.len,sk.y-Math.sin(ang2)*sk.len);gr2.addColorStop(0,'rgba('+s.rgb.join(',')+','+sk.a+')');gr2.addColorStop(1,'rgba(0,0,0,0)');ctx.beginPath();ctx.moveTo(sk.x,sk.y);ctx.lineTo(sk.x-Math.cos(ang2)*sk.len,sk.y-Math.sin(ang2)*sk.len);ctx.strokeStyle=gr2;ctx.lineWidth=1.3;ctx.stroke();ctx.beginPath();ctx.arc(sk.x,sk.y,1.5,0,Math.PI*2);ctx.fillStyle='rgba('+s.rgb.join(',')+','+sk.a+')';ctx.fill();return true;});var coreGr=ctx.createRadialGradient(bx,by,0,bx,by,W*.07);coreGr.addColorStop(0,'rgba('+s.rgb.join(',')+',0.18)');coreGr.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=coreGr;ctx.beginPath();ctx.arc(bx,by,W*.07,0,Math.PI*2);ctx.fill();});t+=.01;requestAnimationFrame(draw);}function init(){resize();draw();window.addEventListener('resize',resize);}setTimeout(init,80);})();
+
+/* ═══ SCROLL REVEAL ═══ */
+(function(){var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('revealed');obs.unobserve(e.target);}});},{threshold:.1,rootMargin:'0px 0px -40px 0px'});window.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});});})();
+
+/* ═══ BLOCKCHAIN ═══ */
+var CONTRACT_ADDRESS='0x0000000000000000000000000000000000000000';
+var BASE_RPC='https://sepolia.base.org';
+var CHAIN_ID=84532;
+var CHAIN_NAME='Base Sepolia';
+var PRICE_FEED_ADDRESS='0x4aDC67D868764F6022B3cD50e6dB3c7aaBc36578';
+var ABI=['function getPoolInfo(uint8) view returns (uint256,uint256,uint256,uint256,uint256,uint256)','function getUserStatus(address) view returns (bool,uint8,bool,uint8,bool,uint8)','function balanceOf(address) view returns (uint256)','function runAutonomousCycle() external','event AllocationCompleted(uint8 indexed,address indexed,uint256)'];
+var PRICE_ABI=['function latestRoundData() view returns (uint80,int256,uint256,uint256,uint80)','function decimals() view returns (uint8)'];
+var provider,signer,contract,ro,priceFeed,userAddr=null,usdPrice=0;
+var cache={micro:null,mid:null,mega:null};
+
+function init(){
+  document.getElementById('contractAddrDisplay').textContent=CONTRACT_ADDRESS;
+  document.getElementById('contractLink').href='https://sepolia.basescan.org/address/'+CONTRACT_ADDRESS;
+  try{var rp=new ethers.JsonRpcProvider(BASE_RPC);ro=new ethers.Contract(CONTRACT_ADDRESS,ABI,rp);priceFeed=new ethers.Contract(PRICE_FEED_ADDRESS,PRICE_ABI,rp);}catch(e){}
+  var btn=document.getElementById('connectBtn');
+  if(window.ethereum){provider=new ethers.BrowserProvider(window.ethereum);btn.addEventListener('click',connectWallet);}
+  else{btn.textContent='No Wallet';btn.classList.add('no-wallet');btn.addEventListener('click',function(){showToast('Install MetaMask or a Web3 wallet to connect');});}
+  document.getElementById('cycleBtn').addEventListener('click',runCycle);
+  fetchPrice();setInterval(fetchPrice,60000);
+  refreshPools();loadWinners();setInterval(refreshPools,15000);setInterval(loadWinners,30000);
+}
+
+function fetchPrice(){if(!priceFeed)return;Promise.all([priceFeed.latestRoundData(),priceFeed.decimals()]).then(function(r){usdPrice=Number(r[0][1])/Math.pow(10,Number(r[1]));var d='$'+usdPrice.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});document.getElementById('ethPriceDisplay').textContent='ETH/USD '+d;document.getElementById('chipPrice').textContent=d;document.getElementById('chipPriceCard').style.display='block';updateAllUsd();}).catch(function(){});}
+
+function $usd(e){return e>0&&usdPrice>0?'≈ $'+(e*usdPrice).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'\u00a0';}
+
+function updateAllUsd(){var tot=['micro','mid','mega'].reduce(function(s,t){var b=parseFloat(document.getElementById(t+'Balance').textContent)||0;document.getElementById(t+'Usd').textContent=$usd(b);return s+b;},0);document.getElementById('totalUsd').textContent=$usd(tot);aiUpdate();}
+
+function refreshPools(){var c=contract||ro;if(!c)return;Promise.all([c.getPoolInfo(0),c.getPoolInfo(1),c.getPoolInfo(2)]).then(function(r){cache={micro:r[0],mid:r[1],mega:r[2]};setPool('micro',r[0]);setPool('mid',r[1]);setPool('mega',r[2]);document.getElementById('totalEth').textContent=Number(ethers.formatEther(r[0][0]+r[1][0]+r[2][0])).toFixed(4);document.getElementById('chipEntries').textContent=[r[0],r[1],r[2]].reduce(function(s,p){return s+Number(p[4]-p[5]);},0);updateAllUsd();}).catch(function(){});}
+
+function setPool(t,d){var bal=Number(ethers.formatEther(d[0])),thr=Number(ethers.formatEther(d[1]));var now=Math.floor(Date.now()/1000),left=Math.max(0,Number(d[3])-now),cnt=Number(d[4]-d[5]);document.getElementById(t+'Balance').textContent=bal.toFixed(4);document.getElementById(t+'Timer').textContent=fmt(left);document.getElementById(t+'Entries').textContent=cnt;if(t!=='mega'){var pct=thr>0?Math.min(bal/thr*100,100):0;document.getElementById(t+'Threshold').textContent=bal.toFixed(3)+' / '+thr.toFixed(3);document.getElementById(t+'Fill').style.width=pct+'%';document.getElementById(t+'FillPct').textContent=pct.toFixed(1)+'%';document.getElementById(t+'EvBar').style.width=pct+'%';}else{var pct2=Math.min((now-Number(d[2]))/(7*86400)*100,100);document.getElementById('megaCycle').textContent='Day '+Math.min((now-Number(d[2]))/86400,7).toFixed(1)+' / 7';document.getElementById('megaFill').style.width=pct2+'%';document.getElementById('megaFillPct').textContent=pct2.toFixed(1)+'%';document.getElementById('megaEvBar').style.width=pct2+'%';}document.getElementById(t+'Odds').textContent=cnt>0?(100/cnt).toFixed(1)+'%':'--';}
+
+function selectPool(t,el){document.querySelectorAll('.pool-float').forEach(function(n){n.style.opacity='.6';});el.style.opacity='1';setTimeout(function(){document.querySelectorAll('.pool-float').forEach(function(n){n.style.opacity='1';});},2000);}
+
+function connectWallet(){if(!provider)return;provider.send('eth_requestAccounts',[]).then(function(accs){return provider.getNetwork().then(function(net){if(Number(net.chainId)!==CHAIN_ID){return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+CHAIN_ID.toString(16)}]}).catch(function(e){if(e.code===4902)return window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:'0x'+CHAIN_ID.toString(16),chainName:CHAIN_NAME,nativeCurrency:{name:'ETH',symbol:'ETH',decimals:18},rpcUrls:[BASE_RPC],blockExplorerUrls:['https://sepolia.basescan.org']}]});}).then(function(){provider=new ethers.BrowserProvider(window.ethereum);});}}).then(function(){userAddr=accs[0];return provider.getSigner();}).then(function(s){signer=s;contract=new ethers.Contract(CONTRACT_ADDRESS,ABI,signer);var btn=document.getElementById('connectBtn');btn.textContent=userAddr.slice(0,6)+'...'+userAddr.slice(-4);btn.classList.add('connected');document.getElementById('userDash').style.display='block';showToast('✦ Wallet connected · '+CHAIN_NAME);refreshUser();setInterval(refreshUser,15000);});}).catch(function(e){console.error(e);});}
+
+function refreshUser(){if(!contract||!userAddr)return;Promise.all([contract.getUserStatus(userAddr),contract.balanceOf(userAddr)]).then(function(r){var st=r[0],bal=r[1];document.getElementById('userBalance').textContent=Number(ethers.formatEther(bal)).toFixed(2);var mE=Number(st[1]),mdE=Number(st[3]),mgE=Number(st[5]);document.getElementById('userTotalEntries').textContent=(mE+mdE+mgE)+' / 9';document.getElementById('userElig').textContent=[st[0],st[2],st[4]].filter(Boolean).length+' / 3';setElig('micro',st[0],mE);setElig('mid',st[2],mdE);setElig('mega',st[4],mgE);}).catch(function(){});}
+
+function setElig(t,ok,cnt){var row=document.getElementById(t+'EligRow'),tag=document.getElementById(t+'EligTag');if(row)row.classList.add('show');if(tag){tag.className='pf-elig-txt '+(ok?'elig-ok':'elig-no');tag.textContent=ok?'✓ Eligible':'Not Eligible';}for(var i=1;i<=3;i++){var d=document.getElementById(t+'D'+i);if(d)d.className=i<=cnt?'e-dot lit':'e-dot';}}
+
+function runCycle(){if(!contract)return;var btn=document.getElementById('cycleBtn');btn.textContent='Sending...';contract.runAutonomousCycle().then(function(tx){btn.textContent='Confirming...';return tx.wait();}).then(function(){showToast('⚡ Cycle executed!');refreshPools();refreshUser();loadWinners();}).catch(function(){showToast('Transaction failed');}).finally(function(){btn.textContent='⚡ Run Autonomous Cycle';});}
+
+function loadWinners(){var c=contract||ro;if(!c)return;c.queryFilter(c.filters.AllocationCompleted(),-5000).then(function(evs){if(!evs.length)return;var box=document.getElementById('winnersList');box.innerHTML='';var cls=['q','p','n'],lb=['Micro','Mid','Mega'];evs.slice(-10).reverse().forEach(function(ev){var pt=Number(ev.args[0]),w=ev.args[1],amt=Number(ethers.formatEther(ev.args[2]));var u=usdPrice>0?' ≈ $'+(amt*usdPrice).toFixed(2):'';var row=document.createElement('div');row.className='w-row';row.innerHTML='<span class="w-badge '+cls[pt]+'">'+lb[pt]+'</span><span class="w-addr">'+w.slice(0,6)+'...'+w.slice(-4)+'</span><span class="w-amt">+'+amt.toFixed(4)+' ETH'+u+'</span>';box.appendChild(row);});}).catch(function(){});}
+
+/* ═══ AI PROTOCOL INTELLIGENCE ═══ */
+function aiUpdate(){if(!cache.micro&&!cache.mid&&!cache.mega)return;var now=Math.floor(Date.now()/1000);var pools=[{name:'Micro',col:'var(--quasar)',data:cache.micro,cycle:7200},{name:'Mid',col:'var(--pulsar)',data:cache.mid,cycle:21600},{name:'Mega',col:'var(--nova)',data:cache.mega,cycle:604800}];
+var next=null,nt=Infinity;pools.forEach(function(p,i){if(!p.data)return;var cd=Math.max(0,Number(p.data[3])-now);var bal=Number(ethers.formatEther(p.data[0]));var thr=Number(ethers.formatEther(p.data[1]));var pct=thr>0?bal/thr:0;var est;if(i<2){if(pct>=1)est=cd;else{var fillEst=pct>0?p.cycle*(1-pct)/pct:p.cycle*2;est=Math.max(cd,fillEst);}}else{est=cd;}if(est<nt){nt=est;next=p;}});
+if(next){var el=document.getElementById('aiNextTrigger');el.textContent=nt<=0?'READY':fmt(nt);el.style.color=nt<=60?'var(--super)':next.col;document.getElementById('aiNextPool').textContent=next.name+' Pool';document.getElementById('aiTriggerConf').style.width=Math.max(25,95-Math.min(nt/600,70))+'%';}
+var tb=0,tt=0;pools.forEach(function(p){if(!p.data)return;tb+=Number(ethers.formatEther(p.data[0]));tt+=Number(ethers.formatEther(p.data[1]));});var fp=tt>0?tb/tt*100:0;var tArr=fp>70?['SURGING','var(--aurora)','Filling fast']:fp>40?['RISING','var(--quasar)','Steady accumulation']:fp>15?['BUILDING','var(--pulsar)','Early cycle growth']:['FRESH','var(--dim)','New cycle started'];var at=document.getElementById('aiTrend');at.textContent=tArr[0];at.style.color=tArr[1];document.getElementById('aiTrendDesc').textContent=tArr[2];document.getElementById('aiTrendConf').style.width=Math.min(95,Math.max(15,fp+20))+'%';
+var bestP=null,bestS=-1;pools.forEach(function(p){if(!p.data)return;var b=Number(ethers.formatEther(p.data[0]));var e=Number(p.data[4]-p.data[5]);var t2=Number(ethers.formatEther(p.data[1]));var s=(b*usdPrice)*.3+(e>0?100/e:100)*.4+(t2>0?b/t2*50:10)*.3;if(s>bestS){bestS=s;bestP=p;}});if(bestP){var ab=document.getElementById('aiBestEntry');ab.textContent=bestP.name;ab.style.color=bestP.col;var e2=bestP.data?Number(bestP.data[4]-bestP.data[5]):0;document.getElementById('aiBestReason').textContent=e2>0?e2+' entries ('+(100/e2).toFixed(1)+'% odds)':'No entries yet';document.getElementById('aiBestConf').style.width=Math.min(90,Math.max(25,35+Math.log10(Math.max(bestS,1)+1)*20))+'%';}
+var h=35;if(tb>0)h+=20;if(pools.some(function(p){return p.data&&Number(p.data[4]-p.data[5])>0;}))h+=20;if(usdPrice>0)h+=15;if(pools.some(function(p){return p.data&&Number(p.data[3])>now;}))h+=10;h=Math.min(100,h);var hArr=h>=90?['var(--aurora)','All systems nominal']:h>=70?['var(--quasar)','Operating well']:h>=50?['var(--nova)','Warming up']:['var(--dim)','Initializing...'];var ah=document.getElementById('aiHealth');ah.textContent=h+'/100';ah.style.color=hArr[0];document.getElementById('aiHealthDesc').textContent=hArr[1];document.getElementById('aiHealthConf').style.width=h+'%';}
+
+function fmt(s){if(s<=0)return'Ready!';var d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60);if(d>0)return d+'d '+h+'h';if(h>0)return h+'h '+m+'m';return m+'m';}
+function copyAddr(){navigator.clipboard.writeText(CONTRACT_ADDRESS).then(function(){showToast('✦ Contract address copied');});}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
+window.addEventListener('load',init);
+</script>
+</body>
+</html>

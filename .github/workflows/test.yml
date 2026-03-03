@@ -1,0 +1,125 @@
+name: evmX CI - Security Tests + CRE Workflow
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  foundry-tests:
+    name: "Foundry (121 tests)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci && forge install foundry-rs/forge-std --no-git
+
+      - name: Compile
+        run: forge build
+
+      - name: Run all Foundry tests
+        run: forge test --summary
+
+      - name: Gas report
+        run: forge test --gas-report > gas-report.txt 2>&1 || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gas-report
+          path: gas-report.txt
+
+  hardhat-local:
+    name: "Hardhat Local (28 tests)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install and compile
+        run: npm ci && npx hardhat compile
+
+      - name: Run local tests
+        run: npx hardhat test test/LaunchStress.test.js
+
+  hardhat-fork:
+    name: "Hardhat Fork (25 tests - Base Mainnet)"
+    runs-on: ubuntu-latest
+    env:
+      BASE_RPC_URL: https://mainnet.base.org
+      ROUTER_ADDRESS: "0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24"
+      WETH_ADDRESS: "0x4200000000000000000000000000000000000006"
+      VRF_KEY_HASH: "0xdc2f87677b01473c763cb0aee938ed3341512f6057324a584e5944e786144d70"
+      FORK_BLOCK_NUMBER: "25000000"
+      FORKING: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install and compile
+        run: npm ci && npx hardhat compile
+
+      - name: Run Base Mainnet fork tests
+        run: npx hardhat test test/evmX_BaseFork.test.js
+
+  cre-typecheck:
+    name: "CRE Workflow TypeScript Check"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install CRE dependencies
+        run: cd cre-workflow && bun install
+
+      - name: TypeScript check
+        run: cd cre-workflow && bun run typecheck
+
+  results:
+    name: "All 174 Tests + CRE"
+    needs: [foundry-tests, hardhat-local, hardhat-fork, cre-typecheck]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Verify all suites passed
+        run: |
+          echo "=============================================="
+          echo "  evmX Test Results"
+          echo "=============================================="
+          echo "  Foundry (121):       ${{ needs.foundry-tests.result }}"
+          echo "  Hardhat Local (28):  ${{ needs.hardhat-local.result }}"
+          echo "  Hardhat Fork (25):   ${{ needs.hardhat-fork.result }}"
+          echo "  CRE TypeCheck:       ${{ needs.cre-typecheck.result }}"
+          echo "=============================================="
+          if [ "${{ needs.foundry-tests.result }}" = "success" ] && \
+             [ "${{ needs.hardhat-local.result }}" = "success" ] && \
+             [ "${{ needs.hardhat-fork.result }}" = "success" ] && \
+             [ "${{ needs.cre-typecheck.result }}" = "success" ]; then
+            echo "OK: ALL 174 TESTS PASSED + CRE WORKFLOW VERIFIED"
+          else
+            echo "ERROR: SOME CHECKS FAILED"
+            exit 1
+          fi

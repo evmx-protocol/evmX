@@ -1,0 +1,6 @@
+{
+  "evmxContractAddress": "0x0000000000000000000000000000000000000000",
+  "chainSelectorName": "base-testnet-sepolia",
+  "schedule": "0 */2 * * * *",
+  "isTestnet": true
+}

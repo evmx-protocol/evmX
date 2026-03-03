@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+lib/
+
+# Build artifacts
+cache/
+cache_forge/
+artifacts/
+out/
+typechain-types/
+deployments/
+broadcast/
+
+# Environment variables - NEVER commit!
+.env
+.env.local
+.env.production
+
+# Coverage
+coverage/
+coverage.json
+lcov.info
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+nul
+*.log
+
+# Claude Code sessions
+.claude/
+
+# Verification (local only)
+verification/
+
+# CRE workflow build artifacts
+cre-workflow/node_modules/
+cre-workflow/build/
+cre-workflow/.javy/
+
+# Go (CRE CLI local build attempts)
+cre-cli/

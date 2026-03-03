@@ -1,0 +1,22 @@
+{
+  "name": "evmx-cre-workflow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CRE Workflow for evmX Autonomous Community Reward Protocol - Automated pool monitoring, cycle triggering, and reward distribution on Base L2",
+  "type": "module",
+  "scripts": {
+    "postinstall": "bunx cre-setup",
+    "simulation": "cre workflow simulate ./src/workflows/evmx-autonomous-rewards",
+    "simulation:broadcast": "cre workflow simulate ./src/workflows/evmx-autonomous-rewards --broadcast",
+    "compile": "bunx cre-compile ./src/workflows/evmx-autonomous-rewards/index.ts ./build/evmx-workflow.wasm",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chainlink/cre-sdk": "^1.1.2",
+    "viem": "^2.34.0",
+    "zod": "^3.25.0"
+  },
+  "engines": {
+    "bun": ">=1.2.21"
+  }
+}

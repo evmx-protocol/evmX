@@ -1,0 +1,21 @@
+# ==========================================================================
+# evmX Event Monitor - CRE Workflow Settings
+# ==========================================================================
+# Monitors AllocationCompleted events from the evmX contract.
+# Uses EVM Log Trigger for real-time event processing.
+# ==========================================================================
+
+local-simulation:
+  user-workflow:
+    workflow-owner-address: ""
+    workflow-name: "evmx-event-monitor"
+  workflow-artifacts:
+    workflow-path: "./index.ts"
+    config-path: "./config.json"
+    secrets-path: "../../../secrets.yaml"
+
+# ==========================================================================
+production-testnet:
+  user-workflow:
+    workflow-owner-address: ""
+    workflow-name: "evmx-event-monitor"

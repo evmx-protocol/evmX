@@ -1,0 +1,45 @@
+{
+  "name": "evmX",
+  "version": "1.0.0",
+  "description": "evmX - Autonomous Community Reward Protocol ERC-20 with 3-tier incentive layer on Base L2",
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test test/LaunchStress.test.js",
+    "test:full": "node scripts/test-full.js",
+    "test:fork": "node -e \"process.env.FORKING='true'; require('child_process').execSync('npx hardhat test test/evmX_BaseFork.test.js', {stdio:'inherit', env:{...process.env, FORKING:'true'}})\"",
+    "test:attacks": "node scripts/test-full.js --suite attacks",
+    "test:fuzz": "node scripts/test-full.js --suite fuzz",
+    "test:invariant": "node scripts/test-full.js --suite invariant",
+    "test:economic": "node scripts/test-full.js --suite economic",
+    "test:properties": "node scripts/test-full.js --suite properties",
+    "deploy:base": "npx hardhat run scripts/deploy-base.js --network base",
+    "deploy:sepolia": "npx hardhat run scripts/deploy-sepolia.js --network baseSepolia",
+    "add-liquidity": "npx hardhat run scripts/add-liquidity.js --network base",
+    "verify": "npx hardhat verify --network base",
+    "verify:sepolia": "npx hardhat verify --network baseSepolia",
+    "github:init": "node scripts/github-init.js"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "2.0.8",
+    "@nomicfoundation/hardhat-ethers": "3.0.8",
+    "@nomicfoundation/hardhat-network-helpers": "1.0.12",
+    "@nomicfoundation/hardhat-toolbox": "4.0.0",
+    "@nomicfoundation/hardhat-verify": "2.0.12",
+    "@openzeppelin/contracts": "^5.0.2",
+    "@typechain/ethers-v6": "0.5.1",
+    "@typechain/hardhat": "9.1.0",
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.10",
+    "chai": "^4.5.0",
+    "dotenv": "^16.6.1",
+    "ethers": "^6.13.0",
+    "hardhat": "2.22.18",
+    "hardhat-gas-reporter": "^1.0.10",
+    "solidity-coverage": "^0.8.17",
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
+    "typescript": "^5.9.3"
+  }
+}
+

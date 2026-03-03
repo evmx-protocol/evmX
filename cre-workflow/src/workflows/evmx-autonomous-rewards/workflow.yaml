@@ -1,0 +1,38 @@
+# ==========================================================================
+# evmX Autonomous Rewards - CRE Workflow Settings
+# ==========================================================================
+# This workflow automates the evmX 3-tier reward distribution system.
+# It monitors Micro, Mid, and Mega pool thresholds on Base L2 and triggers
+# runAutonomousCycle() when any pool is ready for allocation.
+#
+# Replaces centralized keepers with Chainlink CRE for trustless automation.
+# ==========================================================================
+
+local-simulation:
+  user-workflow:
+    workflow-owner-address: ""
+    workflow-name: "evmx-autonomous-rewards"
+  workflow-artifacts:
+    workflow-path: "./index.ts"
+    config-path: "./config.json"
+    secrets-path: "../../../secrets.yaml"
+
+# ==========================================================================
+production-testnet:
+  user-workflow:
+    workflow-owner-address: ""
+    workflow-name: "evmx-autonomous-rewards"
+  workflow-artifacts:
+    workflow-path: "./index.ts"
+    config-path: "./config.json"
+    secrets-path: "../../../secrets.yaml"
+
+# ==========================================================================
+# production:
+#   user-workflow:
+#     workflow-owner-address: ""
+#     workflow-name: "evmx-autonomous-rewards"
+#   workflow-artifacts:
+#     workflow-path: "./index.ts"
+#     config-path: "./config.json"
+#     secrets-path: "../../../secrets.yaml"

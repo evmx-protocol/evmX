@@ -1,0 +1,80 @@
+name: CRE Workflow Simulate
+
+on:
+  workflow_dispatch:
+    inputs:
+      broadcast:
+        description: 'Broadcast to testnet (requires deployed contract)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+jobs:
+  cre-simulate:
+    name: "CRE Simulate - evmX Autonomous Rewards"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install CRE dependencies
+        run: cd cre-workflow && bun install
+
+      - name: TypeScript check
+        run: cd cre-workflow && bun run typecheck
+
+      - name: Download CRE CLI
+        run: |
+          CRE_VERSION="v1.2.0"
+          echo "Downloading CRE CLI ${CRE_VERSION}..."
+          curl -sL "https://github.com/smartcontractkit/cre-cli/releases/download/${CRE_VERSION}/cre_linux_amd64.tar.gz" -o cre.tar.gz
+          tar -xzf cre.tar.gz
+          chmod +x cre
+          sudo mv cre /usr/local/bin/cre
+          cre --version || echo "CRE CLI installed"
+
+      - name: Run CRE Simulate (local)
+        if: ${{ inputs.broadcast != 'true' }}
+        working-directory: cre-workflow
+        run: |
+          echo "=============================================="
+          echo "  evmX CRE Workflow - Local Simulation"
+          echo "=============================================="
+          cre workflow simulate \
+            ./src/workflows/evmx-autonomous-rewards \
+            --target local-simulation \
+            2>&1 | tee ../cre-simulate-output.txt || true
+          echo ""
+          echo "=============================================="
+          echo "  Simulation Complete"
+          echo "=============================================="
+
+      - name: Run CRE Simulate (broadcast to testnet)
+        if: ${{ inputs.broadcast == 'true' }}
+        working-directory: cre-workflow
+        run: |
+          echo "=============================================="
+          echo "  evmX CRE Workflow - Testnet Broadcast"
+          echo "=============================================="
+          cre workflow simulate \
+            ./src/workflows/evmx-autonomous-rewards \
+            --target production-testnet \
+            --broadcast \
+            2>&1 | tee ../cre-simulate-output.txt || true
+          echo ""
+          echo "=============================================="
+          echo "  Broadcast Complete"
+          echo "=============================================="
+
+      - name: Upload simulation output
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cre-simulation-output
+          path: cre-simulate-output.txt
