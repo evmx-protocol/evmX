@@ -136,6 +136,12 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 - Mutation testing: all mutations caught
 - Autonomy: Ownership renounced + LP burned
 
+**4:00 - 4:30 | Launch Plan**
+- "Hackathon prize → 100% allocated to Uniswap V2 liquidity on Base Mainnet"
+- "LP tokens permanently burned — no rug pull possible"
+- "Ownership renounced — unstoppable autonomous protocol"
+- "This isn't just a demo — it's a production-ready launch"
+
 **4:30 - 5:00 | Conclusion**
 - Recap: 3 Chainlink services, 3-tier rewards, unconditional autonomy
 - "No admin. No keys. No human intervention. Runs forever."
@@ -158,7 +164,7 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 |-------|-------|
 | **Project Name** | evmX — Autonomous Community Reward Protocol |
 | **Track** | DeFi & Tokenization |
-| **Description** | Autonomous 3-tier reward ERC-20 on Base L2 with multi-layer trigger architecture. Uses **3 Chainlink services**: CRE for guaranteed execution (even with zero trades), VRF v2.5 for provably fair randomness, and Data Feed (ETH/USD) for real-time USD pricing + AI-powered protocol analytics. Ownership renounced + LP burned = unconditionally autonomous. 174 tests, mutation-tested. |
+| **Description** | Autonomous 3-tier reward ERC-20 on Base L2 with multi-layer trigger architecture. Uses **3 Chainlink services**: CRE for guaranteed execution (even with zero trades), VRF v2.5 for provably fair randomness, and Data Feed (ETH/USD) for real-time USD pricing + AI-powered protocol analytics. Ownership renounced + LP burned = unconditionally autonomous. 174 tests, mutation-tested. **Launch Plan:** Hackathon prize funds will be allocated 100% to Uniswap V2 liquidity on Base Mainnet, with LP tokens burned for permanent locked liquidity — turning this hackathon project into a live, unstoppable protocol. |
 | **GitHub URL** | https://github.com/evmx-protocol/evmX |
 | **Demo Video** | https://youtube.com/watch?v=... |
 | **Contract Address** | [0x4AfdC83DC87193f7915429c0eBb99d11A77408d1](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) (Base Sepolia) |

@@ -391,6 +391,34 @@ evmX/
 
 ---
 
+## Roadmap — From Hackathon to Mainnet
+
+evmX is not just a hackathon demo — it's a **production-ready protocol** with a clear path to Base Mainnet launch.
+
+### Phase 1: Hackathon (Current)
+- [x] Smart contract finalized (1,385 lines, 174 tests)
+- [x] Deployed to Base Sepolia with Chainlink VRF v2.5
+- [x] 2 CRE Workflows (Autonomous Rewards + Event Monitor)
+- [x] Frontend dApp with AI Protocol Intelligence
+- [x] 6-phase security assessment completed
+
+### Phase 2: Mainnet Launch (Post-Hackathon)
+- [ ] **Hackathon prize funds initial Uniswap V2 liquidity** — 100% of prize money allocated to ETH/evmX liquidity pool on Base Mainnet
+- [ ] LP tokens permanently burned (no rug pull possible)
+- [ ] Ownership renounced immediately after launch
+- [ ] CRE Workflows deployed to production (Base Mainnet)
+- [ ] VRF subscription funded for continuous operation
+
+### Phase 3: Autonomous Operation
+- [ ] Protocol runs 100% autonomously — no human intervention
+- [ ] Community growth driven by reward mechanics
+- [ ] CRE ensures 24/7 pool monitoring and execution
+- [ ] Marketing wallet funds used for community initiatives
+
+> **Liquidity Strategy:** The hackathon prize is the catalyst for real-world deployment. By allocating prize funds directly to the Uniswap V2 liquidity pool and immediately burning LP tokens, evmX launches with permanent, locked liquidity — creating a trustless, unstoppable reward protocol from day one.
+
+---
+
 ## Deployment
 
 ### Base Sepolia Testnet (Hackathon Demo)
