@@ -161,7 +161,7 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 | **Description** | Autonomous 3-tier reward ERC-20 on Base L2 with multi-layer trigger architecture. Uses **3 Chainlink services**: CRE for guaranteed execution (even with zero trades), VRF v2.5 for provably fair randomness, and Data Feed (ETH/USD) for real-time USD pricing + AI-powered protocol analytics. Ownership renounced + LP burned = unconditionally autonomous. 174 tests, mutation-tested. |
 | **GitHub URL** | https://github.com/evmx-protocol/evmX |
 | **Demo Video** | https://youtube.com/watch?v=... |
-| **Contract Address** | 0x... (Base Sepolia) |
+| **Contract Address** | [0x4AfdC83DC87193f7915429c0eBb99d11A77408d1](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) (Base Sepolia) |
 | **CRE Workflow** | Yes — 2 workflows (Autonomous Rewards + Event Monitor) |
 | **Chainlink Services** | CRE (2 workflows) + VRF v2.5 + Data Feed (ETH/USD) = **3 services** |
 | **Additional Tracks** | Tenderly ($5K bonus track) |

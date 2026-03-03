@@ -505,7 +505,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;back
 (function(){var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('revealed');obs.unobserve(e.target);}});},{threshold:.1,rootMargin:'0px 0px -40px 0px'});window.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});});})();
 
 /* ═══ BLOCKCHAIN ═══ */
-var CONTRACT_ADDRESS='0x0000000000000000000000000000000000000000';
+var CONTRACT_ADDRESS='0x4AfdC83DC87193f7915429c0eBb99d11A77408d1';
 var BASE_RPC='https://sepolia.base.org';
 var CHAIN_ID=84532;
 var CHAIN_NAME='Base Sepolia';
