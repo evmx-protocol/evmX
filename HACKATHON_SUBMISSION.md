@@ -134,6 +134,9 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 - Show 174 tests passing (CI screenshot)
 - Mention: reentrancy, flash loan, sandwich, MEV, gas grief tests
 - Mutation testing: all mutations caught
+- **Bot exclusion**: Smart contracts cannot win rewards (`code.length > 0` check) — MEV bots, flash loan contracts, and automated scripts are rejected by the VRF winner selection
+- **Same-block protection**: Buy-and-sell in the same block is blocked (anti-sandwich)
+- **MIN_TOKENS_FOR_REWARDS**: Must hold 10,000+ tokens to be eligible
 - Autonomy: Ownership renounced + LP burned
 
 **4:00 - 4:30 | Launch Plan**

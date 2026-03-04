@@ -240,6 +240,9 @@ After launch, **ownership is permanently renounced** and **LP tokens are burned*
 - **Chainlink VRF v2.5** — Provably fair randomness (native ETH payment)
 - **CRE Automation** — No centralized keeper dependency
 - **Anti-whale** — 4% max wallet, 1.5% max TX, whale exclusion from micro pool
+- **Smart contract exclusion** — Only EOA wallets can win rewards (`candidate.code.length > 0` → rejected). Bot contracts, MEV bots, and flash loan contracts are automatically excluded from winner selection
+- **Same-block trade protection** — Prevents buy-and-sell in the same block (anti-sandwich)
+- **MIN_TOKENS_FOR_REWARDS** — Must hold 10,000+ tokens to be eligible (bots never hold)
 - **24h Emergency Fallback** — Commit-reveal on-chain entropy if VRF fails
 - **VRF Stale Reroute** — Unfunded VRF ETH redistributes to pools after 7 days
 - **Permissionless reEnroll()** — Anyone can trigger eligibility re-check
