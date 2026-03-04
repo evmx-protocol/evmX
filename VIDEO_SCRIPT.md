@@ -89,7 +89,7 @@ Steps to show:
 Text overlay:
 ```
 VERIFIED SMART CONTRACT
-Solidity 0.8.28 | 1,385 lines
+Solidity 0.8.28 | 1,435 lines
 Anti-whale protection | Same-block trade protection
 Emergency fallback with on-chain entropy
 ```

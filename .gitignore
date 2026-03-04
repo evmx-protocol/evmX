@@ -46,3 +46,8 @@ cre-workflow/.javy/
 
 # Go (CRE CLI local build attempts)
 cre-cli/
+
+# Video production helpers (not part of project source)
+NARRATION_SCRIPT.md
+RECORDING_GUIDE.md
+video-slides.html
