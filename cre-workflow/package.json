@@ -7,6 +7,7 @@
   "scripts": {
     "postinstall": "bunx cre-setup",
     "simulation": "cre workflow simulate ./src/workflows/evmx-autonomous-rewards",
+    "simulation:ai": "cre workflow simulate ./src/workflows/evmx-ai-advisor",
     "simulation:broadcast": "cre workflow simulate ./src/workflows/evmx-autonomous-rewards --broadcast",
     "compile": "bunx cre-compile ./src/workflows/evmx-autonomous-rewards/index.ts ./build/evmx-workflow.wasm",
     "typecheck": "tsc --noEmit"

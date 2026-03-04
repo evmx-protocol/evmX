@@ -1,0 +1,28 @@
+# ==========================================================================
+# evmX AI Strategy Advisor — CRE Workflow Settings
+# ==========================================================================
+# AI-powered pool analysis combining on-chain data, external market APIs,
+# and LLM inference for autonomous strategy recommendations.
+#
+# Data pipeline: EVMClient (pools) + HTTPClient (CoinGecko) +
+#                ConfidentialHTTPClient (OpenAI) → Strategy Report
+# ==========================================================================
+
+local-simulation:
+  user-workflow:
+    workflow-owner-address: ""
+    workflow-name: "evmx-ai-advisor"
+  workflow-artifacts:
+    workflow-path: "./index.ts"
+    config-path: "./config.json"
+    secrets-path: "../../../secrets.yaml"
+
+# ==========================================================================
+production-testnet:
+  user-workflow:
+    workflow-owner-address: ""
+    workflow-name: "evmx-ai-advisor"
+  workflow-artifacts:
+    workflow-path: "./index.ts"
+    config-path: "./config.json"
+    secrets-path: "../../../secrets.yaml"

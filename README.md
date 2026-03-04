@@ -78,7 +78,12 @@ User buys evmX → 3% tax fills reward pools → CRE monitors thresholds
            │  │  evmx-event-monitor    │  │  EVM Log Trigger
            │  │    (CRE Workflow #2)   │  │  → Monitor PoolAllocated
            │  └────────────────────────┘  │  → Log Winners
-           └──────────────────────────────┘
+           │                              │
+           │  ┌────────────────────────┐  │
+           │  │  evmx-ai-advisor       │  │  Cron → Read Pools (EVM)
+           │  │    (CRE Workflow #3)   │  │  → CoinGecko API (HTTP)
+           │  └────────────────────────┘  │  → OpenAI LLM (Confidential)
+           └──────────────────────────────┘     → AI Strategy Report
 ```
 
 ---
@@ -89,8 +94,9 @@ User buys evmX → 3% tax fills reward pools → CRE monitors thresholds
 
 | Service | Purpose | Implementation |
 |---------|---------|---------------|
-| **CRE Workflows** | Autonomous pool monitoring & cycle triggering | `cre-workflow/src/workflows/evmx-autonomous-rewards/` |
-| **CRE EVM Log Trigger** | Real-time event monitoring & winner tracking | `cre-workflow/src/workflows/evmx-event-monitor/` |
+| **CRE Workflow #1** | Autonomous pool monitoring & cycle triggering | `cre-workflow/src/workflows/evmx-autonomous-rewards/` |
+| **CRE Workflow #2** | Real-time event monitoring & winner tracking | `cre-workflow/src/workflows/evmx-event-monitor/` |
+| **CRE Workflow #3** | AI strategy advisor (external API + LLM) | `cre-workflow/src/workflows/evmx-ai-advisor/` |
 | **VRF v2.5** | Provably fair random winner selection | Native ETH payment, 3-block confirmations |
 | **Data Feed (ETH/USD)** | Real-time USD pricing for pools & AI analytics | `AggregatorV3Interface` on Base (frontend) |
 
@@ -154,6 +160,22 @@ Processes `PoolAllocated` events in real-time via EVM Log Trigger:
 - Decodes winner address, pool type, and payout amount
 - Enables automated notifications and analytics dashboards
 - Provides a real-time event stream for the frontend winner feed
+
+### CRE Workflow #3: AI Strategy Advisor
+
+The AI-powered workflow combines **3 data sources** in a single CRE pipeline:
+
+1. **EVM Read** — Reads all 3 pool states from the smart contract (on-chain data)
+2. **HTTP Client** — Fetches real-time ETH market data from CoinGecko API (external API)
+3. **Confidential HTTP** — Sends combined analysis to OpenAI GPT for strategy recommendation (LLM)
+4. **Fallback** — If LLM is unavailable, uses local scoring algorithm (weighted: odds 40%, fill 30%, size 30%)
+
+This workflow demonstrates CRE's ability to orchestrate **blockchain reads + external APIs + LLM inference** in a single, autonomous pipeline — the three pillars of modern AI-powered DeFi.
+
+```
+CRE Cron (5min) → EVMClient.callContract() → HTTPClient (CoinGecko)
+                → ConfidentialHTTPClient (OpenAI) → AI Strategy Report
+```
 
 ### Chainlink Data Feed: ETH/USD
 

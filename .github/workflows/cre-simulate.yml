@@ -44,7 +44,7 @@ jobs:
         working-directory: cre-workflow
         run: |
           echo "=============================================="
-          echo "  evmX CRE Workflow - Local Simulation"
+          echo "  evmX CRE Workflow #1 - Autonomous Rewards"
           echo "=============================================="
           cre workflow simulate \
             ./src/workflows/evmx-autonomous-rewards \
@@ -52,7 +52,15 @@ jobs:
             2>&1 | tee ../cre-simulate-output.txt || true
           echo ""
           echo "=============================================="
-          echo "  Simulation Complete"
+          echo "  evmX CRE Workflow #3 - AI Strategy Advisor"
+          echo "=============================================="
+          cre workflow simulate \
+            ./src/workflows/evmx-ai-advisor \
+            --target local-simulation \
+            2>&1 | tee -a ../cre-simulate-output.txt || true
+          echo ""
+          echo "=============================================="
+          echo "  All CRE Simulations Complete"
           echo "=============================================="
 
       - name: Run CRE Simulate (broadcast to testnet)
