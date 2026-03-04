@@ -92,8 +92,8 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install CRE dependencies
-        run: cd cre-workflow && bun install
+      - name: Install CRE dependencies (skip postinstall - javy binary not needed for typecheck)
+        run: cd cre-workflow && bun install --ignore-scripts
 
       - name: TypeScript check
         run: cd cre-workflow && bun run typecheck
