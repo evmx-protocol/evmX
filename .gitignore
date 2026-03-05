@@ -51,3 +51,6 @@ cre-cli/
 NARRATION_SCRIPT.md
 RECORDING_GUIDE.md
 video-slides.html
+
+# Tenderly config (contains access key)
+tenderly.yaml

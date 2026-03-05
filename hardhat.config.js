@@ -1,5 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
+require("@tenderly/hardhat-tenderly");
 
 /**
  * ============================================================================
@@ -27,6 +28,9 @@ const BASE_SEPOLIA_RPC_URL = process.env.BASE_SEPOLIA_RPC_URL || "https://sepoli
 const FORKING_ENABLED = process.env.FORKING === "true";
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY || "";
 const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY || "";
+const TENDERLY_VIRTUAL_TESTNET_RPC = process.env.TENDERLY_VIRTUAL_TESTNET_RPC || "";
+const TENDERLY_PROJECT = process.env.TENDERLY_PROJECT || "";
+const TENDERLY_USERNAME = process.env.TENDERLY_USERNAME || "";
 const FORK_BLOCK_NUMBER = process.env.FORK_BLOCK_NUMBER
   ? parseInt(process.env.FORK_BLOCK_NUMBER, 10)
   : undefined;
@@ -101,12 +105,26 @@ module.exports = {
       accounts: DEPLOYER_PRIVATE_KEY ? [DEPLOYER_PRIVATE_KEY] : [],
       gasPrice: "auto",
     },
+    // -- Tenderly Virtual TestNet (Base fork for hackathon demo) -----------
+    tenderlyVNet: {
+      url: TENDERLY_VIRTUAL_TESTNET_RPC,
+      chainId: 8453,
+      accounts: DEPLOYER_PRIVATE_KEY ? [DEPLOYER_PRIVATE_KEY] : [],
+      gasPrice: "auto",
+    },
+  },
+  // Tenderly verification
+  tenderly: {
+    project: TENDERLY_PROJECT,
+    username: TENDERLY_USERNAME,
+    accessKey: process.env.TENDERLY_ACCESS_KEY || "",
   },
   // â”€â”€ BaseScan verification â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   etherscan: {
     apiKey: {
       base: BASESCAN_API_KEY,
       baseSepolia: BASESCAN_API_KEY,
+      tenderlyVNet: process.env.TENDERLY_ACCESS_KEY || "dummy",
     },
     customChains: [
       {
@@ -123,6 +141,14 @@ module.exports = {
         urls: {
           apiURL: "https://api.etherscan.io/v2/api?chainid=84532",
           browserURL: "https://sepolia.basescan.org",
+        },
+      },
+      {
+        network: "tenderlyVNet",
+        chainId: 8453,
+        urls: {
+          apiURL: TENDERLY_VIRTUAL_TESTNET_RPC + "/verify/etherscan",
+          browserURL: "https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions",
         },
       },
     ],

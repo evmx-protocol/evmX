@@ -9,7 +9,7 @@
 [![174 tests](https://img.shields.io/badge/Tests-174%20passing-brightgreen)](#test-suite)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-**Convergence Hackathon 2026** | Tracks: DeFi & Tokenization + CRE & AI
+**Convergence Hackathon 2026** | Tracks: CRE & AI + Tenderly
 
 ### Why This Matters
 
@@ -425,6 +425,8 @@ evmX/
 │   ├── test-full.js                # Run all 174 tests
 │   ├── deploy-base.js              # Deploy to Base Mainnet
 │   ├── deploy-sepolia.js           # Deploy to Base Sepolia (testnet)
+│   ├── deploy-tenderly.js          # Deploy to Tenderly VNet + auto-verify
+│   ├── tenderly-demo.js            # Demo transactions on Tenderly
 │   └── add-liquidity.js            # Add Uniswap V2 liquidity
 │
 ├── index.html                      # Frontend dashboard (single-page dApp)
@@ -465,6 +467,40 @@ evmX is not just a hackathon demo — it's a **production-ready protocol** with 
 
 ## Deployment
 
+### Tenderly Virtual TestNet (Base Fork — Live Demo)
+
+**[View Live Explorer →](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions)**
+
+| Property | Value |
+|----------|-------|
+| Network | Base mainnet fork (Chain ID: 8453) |
+| Contract | [`0x06eABc6937C02B073e568695Ca2526D10B23c68E`](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) |
+| Uniswap V2 Pair | `0x70598F3eF23590805259fB77741726E7C00BEbaD` |
+| Transactions | 28 (deploy, liquidity, buys, sells, autonomous cycle, re-enrollment) |
+
+**Why Tenderly Virtual TestNets?**
+
+Tenderly Virtual TestNets provide a **real-time Base mainnet fork** where all on-chain infrastructure (Uniswap V2, WETH, VRF Coordinator) exists at their production addresses. This allows us to:
+
+1. **Deploy the real protocol** — same contract, same addresses, same behavior as production
+2. **Simulate full lifecycle** — liquidity, trading with 3% tax, pool accumulation, autonomous cycles
+3. **Debug with full traces** — every transaction is inspectable with Tenderly's debugger, showing exact gas usage, state changes, and event emissions
+4. **Public Explorer** — judges and reviewers can independently verify all protocol behavior
+
+The demo script (`scripts/tenderly-demo.js`) creates 28 transactions showcasing:
+- 5 buyer wallet fundings + liquidity addition (5 ETH + 50M evmX)
+- 5 buy swaps (3% buy tax → Micro/Mid/Marketing/VRF pool funding)
+- 3 sell swaps (3% sell tax → Mega pot accumulation)
+- `runAutonomousCycle()` — triggers swap + pool threshold checks
+- 3 `reEnroll()` calls — permissionless eligibility re-check
+
+```bash
+npm run deploy:tenderly    # Deploy to Tenderly VNet
+npm run demo:tenderly      # Run demo transactions
+```
+
+> **VRF on Fork:** Chainlink VRF callbacks don't arrive on a fork (no live node). The protocol's built-in `emergencyForceAllocation()` handles this — it uses on-chain entropy after 24h timeout. This actually **showcases the protocol's resilience**: it keeps running even without VRF.
+
 ### Base Sepolia Testnet (Hackathon Demo)
 
 ```bash
@@ -498,6 +534,7 @@ npm run deploy:base
 | AI Analytics | On-chain data analysis + Chainlink price feed → predictive insights |
 | Frontend | Vanilla JS, ethers.js v6, Pure CSS (no frameworks) |
 | Network | Base L2 (Chain ID: 8453) |
+| Testing | Tenderly Virtual TestNet (Base fork) |
 | DEX | Uniswap V2 |
 
 ---
