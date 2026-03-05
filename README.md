@@ -1,6 +1,7 @@
 # evmX — Autonomous Community Reward Protocol
 
-> **CRE-powered trustless reward distribution with 3-tier incentive pools on Base L2**
+> **The first ERC-20 protocol designed to run forever without any human intervention.**
+> After ownership renounce and LP burn, no one — not even the creator — can stop, pause, modify, or control it.
 
 [![Solidity 0.8.28](https://img.shields.io/badge/Solidity-0.8.28-363636?logo=solidity)](https://soliditylang.org/)
 [![Base L2](https://img.shields.io/badge/Network-Base-0052FF?logo=coinbase)](https://base.org/)
@@ -9,6 +10,20 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **Convergence Hackathon 2026** | Tracks: DeFi & Tokenization + CRE & AI
+
+### Why This Matters
+
+Every DeFi protocol claims to be "decentralized" — but almost all of them have admin keys, upgrade proxies, or centralized keepers that can be shut down. **evmX proves this doesn't have to be the case.**
+
+By combining Chainlink CRE + VRF + Data Feeds with an immutable smart contract, evmX achieves what we call **Unconditional Autonomy**:
+
+| | Traditional DeFi | evmX |
+|---|---|---|
+| Admin key | ✅ Owner can pause/modify | ❌ **Ownership renounced — no admin exists** |
+| Upgrade path | ✅ Proxy can change logic | ❌ **No proxy — code is final** |
+| Keeper dependency | ✅ Bot must run 24/7 | ❌ **CRE + trade triggers — dual-layer redundancy** |
+| Liquidity risk | ✅ Owner can pull LP | ❌ **LP tokens burned — locked forever** |
+| If creator disappears | Protocol dies | **Protocol runs forever** |
 
 ---
 
