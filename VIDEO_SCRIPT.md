@@ -190,7 +190,7 @@ Contract: 0x4AfdC83DC87193f7915429c0eBb99d11A77408d1
 Hackathon Prize = Initial Liquidity = Real Launch
 
 Built for Chainlink Convergence Hackathon 2026
-DeFi & Tokenization + CRE & AI Tracks
+CRE & AI + Tenderly Tracks
 ```
 
 ---

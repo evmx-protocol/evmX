@@ -135,7 +135,7 @@ async function main() {
 
   const diff = silent("git diff --cached --stat");
   if (diff) {
-    run('git commit -m "evmX: Autonomous Community Reward Protocol on Base L2\n\n- Chainlink CRE + VRF v2.5 + Data Feed (ETH/USD) — 3 services\n- 3-tier reward pools (Micro/Mid/Mega) with Smart Ladder\n- AI Protocol Intelligence: predictive analytics powered by Chainlink Data Feed\n- Solidity 0.8.28 | Foundry + Hardhat dual framework\n- 174 tests: attacks, fuzz, invariant, formal properties, economic, fork\n- CRE workflows: autonomous-rewards + event-monitor\n- Ownership renounced + LP burned — fully autonomous\n- Convergence Hackathon 2026 | DeFi & Tokenization"');
+    run('git commit -m "evmX: Autonomous Community Reward Protocol on Base L2\n\n- Chainlink CRE + VRF v2.5 + Data Feed (ETH/USD) — 3 services\n- 3-tier reward pools (Micro/Mid/Mega) with Smart Ladder\n- AI Protocol Intelligence: predictive analytics powered by Chainlink Data Feed\n- Solidity 0.8.28 | Foundry + Hardhat dual framework\n- 174 tests: attacks, fuzz, invariant, formal properties, economic, fork\n- CRE workflows: autonomous-rewards + event-monitor\n- Ownership renounced + LP burned — fully autonomous\n- Convergence Hackathon 2026 | CRE & AI + Tenderly"');
     console.log("    \x1b[32mâś”\x1b[0m Committed");
   } else {
     console.log("    No changes to commit");

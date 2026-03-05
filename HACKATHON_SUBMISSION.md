@@ -1,7 +1,7 @@
 # evmX — Chainlink Convergence Hackathon 2026 Submission Guide
 
 > **Deadline: March 8, 2026 @ 11:59 PM ET**
-> **Track: DeFi & Tokenization** ($20K / $12K / $8K prizes)
+> **Tracks: CRE & AI + Tenderly** (Chainlink prize + Sponsor prize eligible)
 
 ---
 
@@ -166,14 +166,15 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 | Field | Value |
 |-------|-------|
 | **Project Name** | evmX — Autonomous Community Reward Protocol |
-| **Track** | DeFi & Tokenization |
+| **Track** | CRE & AI + Tenderly |
 | **Description** | Autonomous 3-tier reward ERC-20 on Base L2 with multi-layer trigger architecture. Uses **3 Chainlink services**: CRE for guaranteed execution (even with zero trades), VRF v2.5 for provably fair randomness, and Data Feed (ETH/USD) for real-time USD pricing + AI-powered protocol analytics. Ownership renounced + LP burned = unconditionally autonomous. 174 tests, mutation-tested. **Launch Plan:** Hackathon prize funds will be allocated 100% to Uniswap V2 liquidity on Base Mainnet, with LP tokens burned for permanent locked liquidity — turning this hackathon project into a live, unstoppable protocol. |
 | **GitHub URL** | https://github.com/evmx-protocol/evmX |
 | **Demo Video** | https://youtube.com/watch?v=... |
 | **Contract Address** | [0x4AfdC83DC87193f7915429c0eBb99d11A77408d1](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) (Base Sepolia) |
+| **Tenderly Explorer** | [Public Explorer](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) — 28 tx, verified source |
 | **CRE Workflow** | Yes — 3 workflows (Autonomous Rewards + Event Monitor + AI Strategy Advisor) |
 | **Chainlink Services** | CRE (3 workflows) + VRF v2.5 + Data Feed (ETH/USD) = **3 services** |
-| **Additional Tracks** | CRE & AI |
+| **Additional Tracks** | Tenderly (Sponsored Track — $5K / $2.5K / $1.75K) |
 
 ---
 
