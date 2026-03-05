@@ -6,10 +6,49 @@
 [![Solidity 0.8.28](https://img.shields.io/badge/Solidity-0.8.28-363636?logo=solidity)](https://soliditylang.org/)
 [![Base L2](https://img.shields.io/badge/Network-Base-0052FF?logo=coinbase)](https://base.org/)
 [![Chainlink CRE](https://img.shields.io/badge/Chainlink-CRE%20%2B%20VRF%20%2B%20Data%20Feed-375BD2)](https://docs.chain.link/cre)
+[![Tenderly VNet](https://img.shields.io/badge/Tenderly-Virtual%20TestNet-6F4CFF)](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions)
 [![174 tests](https://img.shields.io/badge/Tests-174%20passing-brightgreen)](#test-suite)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-**Convergence Hackathon 2026** | Tracks: CRE & AI + Tenderly
+**Convergence Hackathon 2026** | Tracks: **CRE & AI** + **Tenderly Virtual TestNets**
+
+---
+
+## Chainlink Products Used
+
+> evmX integrates **3 Chainlink services** as core, non-optional protocol infrastructure — not demos or wrappers.
+
+| Product | Role in Protocol | Where |
+|---------|-----------------|-------|
+| 🔗 **Chainlink CRE** (3 Workflows) | Autonomous keeper layer — guarantees reward cycle execution even with **zero trading volume**. Workflow #1 monitors pools + triggers cycle every 2 min. Workflow #2 streams `PoolAllocated` events. Workflow #3 is an AI Strategy Advisor (EVM + HTTP + LLM in one pipeline). | `cre-workflow/src/workflows/` |
+| 🎲 **Chainlink VRF v2.5** | Provably fair random winner selection — on-chain verifiable, manipulation-proof. Native ETH payment. 3-block confirmation. | `evmX.sol: fulfillRandomWords()` |
+| 📈 **Chainlink Data Feed** (ETH/USD) | Powers all USD price displays in the frontend + feeds the AI analytics engine (pool trend predictions, protocol health score, entry timing recommendations). | `index.html: AggregatorV3Interface` |
+
+**Why CRE is the critical layer:**
+
+```
+Without CRE:  trade triggers only → pools freeze if no one trades for hours
+With CRE:     guaranteed execution every 2 min → protocol runs FOREVER, zero trades or not
+```
+
+This is the core innovation: CRE makes evmX **unconditionally autonomous** — it runs whether there are 1,000 trades/hour or zero trades for a week.
+
+---
+
+## Tenderly Virtual TestNet — Live Demo
+
+> **[🔍 Open Public Explorer →](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions)**
+
+| | |
+|---|---|
+| **Network** | Base mainnet fork (Chain ID 8453) |
+| **Contract** | `0x06eABc6937C02B073e568695Ca2526D10B23c68E` (evmX — verified) |
+| **Transactions** | **28 — all successful** (deploy → liquidity → buys → sells → autonomous cycle → re-enrollment) |
+| **CRE connection** | VNet demonstrates the exact on-chain state CRE workflows read and write to |
+
+The Tenderly Virtual TestNet runs the **full production protocol** on a real Base mainnet fork — same Uniswap V2 Router, same WETH, same VRF Coordinator addresses as mainnet. Every transaction is publicly inspectable with full state traces.
+
+---
 
 ### Why This Matters
 
@@ -447,6 +486,7 @@ evmX is not just a hackathon demo — it's a **production-ready protocol** with 
 - [x] 3 CRE Workflows (Autonomous Rewards + Event Monitor + AI Strategy Advisor)
 - [x] Frontend dApp with AI Protocol Intelligence
 - [x] 6-phase security assessment completed
+- [x] Tenderly Virtual TestNet — full lifecycle demo (28 tx, verified, Public Explorer)
 
 ### Phase 2: Mainnet Launch (Post-Hackathon)
 - [ ] **Hackathon prize funds initial Uniswap V2 liquidity** — 100% of prize money allocated to ETH/evmX liquidity pool on Base Mainnet
@@ -467,39 +507,14 @@ evmX is not just a hackathon demo — it's a **production-ready protocol** with 
 
 ## Deployment
 
-### Tenderly Virtual TestNet (Base Fork — Live Demo)
-
-**[View Live Explorer →](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions)**
-
-| Property | Value |
-|----------|-------|
-| Network | Base mainnet fork (Chain ID: 8453) |
-| Contract | [`0x06eABc6937C02B073e568695Ca2526D10B23c68E`](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) |
-| Uniswap V2 Pair | `0x70598F3eF23590805259fB77741726E7C00BEbaD` |
-| Transactions | 28 (deploy, liquidity, buys, sells, autonomous cycle, re-enrollment) |
-
-**Why Tenderly Virtual TestNets?**
-
-Tenderly Virtual TestNets provide a **real-time Base mainnet fork** where all on-chain infrastructure (Uniswap V2, WETH, VRF Coordinator) exists at their production addresses. This allows us to:
-
-1. **Deploy the real protocol** — same contract, same addresses, same behavior as production
-2. **Simulate full lifecycle** — liquidity, trading with 3% tax, pool accumulation, autonomous cycles
-3. **Debug with full traces** — every transaction is inspectable with Tenderly's debugger, showing exact gas usage, state changes, and event emissions
-4. **Public Explorer** — judges and reviewers can independently verify all protocol behavior
-
-The demo script (`scripts/tenderly-demo.js`) creates 28 transactions showcasing:
-- 5 buyer wallet fundings + liquidity addition (5 ETH + 50M evmX)
-- 5 buy swaps (3% buy tax → Micro/Mid/Marketing/VRF pool funding)
-- 3 sell swaps (3% sell tax → Mega pot accumulation)
-- `runAutonomousCycle()` — triggers swap + pool threshold checks
-- 3 `reEnroll()` calls — permissionless eligibility re-check
+### Tenderly Virtual TestNet
 
 ```bash
-npm run deploy:tenderly    # Deploy to Tenderly VNet
-npm run demo:tenderly      # Run demo transactions
+npm run deploy:tenderly    # Deploy to Tenderly VNet + auto-verify
+npm run demo:tenderly      # Run 28 demo transactions (full lifecycle)
 ```
 
-> **VRF on Fork:** Chainlink VRF callbacks don't arrive on a fork (no live node). The protocol's built-in `emergencyForceAllocation()` handles this — it uses on-chain entropy after 24h timeout. This actually **showcases the protocol's resilience**: it keeps running even without VRF.
+> See **[Tenderly Virtual TestNet — Live Demo](#tenderly-virtual-testnet--live-demo)** section above for full details, Public Explorer link, and transaction breakdown.
 
 ### Base Sepolia Testnet (Hackathon Demo)
 

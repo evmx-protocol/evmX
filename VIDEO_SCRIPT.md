@@ -1,5 +1,5 @@
 # evmX Demo Video Script
-# Duration: 3-4 minutes | No voiceover needed — text overlays + background music
+# Duration: 4-4.5 minutes | No voiceover needed — text overlays + background music
 
 ---
 
@@ -125,7 +125,31 @@ AI Strategy Advisor:
 
 ---
 
-## SCENE 7: Testing & Security (3:00 - 3:30)
+## SCENE 6.5: Tenderly Virtual TestNet (3:00 - 3:15)
+**[Screen record: Open Tenderly Public Explorer in browser]**
+
+Steps to show:
+1. Open Public Explorer link — show 28 transactions, all green/successful
+2. Click on a buy swap — show decoded function name `swapExactETHForTokensSupportingFeeOnTransferTokens`
+3. Click on `runAutonomousCycle()` — show state changes and events
+4. Show verified contract label: evmX_Testable
+
+Text overlay:
+```
+TENDERLY VIRTUAL TESTNET — BASE MAINNET FORK
+
+28 verified transactions — full protocol lifecycle:
+→ Deploy + liquidity + buys + sells + autonomous cycle + re-enrollment
+
+Same Uniswap V2 Router, WETH, VRF Coordinator as mainnet
+Every transaction inspectable with full state traces
+
+Public Explorer: anyone can verify the protocol behavior
+```
+
+---
+
+## SCENE 7: Testing & Security (3:15 - 3:45)
 **[Screen record: terminal running tests]**
 
 Run in terminal:
@@ -153,7 +177,7 @@ Hardhat (53 tests):
 
 ---
 
-## SCENE 8: Launch Plan (3:30 - 3:50)
+## SCENE 8: Launch Plan (3:45 - 4:05)
 **[Dark background with bold text — this is KEY for judges]**
 
 Text overlay (show one by one with emphasis):
@@ -175,7 +199,7 @@ evmX is ready to launch.
 
 ---
 
-## SCENE 9: Closing (3:50 - 4:05)
+## SCENE 9: Closing (4:05 - 4:20)
 **[Dark background, fade in]**
 
 Text overlay:
@@ -184,13 +208,16 @@ evmX
 Autonomous Community Reward Protocol
 
 GitHub: github.com/evmx-protocol/evmX
-Network: Base Sepolia (Chain ID: 84532)
-Contract: 0x4AfdC83DC87193f7915429c0eBb99d11A77408d1
+Tenderly Explorer: dashboard.tenderly.co/explorer/vnet/...
+Base Sepolia: 0x4AfdC83DC87193f7915429c0eBb99d11A77408d1
+
+3 Chainlink Services: CRE (3 workflows) + VRF v2.5 + Data Feed
+Tested on Tenderly Virtual TestNet (28 tx, verified)
 
 Hackathon Prize = Initial Liquidity = Real Launch
 
 Built for Chainlink Convergence Hackathon 2026
-CRE & AI + Tenderly Tracks
+Tracks: CRE & AI + Tenderly Virtual TestNets
 ```
 
 ---
