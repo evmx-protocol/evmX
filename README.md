@@ -43,7 +43,8 @@ This is the core innovation: CRE makes evmX **unconditionally autonomous** — i
 |---|---|
 | **Network** | Base mainnet fork (Chain ID 8453) |
 | **Contract** | `0x06eABc6937C02B073e568695Ca2526D10B23c68E` (evmX — verified) |
-| **Transactions** | **48+ — all successful** (deploy → liquidity → 20 buy swaps → sells → pool accumulation → autonomous cycles → re-enrollment) |
+| **Base Sepolia** | [`0x4AfdC83DC87193f7915429c0eBb99d11A77408d1`](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) (live testnet deploy) |
+| **Transactions** | **60 — all successful** (deploy → liquidity → buy swaps → sells → pool accumulation → autonomous cycles → re-enrollment) |
 | **CRE connection** | VNet demonstrates the exact on-chain state CRE workflows read and write to |
 
 The Tenderly Virtual TestNet runs the **full production protocol** on a real Base mainnet fork — same Uniswap V2 Router, same WETH, same VRF Coordinator addresses as mainnet. Every transaction is publicly inspectable with full state traces.
@@ -486,7 +487,7 @@ evmX is not just a hackathon demo — it's a **production-ready protocol** with 
 - [x] 3 CRE Workflows (Autonomous Rewards + Event Monitor + AI Strategy Advisor)
 - [x] Frontend dApp with AI Protocol Intelligence
 - [x] 6-phase security assessment completed
-- [x] Tenderly Virtual TestNet — full lifecycle demo (28 tx, verified, Public Explorer)
+- [x] Tenderly Virtual TestNet — full lifecycle demo (60 tx, verified, Public Explorer)
 
 ### Phase 2: Mainnet Launch (Post-Hackathon)
 - [ ] **Hackathon prize funds initial Uniswap V2 liquidity** — 100% of prize money allocated to ETH/evmX liquidity pool on Base Mainnet
@@ -511,7 +512,7 @@ evmX is not just a hackathon demo — it's a **production-ready protocol** with 
 
 ```bash
 npm run deploy:tenderly    # Deploy to Tenderly VNet + auto-verify
-npm run demo:tenderly      # Run 28 demo transactions (full lifecycle)
+npm run demo:tenderly      # Run demo transactions (full lifecycle)
 ```
 
 > See **[Tenderly Virtual TestNet — Live Demo](#tenderly-virtual-testnet--live-demo)** section above for full details, Public Explorer link, and transaction breakdown.

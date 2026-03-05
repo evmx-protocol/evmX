@@ -129,7 +129,7 @@ AI Strategy Advisor:
 **[Screen record: Open Tenderly Public Explorer in browser]**
 
 Steps to show:
-1. Open Public Explorer link — show 28 transactions, all green/successful
+1. Open Public Explorer link — show 60 transactions, all green/successful
 2. Click on a buy swap — show decoded function name `swapExactETHForTokensSupportingFeeOnTransferTokens`
 3. Click on `runAutonomousCycle()` — show state changes and events
 4. Show verified contract label: evmX_Testable
@@ -138,7 +138,7 @@ Text overlay:
 ```
 TENDERLY VIRTUAL TESTNET — BASE MAINNET FORK
 
-28 verified transactions — full protocol lifecycle:
+60 verified transactions — full protocol lifecycle:
 → Deploy + liquidity + buys + sells + autonomous cycle + re-enrollment
 
 Same Uniswap V2 Router, WETH, VRF Coordinator as mainnet
@@ -212,7 +212,7 @@ Tenderly Explorer: dashboard.tenderly.co/explorer/vnet/...
 Base Sepolia: 0x4AfdC83DC87193f7915429c0eBb99d11A77408d1
 
 3 Chainlink Services: CRE (3 workflows) + VRF v2.5 + Data Feed
-Tested on Tenderly Virtual TestNet (28 tx, verified)
+Tested on Tenderly Virtual TestNet (60 tx, verified)
 
 Hackathon Prize = Initial Liquidity = Real Launch
 

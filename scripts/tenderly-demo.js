@@ -642,7 +642,7 @@ async function main() {
   console.log("\n  What the Tenderly Explorer now shows:");
   console.log("    🔵 10 buyer wallet fundings");
   console.log("    🔵 Uniswap V2 liquidity addition");
-  console.log("    🟢 20 buy swaps (3% buy tax → Micro/Mid/Marketing/VRF)");
+  console.log("    🟢 25 buy swaps (3% buy tax → Micro/Mid/Marketing/VRF)");
   console.log("    🔴 5 sell swaps (3% sell tax → Mega pool)");
   console.log("    ⚡ 6 runAutonomousCycle() calls (swap + pool checks)");
   console.log("    🎲 VRF requests (on-chain randomness)");

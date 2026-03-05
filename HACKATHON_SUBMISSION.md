@@ -167,11 +167,11 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 |-------|-------|
 | **Project Name** | evmX — Autonomous Community Reward Protocol |
 | **Track** | CRE & AI + Tenderly |
-| **Description** | Autonomous 3-tier reward ERC-20 on Base L2 with multi-layer trigger architecture. Uses **3 Chainlink services**: CRE (3 workflows — autonomous keeper, event monitor, AI advisor), VRF v2.5 (provably fair random winner selection), and Data Feed ETH/USD (real-time pricing + AI analytics). Full protocol deployed and tested on **Tenderly Virtual TestNet** (Base fork, 28 verified transactions, Public Explorer). Ownership renounced + LP burned = unconditionally autonomous. 174 tests (attacks, fuzz, invariant, economic stress), mutation-tested. **Launch Plan:** 100% of hackathon prize → Uniswap V2 liquidity on Base Mainnet, LP burned — live, unstoppable protocol from day one. |
+| **Description** | Autonomous 3-tier reward ERC-20 on Base L2 with multi-layer trigger architecture. Uses **3 Chainlink services**: CRE (3 workflows — autonomous keeper, event monitor, AI advisor), VRF v2.5 (provably fair random winner selection), and Data Feed ETH/USD (real-time pricing + AI analytics). Full protocol deployed and tested on **Tenderly Virtual TestNet** (Base fork, 60 verified transactions, Public Explorer). Ownership renounced + LP burned = unconditionally autonomous. 174 tests (attacks, fuzz, invariant, economic stress), mutation-tested. **Launch Plan:** 100% of hackathon prize → Uniswap V2 liquidity on Base Mainnet, LP burned — live, unstoppable protocol from day one. |
 | **GitHub URL** | https://github.com/evmx-protocol/evmX |
-| **Demo Video** | https://youtube.com/watch?v=... |
+| **Demo Video** | https://www.youtube.com/watch?v=5B3lsTy77uE |
 | **Contract Address** | [0x4AfdC83DC87193f7915429c0eBb99d11A77408d1](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) (Base Sepolia) |
-| **Tenderly Explorer** | [Public Explorer](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) — 28 tx, verified source |
+| **Tenderly Explorer** | [Public Explorer](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) — 60 tx, verified source |
 | **CRE Workflow** | Yes — 3 workflows (Autonomous Rewards + Event Monitor + AI Strategy Advisor) |
 | **Chainlink Services** | CRE (3 workflows) + VRF v2.5 + Data Feed (ETH/USD) = **3 services** |
 | **Additional Tracks** | Tenderly (Sponsored Track — $5K / $2.5K / $1.75K) |
@@ -187,7 +187,7 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 - [ ] Frontend shows live pool data with **USD prices (Chainlink Data Feed)**
 - [ ] Frontend shows **AI Protocol Intelligence** panel
 - [ ] Demo video uploaded (3-5 min)
-- [ ] Tenderly Virtual TestNet — contract deployed, verified, 28 demo tx, Public Explorer live
+- [ ] Tenderly Virtual TestNet — contract deployed, verified, 60 demo tx, Public Explorer live
 - [ ] Submission form completed
 - [ ] README has all badges and documentation
 - [ ] All 174 tests pass in CI
