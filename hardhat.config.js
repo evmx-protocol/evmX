@@ -1,6 +1,13 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
-require("@tenderly/hardhat-tenderly");
+
+// Tenderly plugin: only loaded for deploy/verify tasks targeting Tenderly VNet.
+// The plugin monkey-patches ethers contract factories which breaks ABI resolution
+// on mock contracts during tests. Guard with --network flag detection.
+const isTenderlyNetwork = process.argv.includes("tenderlyVNet");
+if (isTenderlyNetwork) {
+  require("@tenderly/hardhat-tenderly");
+}
 
 /**
  * ============================================================================
