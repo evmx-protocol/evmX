@@ -8,7 +8,7 @@
 [![174 tests](https://img.shields.io/badge/Tests-174%20passing-brightgreen)](#test-suite)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-**Convergence Hackathon 2026** | Track: DeFi & Tokenization
+**Convergence Hackathon 2026** | Tracks: DeFi & Tokenization + CRE & AI
 
 ---
 
@@ -386,8 +386,12 @@ evmX/
 │       │   ├── config.json           #   Chain & contract configuration
 │       │   ├── workflow.yaml         #   CRE workflow settings
 │       │   └── abi/                  #   Contract ABI definitions
-│       └── evmx-event-monitor/       # Workflow #2: Event processing
-│           ├── index.ts              #   Log trigger logic
+│       ├── evmx-event-monitor/       # Workflow #2: Event processing
+│       │   ├── index.ts              #   Log trigger logic
+│       │   ├── config.json           #   Configuration
+│       │   └── workflow.yaml         #   CRE workflow settings
+│       └── evmx-ai-advisor/         # Workflow #3: AI Strategy Advisor
+│           ├── index.ts              #   EVMClient + HTTPClient + ConfidentialHTTPClient (OpenAI)
 │           ├── config.json           #   Configuration
 │           └── workflow.yaml         #   CRE workflow settings
 │
@@ -423,7 +427,7 @@ evmX is not just a hackathon demo — it's a **production-ready protocol** with 
 ### Phase 1: Hackathon (Current)
 - [x] Smart contract finalized (1,435 lines, 174 tests)
 - [x] Deployed to Base Sepolia with Chainlink VRF v2.5
-- [x] 2 CRE Workflows (Autonomous Rewards + Event Monitor)
+- [x] 3 CRE Workflows (Autonomous Rewards + Event Monitor + AI Strategy Advisor)
 - [x] Frontend dApp with AI Protocol Intelligence
 - [x] 6-phase security assessment completed
 

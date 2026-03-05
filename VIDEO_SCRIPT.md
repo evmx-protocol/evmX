@@ -102,11 +102,12 @@ Emergency fallback with on-chain entropy
 Steps to show:
 1. Show evmx-autonomous-rewards/index.ts — quick scroll
 2. Show evmx-event-monitor/index.ts — quick scroll
-3. Show config.json with contract address
+3. Show evmx-ai-advisor/index.ts — quick scroll
+4. Show config.json with contract address
 
 Text overlay:
 ```
-2 CRE WORKFLOWS
+3 CRE WORKFLOWS
 
 Autonomous Rewards:
 - Cron-triggered pool monitoring
@@ -116,7 +117,10 @@ Autonomous Rewards:
 Event Monitor:
 - EVM Log Trigger on PoolAllocated events
 - Real-time winner notifications
-- Decodes event data for analytics
+
+AI Strategy Advisor:
+- EVMClient + HTTPClient (CoinGecko) + ConfidentialHTTPClient (OpenAI)
+- Multi-source AI-powered protocol analytics
 ```
 
 ---
@@ -186,7 +190,7 @@ Contract: 0x4AfdC83DC87193f7915429c0eBb99d11A77408d1
 Hackathon Prize = Initial Liquidity = Real Launch
 
 Built for Chainlink Convergence Hackathon 2026
-DeFi & Tokenization Track
+DeFi & Tokenization + CRE & AI Tracks
 ```
 
 ---

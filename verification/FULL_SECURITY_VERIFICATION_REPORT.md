@@ -9,7 +9,7 @@
 **Contract**: evmX_Testable.sol / evmX.sol (identical logic)
 **Solidity**: 0.8.28
 **Target**: Base Mainnet (Chain ID 8453)
-**Lines of Code**: ~1,409
+**Lines of Code**: ~1,435
 **Scope Context**: Internal repository verification run
 
 ---

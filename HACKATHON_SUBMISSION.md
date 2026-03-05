@@ -171,9 +171,9 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 | **GitHub URL** | https://github.com/evmx-protocol/evmX |
 | **Demo Video** | https://youtube.com/watch?v=... |
 | **Contract Address** | [0x4AfdC83DC87193f7915429c0eBb99d11A77408d1](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) (Base Sepolia) |
-| **CRE Workflow** | Yes — 2 workflows (Autonomous Rewards + Event Monitor) |
-| **Chainlink Services** | CRE (2 workflows) + VRF v2.5 + Data Feed (ETH/USD) = **3 services** |
-| **Additional Tracks** | Tenderly ($5K bonus track) |
+| **CRE Workflow** | Yes — 3 workflows (Autonomous Rewards + Event Monitor + AI Strategy Advisor) |
+| **Chainlink Services** | CRE (3 workflows) + VRF v2.5 + Data Feed (ETH/USD) = **3 services** |
+| **Additional Tracks** | CRE & AI |
 
 ---
 

@@ -18,7 +18,7 @@
 | **Compiler Settings** | `viaIR: true`, `optimizer: true`, `optimizer_runs: 50` |
 | **OpenZeppelin** | ERC20, Ownable, ReentrancyGuard (v5.0.2+) |
 | **External Dependencies** | Uniswap V2 Router, Chainlink VRF v2.5 |
-| **Lines of Code** | ~1,409 (evmX_Testable.sol) |
+| **Lines of Code** | ~1,435 (evmX_Testable.sol: ~1,439) |
 
 ### Architecture Summary
 DeFi incentives ERC-20 token with 3% buy/sell tax distributed across three reward pool tiers (Micro/Mid/Mega), marketing, and VRF funding. Recipient selection via Chainlink VRF v2.5 with native ETH payment. Smart threshold ladder auto-adjusts pool cycle triggers based on time-based decay.
@@ -347,9 +347,9 @@ test/foundry/
     evmXHandler.sol          â€” Stateful handler (10 actions)
     evmXInvariant.t.sol      â€” 13 invariant tests
   fuzz/
-    evmXFuzz.t.sol           â€” 10 fuzz tests
+    evmXFuzz.t.sol           — 14 fuzz tests
   attacks/
-    evmXAttacks.t.sol        â€” 10 attack tests
+    evmXAttacks.t.sol        — 12 attack tests
   state_machine/
     evmXEconomic.t.sol       â€” 15 economic simulation tests
 

@@ -10,9 +10,9 @@
 **Contract**: `evmX.sol` / `evmX_Testable.sol` (identical logic)
 **Solidity**: 0.8.28 (via IR, optimizer: 50 runs)
 **Target**: Base Mainnet (Chain ID 8453)
-**Lines of Code**: 1,409
+**Lines of Code**: 1,435
 **Contract Size**: 23,915 bytes (within 24,576 limit)
-**Test Coverage**: 153 tests (combined Foundry and Hardhat suites), 0 failures
+**Test Coverage**: 174 tests (combined Foundry and Hardhat suites), 0 failures
 
 ---
 
@@ -20,7 +20,7 @@
 
 evmX has undergone a comprehensive 6-phase internal security verification including manual code review, automated exploit attempts, formal property verification, economic analysis, and liveness proofs.
 
-**153 automated tests verify 55+ formal properties of the contract.**
+**174 automated tests verify 55+ formal properties of the contract.**
 
 No known critical code defects were observed in the internal test scope under normal operating conditions. Two critical-severity findings are **operational risks** (not code bugs) that require monitoring post-deployment. All exploit attempts were proven non-exploitable due to the contract's layered defense architecture.
 
@@ -159,7 +159,7 @@ Prior to this final status summary, a gap analysis was performed against the exi
 
 ### Verified Properties (55+)
 
-The following mathematical truths have been verified through 100 Foundry tests:
+The following mathematical truths have been verified through 121 Foundry tests:
 
 **Supply & Conservation:**
 - P1: `totalSupply() == 100_000_000 * 1e18` (ALWAYS)
@@ -300,18 +300,18 @@ cd evmX
 npm install
 forge install foundry-rs/forge-std --no-git
 
-# Run ALL 153 tests
+# Run ALL 174 tests
 forge test           # Foundry test suites
 npx hardhat test     # Hardhat test suites
 
-# Expected: 153 passed, 0 failed
+# Expected: 174 passed, 0 failed
 ```
 
 ### Final Test Run (Maintainer Environment)
 
 ```text
-Total tests: 153
-Passed: 153
+Total tests: 174
+Passed: 174
 Failed: 0
 Skipped: 0
 ```
