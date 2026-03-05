@@ -43,7 +43,7 @@ This is the core innovation: CRE makes evmX **unconditionally autonomous** — i
 |---|---|
 | **Network** | Base mainnet fork (Chain ID 8453) |
 | **Contract** | `0x06eABc6937C02B073e568695Ca2526D10B23c68E` (evmX — verified) |
-| **Transactions** | **28 — all successful** (deploy → liquidity → buys → sells → autonomous cycle → re-enrollment) |
+| **Transactions** | **48+ — all successful** (deploy → liquidity → 20 buy swaps → sells → pool accumulation → autonomous cycles → re-enrollment) |
 | **CRE connection** | VNet demonstrates the exact on-chain state CRE workflows read and write to |
 
 The Tenderly Virtual TestNet runs the **full production protocol** on a real Base mainnet fork — same Uniswap V2 Router, same WETH, same VRF Coordinator addresses as mainnet. Every transaction is publicly inspectable with full state traces.
