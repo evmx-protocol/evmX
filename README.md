@@ -1,23 +1,52 @@
-# evmX — Autonomous Community Reward Protocol
+<div align="center">
 
-> **The first ERC-20 protocol designed to run forever without any human intervention.**
-> After ownership renounce and LP burn, no one — not even the creator — can stop, pause, modify, or control it.
+# ⚡ evmX
 
-[![Solidity 0.8.28](https://img.shields.io/badge/Solidity-0.8.28-363636?logo=solidity)](https://soliditylang.org/)
-[![Base L2](https://img.shields.io/badge/Network-Base-0052FF?logo=coinbase)](https://base.org/)
-[![Chainlink CRE](https://img.shields.io/badge/Chainlink-CRE%20%2B%20VRF%20%2B%20Data%20Feed-375BD2)](https://docs.chain.link/cre)
-[![Tenderly VNet](https://img.shields.io/badge/Tenderly-Virtual%20TestNet-6F4CFF)](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions)
-[![174 tests](https://img.shields.io/badge/Tests-174%20passing-brightgreen)](#test-suite)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+### Autonomous Community Reward Protocol
 
-**Convergence Hackathon 2026** | Tracks: **CRE & AI** + **Tenderly Virtual TestNets**
+**The first ERC-20 protocol designed to run forever without any human intervention.**
+After ownership renounce and LP burn, no one — not even the creator — can stop, pause, modify, or control it.
 
-📹 **Demo Video:** [https://youtu.be/hi5uvVxkVUA](https://youtu.be/hi5uvVxkVUA)
+<br>
+
+[![Solidity 0.8.28](https://img.shields.io/badge/Solidity-0.8.28-363636?style=for-the-badge&logo=solidity)](https://soliditylang.org/)
+[![Base L2](https://img.shields.io/badge/Base-L2-0052FF?style=for-the-badge&logo=coinbase)](https://base.org/)
+[![Chainlink](https://img.shields.io/badge/Chainlink-CRE%20%2B%20VRF%20%2B%20Data%20Feed-375BD2?style=for-the-badge)](https://docs.chain.link/cre)
+[![Tests](https://img.shields.io/badge/Tests-174%20passing-brightgreen?style=for-the-badge)](#-test-suite)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+
+<br>
+
+**🏆 Convergence Hackathon 2026** — Tracks: **CRE & AI** + **Tenderly Virtual TestNets**
+
+📹 [**Watch Demo Video**](https://youtu.be/hi5uvVxkVUA) &nbsp;|&nbsp; 🔍 [**Tenderly Explorer**](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) &nbsp;|&nbsp; 📄 [**BaseScan**](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1)
+
+</div>
 
 ---
 
-## Chainlink Products Used
+## 📋 Table of Contents
 
+- [Chainlink Products Used](#-chainlink-products-used)
+- [Tenderly Virtual TestNet](#-tenderly-virtual-testnet--live-demo)
+- [Why This Matters](#-why-this-matters)
+- [The Problem & Solution](#-the-problem)
+- [Architecture](#-architecture)
+- [Chainlink Integration](#-chainlink-integration)
+- [Token Mechanics](#-token-mechanics)
+- [Quick Start](#-quick-start)
+- [Test Suite](#-test-suite)
+- [Security](#-security)
+- [Project Structure](#-project-structure)
+- [Roadmap](#-roadmap--from-hackathon-to-mainnet)
+- [Deployment](#-deployment)
+- [Tech Stack](#-tech-stack)
+
+---
+
+## 🔗 Chainlink Products Used
+
+> [!IMPORTANT]
 > evmX integrates **3 Chainlink services** as core, non-optional protocol infrastructure — not demos or wrappers.
 
 | Product | Role in Protocol | Where |
@@ -26,18 +55,17 @@
 | 🎲 **Chainlink VRF v2.5** | Provably fair random winner selection — on-chain verifiable, manipulation-proof. Native ETH payment. 3-block confirmation. | `evmX.sol: fulfillRandomWords()` |
 | 📈 **Chainlink Data Feed** (ETH/USD) | Powers all USD price displays in the frontend + feeds the AI analytics engine (pool trend predictions, protocol health score, entry timing recommendations). | `index.html: AggregatorV3Interface` |
 
-**Why CRE is the critical layer:**
-
-```
-Without CRE:  trade triggers only → pools freeze if no one trades for hours
-With CRE:     guaranteed execution every 2 min → protocol runs FOREVER, zero trades or not
-```
-
-This is the core innovation: CRE makes evmX **unconditionally autonomous** — it runs whether there are 1,000 trades/hour or zero trades for a week.
+> [!NOTE]
+> **Why CRE is the critical layer:**
+> ```
+> Without CRE:  trade triggers only → pools freeze if no one trades for hours
+> With CRE:     guaranteed execution every 2 min → protocol runs FOREVER, zero trades or not
+> ```
+> This is the core innovation: CRE makes evmX **unconditionally autonomous** — it runs whether there are 1,000 trades/hour or zero trades for a week.
 
 ---
 
-## Tenderly Virtual TestNet — Live Demo
+## 🔍 Tenderly Virtual TestNet — Live Demo
 
 > **[🔍 Open Public Explorer →](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions)**
 
@@ -53,7 +81,7 @@ The Tenderly Virtual TestNet runs the **full production protocol** on a real Bas
 
 ---
 
-### Why This Matters
+## 💡 Why This Matters
 
 Every DeFi protocol claims to be "decentralized" — but almost all of them have admin keys, upgrade proxies, or centralized keepers that can be shut down. **evmX proves this doesn't have to be the case.**
 
@@ -69,14 +97,14 @@ By combining Chainlink CRE + VRF + Data Feeds with an immutable smart contract, 
 
 ---
 
-## The Problem
+## 🚨 The Problem
 
 Community reward tokens rely on **centralized keepers** to trigger reward distributions. This creates:
 - Single points of failure (keeper goes offline = no rewards)
 - Trust assumptions (keeper can front-run or delay)
 - Operational overhead (someone must maintain the bot)
 
-## The Solution
+## ✅ The Solution
 
 evmX replaces centralized keepers with **Chainlink CRE (Runtime Environment)** for fully autonomous, trustless reward orchestration:
 
@@ -90,7 +118,10 @@ User buys evmX → 3% tax fills reward pools → CRE monitors thresholds
 
 ---
 
-## Architecture
+## 🏗 Architecture
+
+<details>
+<summary><b>Click to expand full architecture diagram</b></summary>
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -143,9 +174,11 @@ User buys evmX → 3% tax fills reward pools → CRE monitors thresholds
            └──────────────────────────────┘     → AI Strategy Report
 ```
 
+</details>
+
 ---
 
-## Chainlink Integration
+## 🔌 Chainlink Integration
 
 ### Services Used
 
@@ -176,11 +209,13 @@ Chainlink CRE calls `runAutonomousCycle()` every 2 minutes, regardless of tradin
 | **Token→ETH swap needed, no sells** | 120k tokens accumulate but no swap | **CRE runs swapAndDistribute()** |
 | **VRF needs funding, no swap** | pendingVrfEth accumulates, no funding | **CRE calls _attemptVrfFund() directly** |
 
+> [!TIP]
 > **Design philosophy:** The contract should never depend on a single trigger mechanism. Layer 1 handles the common case (active trading). Layer 2 (CRE) guarantees execution under ALL conditions — including zero trading volume. Together, they make evmX **unconditionally autonomous**: it runs whether there are 1000 trades per hour or zero trades for a week.
 
 This is analogous to how Aave and Compound use Chainlink Keepers — their contracts can be triggered manually, but Keepers provide the reliable, decentralized automation layer that makes them production-grade.
 
-### CRE Workflow #1: Autonomous Rewards
+<details>
+<summary><b>CRE Workflow #1: Autonomous Rewards — code</b></summary>
 
 The primary CRE workflow:
 
@@ -211,14 +246,20 @@ const onCronTrigger = (runtime: Runtime<Config>, _payload: CronPayload): string 
 }
 ```
 
-### CRE Workflow #2: Event Monitor
+</details>
+
+<details>
+<summary><b>CRE Workflow #2: Event Monitor</b></summary>
 
 Processes `PoolAllocated` events in real-time via EVM Log Trigger:
 - Decodes winner address, pool type, and payout amount
 - Enables automated notifications and analytics dashboards
 - Provides a real-time event stream for the frontend winner feed
 
-### CRE Workflow #3: AI Strategy Advisor
+</details>
+
+<details>
+<summary><b>CRE Workflow #3: AI Strategy Advisor — code</b></summary>
 
 The AI-powered workflow combines **3 data sources** in a single CRE pipeline:
 
@@ -233,6 +274,8 @@ This workflow demonstrates CRE's ability to orchestrate **blockchain reads + ext
 CRE Cron (5min) → EVMClient.callContract() → HTTPClient (CoinGecko)
                 → ConfidentialHTTPClient (OpenAI) → AI Strategy Report
 ```
+
+</details>
 
 ### Chainlink Data Feed: ETH/USD
 
@@ -252,9 +295,10 @@ The frontend reads the Chainlink ETH/USD price feed directly via `AggregatorV3In
 
 ---
 
-## Token Mechanics
+## 🎰 Token Mechanics
 
-### 3-Tier Reward System
+<details>
+<summary><b>3-Tier Reward System</b></summary>
 
 | Pool | Cycle | Threshold | Entry Requirement | Tax Source |
 |------|-------|-----------|-------------------|------------|
@@ -262,7 +306,10 @@ The frontend reads the Chainlink ETH/USD price feed directly via `AggregatorV3In
 | **Mid** | 6h timer / Smart Ladder | 0.05 - 500 ETH | 0.7% of pool (floor 0.0025, cap 0.25 ETH) | 1.5% buy tax |
 | **Mega** | Fixed 7-day cycle | — | 0.7% of pool (floor 0.0035, cap 1 ETH) | 1.9% sell tax |
 
-### Buy-to-Play Entry System
+</details>
+
+<details>
+<summary><b>Buy-to-Play Entry System</b></summary>
 
 Entries are **only** granted from actual buys (not transfers or re-enrollment):
 
@@ -272,12 +319,17 @@ Entries are **only** granted from actual buys (not transfers or re-enrollment):
 | 2nd entry | Cumulative buy value reaches 2x threshold |
 | 3rd entry (max) | Cumulative buy value reaches 3x threshold |
 
-### Tax Structure
+</details>
+
+<details>
+<summary><b>Tax Structure</b></summary>
 
 | Direction | Total Tax | Breakdown |
 |-----------|-----------|-----------|
 | **Buy** | 3% | Micro (1%) + Mid (1.5%) + Marketing (0.4%) + VRF (0.1%) |
 | **Sell** | 3% | Mega (1.9%) + Marketing (1%) + VRF (0.1%) |
+
+</details>
 
 ### Fully Autonomous — No Admin Keys
 
@@ -290,6 +342,7 @@ After launch, **ownership is permanently renounced** and **LP tokens are burned*
 | **CRE Automated** | Chainlink CRE guarantees execution even with zero trading volume — swap, VRF funding, and pool triggers run 24/7 without any human operator. |
 | **VRF Provably Fair** | Chainlink VRF v2.5 provides cryptographically verifiable randomness. No one can predict or manipulate winner selection. |
 
+> [!CAUTION]
 > **After renounce + LP burn, evmX becomes a self-sustaining, unstoppable protocol.** No entity — not even the deployer — can change any parameter, drain funds, or stop the reward cycles. The code runs forever.
 
 ### Safety Features
@@ -306,7 +359,7 @@ After launch, **ownership is permanently renounced** and **LP tokens are burned*
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ```bash
 # Clone the repository
@@ -359,7 +412,7 @@ npm run deploy:sepolia
 
 ---
 
-## Test Suite
+## 🧪 Test Suite
 
 ### 174 Tests — Dual Framework — Full Coverage
 
@@ -376,15 +429,16 @@ npm run deploy:sepolia
 | **Base Mainnet Fork** | 25 | Hardhat | Real Uniswap V2, real WETH, real Base state |
 | **Total** | **174** | | |
 
-### Mutation Testing
-
-Tests are verified via mutation testing — intentionally breaking the contract proves tests catch real bugs:
+<details>
+<summary><b>Mutation Testing — Proof that tests catch real bugs</b></summary>
 
 | Mutation | What broke | Tests that caught it |
 |----------|-----------|---------------------|
 | Remove `buyAmountETH > 0` guard | Transfer/reEnroll grants entries | P38, G21, fuzz_reEnroll |
 | `MAX_ENTRIES_PER_CYCLE` 3 → 255 | Unlimited entries per cycle | P40, fuzz_buyToPlay |
 | `EMERGENCY_COMMIT_DELAY` 5 → 0 | No commit-reveal delay | P42 |
+
+</details>
 
 ```bash
 # Run all tests
@@ -400,7 +454,7 @@ npm run test:properties
 
 ---
 
-## Security
+## 🛡 Security
 
 ### 6-Phase Internal Security Assessment
 
@@ -423,7 +477,10 @@ npm run test:properties
 
 ---
 
-## Project Structure
+## 📁 Project Structure
+
+<details>
+<summary><b>Click to expand</b></summary>
 
 ```
 evmX/
@@ -477,9 +534,11 @@ evmX/
 └── package.json                    # Project dependencies & scripts
 ```
 
+</details>
+
 ---
 
-## Roadmap — From Hackathon to Mainnet
+## 🗺 Roadmap — From Hackathon to Mainnet
 
 evmX is not just a hackathon demo — it's a **production-ready protocol** with a clear path to Base Mainnet launch.
 
@@ -504,11 +563,12 @@ evmX is not just a hackathon demo — it's a **production-ready protocol** with 
 - [ ] CRE ensures 24/7 pool monitoring and execution
 - [ ] Marketing wallet funds used for community initiatives
 
+> [!NOTE]
 > **Liquidity Strategy:** The hackathon prize is the catalyst for real-world deployment. By allocating prize funds directly to the Uniswap V2 liquidity pool and immediately burning LP tokens, evmX launches with permanent, locked liquidity — creating a trustless, unstoppable reward protocol from day one.
 
 ---
 
-## Deployment
+## 📦 Deployment
 
 ### Tenderly Virtual TestNet
 
@@ -517,7 +577,7 @@ npm run deploy:tenderly    # Deploy to Tenderly VNet + auto-verify
 npm run demo:tenderly      # Run demo transactions (full lifecycle)
 ```
 
-> See **[Tenderly Virtual TestNet — Live Demo](#tenderly-virtual-testnet--live-demo)** section above for full details, Public Explorer link, and transaction breakdown.
+> See **[Tenderly Virtual TestNet — Live Demo](#-tenderly-virtual-testnet--live-demo)** section above for full details, Public Explorer link, and transaction breakdown.
 
 ### Base Sepolia Testnet (Hackathon Demo)
 
@@ -540,7 +600,7 @@ npm run deploy:base
 
 ---
 
-## Tech Stack
+## ⚙ Tech Stack
 
 | Component | Technology |
 |-----------|-----------|
@@ -557,12 +617,16 @@ npm run deploy:base
 
 ---
 
+<div align="center">
+
 ## License
 
 MIT License
 
 ---
 
-## Disclaimer
+**evmX** — Built with Chainlink CRE + VRF + Data Feeds on Base L2
 
-This software is provided "as is" without warranty of any kind. evmX has undergone a 6-phase internal security assessment with 174 automated tests including mutation testing, but **no assessment guarantees zero bugs**. Smart contracts are immutable once deployed. Users interact with decentralized protocols at their own risk.
+*This software is provided "as is" without warranty of any kind. evmX has undergone a 6-phase internal security assessment with 174 automated tests including mutation testing, but no assessment guarantees zero bugs. Smart contracts are immutable once deployed. Users interact with decentralized protocols at their own risk.*
+
+</div>
