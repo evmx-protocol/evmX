@@ -199,5 +199,18 @@ const initWorkflow = (config: Config) => {
   ]
 }
 
-// ── Export ────────────────────────────────────────────────────────────────
-export default { initWorkflow }
+// ── Runner Entry Point (CRE CLI v1.2.0+) ────────────────────────────────
+import { Runner } from '@chainlink/cre-sdk'
+import { z } from 'zod'
+
+const configSchema = z.object({
+  evmxContractAddress: z.string(),
+  schedule: z.string(),
+})
+
+export async function main() {
+  const runner = await Runner.newRunner<Config>({ configSchema })
+  await runner.run(initWorkflow)
+}
+
+main()

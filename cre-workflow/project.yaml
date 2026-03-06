@@ -10,7 +10,7 @@
 
 local-simulation:
   rpcs:
-    - chain-name: base-testnet-sepolia
+    - chain-name: ethereum-testnet-sepolia-base-1
       url: https://sepolia.base.org
 
 # ==========================================================================
@@ -18,7 +18,7 @@ production-testnet:
   cre-cli:
     don-family: "zone-a"
   rpcs:
-    - chain-name: base-testnet-sepolia
+    - chain-name: ethereum-testnet-sepolia-base-1
       url: https://sepolia.base.org
   dev-platform:
     don-id: 4
