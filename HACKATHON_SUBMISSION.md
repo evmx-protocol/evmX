@@ -188,7 +188,7 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 - [x] Frontend shows **AI Protocol Intelligence** panel
 - [x] Demo video uploaded (3-5 min)
 - [x] Tenderly Virtual TestNet — contract deployed, verified, 60 demo tx, Public Explorer live
-- [ ] Submission form completed
+- [x] Submission form completed
 - [x] README has all badges and documentation
 - [x] All 174 tests pass in CI
 
