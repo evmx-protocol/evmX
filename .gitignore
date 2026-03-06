@@ -50,7 +50,18 @@ cre-cli/
 # Video production helpers (not part of project source)
 NARRATION_SCRIPT.md
 RECORDING_GUIDE.md
+VIDEO_SCRIPT.md
 video-slides.html
+*.mp4
+test-results.png
+basescan.png
+tenderly.png
+
+# Internal checklists (not part of project source)
+deploy-checklist.md
 
 # Tenderly config (contains access key)
 tenderly.yaml
+
+# CRE build temp files
+**/.cre_build_tmp.*

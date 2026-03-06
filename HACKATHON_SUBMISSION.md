@@ -169,7 +169,7 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 | **Track** | CRE & AI + Tenderly |
 | **Description** | Autonomous 3-tier reward ERC-20 on Base L2 with multi-layer trigger architecture. Uses **3 Chainlink services**: CRE (3 workflows — autonomous keeper, event monitor, AI advisor), VRF v2.5 (provably fair random winner selection), and Data Feed ETH/USD (real-time pricing + AI analytics). Full protocol deployed and tested on **Tenderly Virtual TestNet** (Base fork, 60 verified transactions, Public Explorer). Ownership renounced + LP burned = unconditionally autonomous. 174 tests (attacks, fuzz, invariant, economic stress), mutation-tested. **Launch Plan:** 100% of hackathon prize → Uniswap V2 liquidity on Base Mainnet, LP burned — live, unstoppable protocol from day one. |
 | **GitHub URL** | https://github.com/evmx-protocol/evmX |
-| **Demo Video** | https://www.youtube.com/watch?v=5B3lsTy77uE |
+| **Demo Video** | https://youtu.be/hi5uvVxkVUA |
 | **Contract Address** | [0x4AfdC83DC87193f7915429c0eBb99d11A77408d1](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) (Base Sepolia) |
 | **Tenderly Explorer** | [Public Explorer](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) — 60 tx, verified source |
 | **CRE Workflow** | Yes — 3 workflows (Autonomous Rewards + Event Monitor + AI Strategy Advisor) |
