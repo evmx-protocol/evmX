@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 /**
  * ===========================================================================
- * |         ETERNAL VIRTUAL MACHINE (evmX) -- Production Contract           |
+ * |         ETERNAL VIRTUAL MACHINE (evmX) -- Testable Contract             |
  * |                         Base Mainnet (Chain ID: 8453)                   |
  * ===========================================================================
  * |                                                                         |

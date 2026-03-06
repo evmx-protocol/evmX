@@ -31,7 +31,7 @@ jobs:
 
       - name: Download CRE CLI
         run: |
-          CRE_VERSION="v1.0.11"
+          CRE_VERSION="v1.2.0"
           echo "Downloading CRE CLI ${CRE_VERSION}..."
           curl -sL "https://github.com/smartcontractkit/cre-cli/releases/download/${CRE_VERSION}/cre_linux_amd64.tar.gz" -o cre.tar.gz
           tar -xzf cre.tar.gz

@@ -1,5 +1,7 @@
 {
   "evmxContractAddress": "0x4AfdC83DC87193f7915429c0eBb99d11A77408d1",
+  "chainSelectorName": "base-testnet-sepolia",
   "schedule": "0 */5 * * * *",
-  "openaiModel": "gpt-4o-mini"
+  "openaiModel": "gpt-4o-mini",
+  "isTestnet": true
 }
