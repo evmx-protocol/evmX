@@ -1,31 +1,22 @@
-<div align="center">
+# evmX — Autonomous Community Reward Protocol
 
-# ⚡ evmX
+> **The first ERC-20 protocol designed to run forever without any human intervention.**
+> After ownership renounce and LP burn, no one — not even the creator — can stop, pause, modify, or control it.
 
-### Autonomous Community Reward Protocol
+[![Solidity](https://img.shields.io/badge/Solidity-0.8.28-363636)](https://soliditylang.org/)
+[![Base L2](https://img.shields.io/badge/Network-Base%20L2-0052FF)](https://base.org/)
+[![Chainlink](https://img.shields.io/badge/Chainlink-CRE%20%2B%20VRF%20%2B%20Data%20Feed-375BD2)](https://docs.chain.link/cre)
+[![Tenderly](https://img.shields.io/badge/Tenderly-Virtual%20TestNet-6F4CFF)](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions)
+[![Tests](https://img.shields.io/badge/Tests-174%20passing-brightgreen)](#-test-suite)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-**The first ERC-20 protocol designed to run forever without any human intervention.**
-After ownership renounce and LP burn, no one — not even the creator — can stop, pause, modify, or control it.
+**🏆 Convergence Hackathon 2026** | Tracks: **CRE & AI** + **Tenderly Virtual TestNets**
 
-<br>
-
-[![Solidity 0.8.28](https://img.shields.io/badge/Solidity-0.8.28-363636?style=for-the-badge&logo=solidity)](https://soliditylang.org/)
-[![Base L2](https://img.shields.io/badge/Base-L2-0052FF?style=for-the-badge&logo=coinbase)](https://base.org/)
-[![Chainlink](https://img.shields.io/badge/Chainlink-CRE%20%2B%20VRF%20%2B%20Data%20Feed-375BD2?style=for-the-badge)](https://docs.chain.link/cre)
-[![Tests](https://img.shields.io/badge/Tests-174%20passing-brightgreen?style=for-the-badge)](#-test-suite)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
-
-<br>
-
-**🏆 Convergence Hackathon 2026** — Tracks: **CRE & AI** + **Tenderly Virtual TestNets**
-
-📹 [**Watch Demo Video**](https://youtu.be/hi5uvVxkVUA) &nbsp;|&nbsp; 🔍 [**Tenderly Explorer**](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) &nbsp;|&nbsp; 📄 [**BaseScan**](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1)
-
-</div>
+📹 [**Demo Video**](https://youtu.be/hi5uvVxkVUA) | 🔍 [**Tenderly Explorer**](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) | 📄 [**BaseScan**](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1)
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Chainlink Products Used](#-chainlink-products-used)
 - [Tenderly Virtual TestNet](#-tenderly-virtual-testnet--live-demo)
@@ -617,8 +608,6 @@ npm run deploy:base
 
 ---
 
-<div align="center">
-
 ## License
 
 MIT License
@@ -628,5 +617,3 @@ MIT License
 **evmX** — Built with Chainlink CRE + VRF + Data Feeds on Base L2
 
 *This software is provided "as is" without warranty of any kind. evmX has undergone a 6-phase internal security assessment with 174 automated tests including mutation testing, but no assessment guarantees zero bugs. Smart contracts are immutable once deployed. Users interact with decentralized protocols at their own risk.*
-
-</div>
