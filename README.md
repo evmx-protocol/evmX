@@ -12,6 +12,8 @@
 
 **Convergence Hackathon 2026** | Tracks: **CRE & AI** + **Tenderly Virtual TestNets**
 
+📹 **Demo Video:** [https://youtu.be/hi5uvVxkVUA](https://youtu.be/hi5uvVxkVUA)
+
 ---
 
 ## Chainlink Products Used

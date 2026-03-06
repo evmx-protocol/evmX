@@ -180,17 +180,17 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 
 ## Checklist
 
-- [ ] GitHub repo is **public**
-- [ ] Base Sepolia contract is **deployed and verified**
-- [ ] VRF subscription is **funded** and consumer **added**
-- [ ] CRE simulate output is captured
-- [ ] Frontend shows live pool data with **USD prices (Chainlink Data Feed)**
-- [ ] Frontend shows **AI Protocol Intelligence** panel
-- [ ] Demo video uploaded (3-5 min)
-- [ ] Tenderly Virtual TestNet — contract deployed, verified, 60 demo tx, Public Explorer live
+- [x] GitHub repo is **public**
+- [x] Base Sepolia contract is **deployed and verified**
+- [x] VRF subscription is **funded** and consumer **added**
+- [x] CRE simulate output is captured
+- [x] Frontend shows live pool data with **USD prices (Chainlink Data Feed)**
+- [x] Frontend shows **AI Protocol Intelligence** panel
+- [x] Demo video uploaded (3-5 min)
+- [x] Tenderly Virtual TestNet — contract deployed, verified, 60 demo tx, Public Explorer live
 - [ ] Submission form completed
-- [ ] README has all badges and documentation
-- [ ] All 174 tests pass in CI
+- [x] README has all badges and documentation
+- [x] All 174 tests pass in CI
 
 ---
 
