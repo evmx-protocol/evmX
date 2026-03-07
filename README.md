@@ -542,7 +542,7 @@ evmX is not just a hackathon demo — it's a **production-ready protocol** with 
 - [x] Tenderly Virtual TestNet — full lifecycle demo (60 tx, verified, Public Explorer)
 
 ### Phase 2: Mainnet Launch (Post-Hackathon)
-- [ ] **Hackathon prize funds initial Uniswap V2 liquidity** — 100% of prize money allocated to ETH/evmX liquidity pool on Base Mainnet
+- [ ] **Hackathon prize funds launch** — 60% allocated to Uniswap V2 liquidity on Base Mainnet, 40% reserved for continued development (frontend, audit, CRE deployment)
 - [ ] LP tokens permanently burned (no rug pull possible)
 - [ ] Ownership renounced immediately after launch
 - [ ] CRE Workflows deployed to production (Base Mainnet)
@@ -555,7 +555,7 @@ evmX is not just a hackathon demo — it's a **production-ready protocol** with 
 - [ ] Marketing wallet funds used for community initiatives
 
 > [!NOTE]
-> **Liquidity Strategy:** The hackathon prize is the catalyst for real-world deployment. By allocating prize funds directly to the Uniswap V2 liquidity pool and immediately burning LP tokens, evmX launches with permanent, locked liquidity — creating a trustless, unstoppable reward protocol from day one.
+> **Launch Strategy:** The hackathon prize is the catalyst for real-world deployment. 60% funds the initial Uniswap V2 liquidity pool (LP tokens burned — permanent, locked liquidity). 40% funds continued development: frontend, security audit, and CRE production deployment. Transparent and sustainable from day one.
 
 ---
 
