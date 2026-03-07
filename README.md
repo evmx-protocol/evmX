@@ -109,6 +109,134 @@ User buys evmX → 3% tax fills reward pools → CRE monitors thresholds
 
 ---
 
+## 🧠 Self-Regulating Protocol Intelligence
+
+> [!IMPORTANT]
+> evmX is **not a static token with fixed rules**. It is a mathematically self-calibrating system with **19 autonomous mechanisms** that adapt to market conditions, pool states, and network behavior in real time — no governance votes, no admin calls, no parameter updates. Every rule is enforced by math, not policy.
+
+### Adaptive Economics — The Protocol Breathes
+
+<details>
+<summary><b>Dynamic Entry Requirements — barriers that scale with pool size</b></summary>
+
+Every pool's entry requirement is calculated as **0.7% of the current pool balance**, bounded by safety floors and caps:
+
+| Pool State | Pool Balance | Entry Requirement | Effect |
+|-----------|-------------|-------------------|--------|
+| Early / Low activity | 0.1 ETH | 0.001 ETH (floor) | Low barrier → encourages early participation |
+| Growing | 5 ETH | 0.035 ETH | Scales proportionally with pool growth |
+| Peak / High activity | 50 ETH | 0.05 ETH (cap) | Cap prevents exclusion at scale |
+
+As the protocol grows, barriers rise — naturally filtering dust and bot entries. As activity slows, barriers drop — encouraging new participants. **The protocol regulates its own accessibility.**
+
+</details>
+
+<details>
+<summary><b>Smart Ladder — thresholds that double or halve based on demand</b></summary>
+
+Pool trigger thresholds are **not fixed numbers**. The Smart Ladder algorithm adjusts them within defined ranges based on fill velocity:
+
+| Condition | Action | Example (Micro Pool) |
+|-----------|--------|---------------------|
+| Pool fills **before** timer expires | Threshold **doubles** | 0.5 ETH → 1.0 ETH |
+| Timer expires **before** pool fills | Threshold **halves** | 1.0 ETH → 0.5 ETH |
+
+| Pool | Threshold Range | Timer | Behavior |
+|------|----------------|-------|----------|
+| **Micro** | 0.01 → 100 ETH | 2 hours | High demand = bigger rewards. Low demand = faster cycles. |
+| **Mid** | 0.05 → 500 ETH | 6 hours | Same adaptive logic, medium timeframe |
+| **Mega** | Fixed 7-day cycle | 7 days | Weekly reward — size determined entirely by sell volume |
+
+**Result:** During high trading volume, pools accumulate larger rewards before triggering. During quiet periods, rewards fire quickly at smaller amounts. The protocol automatically finds its own equilibrium.
+
+</details>
+
+<details>
+<summary><b>Anti-Whale as Economic Balancer — wealth distribution enforced by math</b></summary>
+
+Whale protection in evmX isn't just a security feature — it's an **economic self-balancing mechanism**:
+
+| Rule | Limit | Purpose |
+|------|-------|---------|
+| Max wallet | 4% of supply | Prevents concentration, forces distribution |
+| Max TX | 1.5% of supply | Smooths price impact per trade |
+| Micro whale exclusion | >3% supply holders excluded | Protects small-holder odds in the fastest pool |
+| Sell = instant revocation | All pools, all cycles | Game theory: hold your tokens or lose your position |
+
+The whale exclusion applies **both at entry AND at selection** — a holder who crosses 3% during a cycle is excluded even if they entered below the threshold. This is enforced at `_isEligibleCandidate()`, not just at enrollment.
+
+</details>
+
+### Self-Healing Mechanisms — Nothing Breaks, Nothing Is Lost
+
+<details>
+<summary><b>5 failsafe systems that keep the protocol running under any condition</b></summary>
+
+| Mechanism | Trigger | Action |
+|-----------|---------|--------|
+| **VRF Emergency Fallback** | VRF doesn't respond for 24h | Commit-reveal on-chain entropy with 5-block delay. If blockhash expires (>256 blocks), auto-recommits. |
+| **VRF Stale Reroute** | VRF subscription unfunded for 7 days | All pending VRF ETH redistributes equally to the 3 reward pools |
+| **VRF Funding Cap** | VRF subscription reaches 2 ETH | Excess ETH flows back to reward pools instead of over-funding |
+| **Marketing Wallet Fallback** | Marketing wallet rejects ETH | Funds redirect to Mega Pool — nothing is lost |
+| **Self-Healing Accounting** | Unexpected ETH arrives at contract | `syncETHAccounting()` captures untracked ETH into Mega Pool |
+
+**Every ETH path has a fallback.** There is no state where funds can be stuck, lost, or inaccessible.
+
+</details>
+
+### Intelligent Participant Management
+
+<details>
+<summary><b>6 mechanisms that maintain fair participation without admin intervention</b></summary>
+
+| Mechanism | How It Works |
+|-----------|-------------|
+| **Per-User Required Token Hold** | Each user's minimum hold is calculated from Uniswap reserves at entry time. If the token price changes, the requirement adapts — users who entered at a higher price don't need to hold more tokens than their original ETH commitment. |
+| **Transfer Balance Check** | If a user transfers tokens and drops below their required hold for any pool, they are **automatically revoked** — per user, per cycle, per pool. |
+| **Buy-to-Play Multi-Entry** | Up to 3 entries per cycle per pool. Entry thresholds scale with the dynamic entry requirement — more commitment = more chances. |
+| **Permissionless Re-enrollment** | `reEnroll(address)` — anyone can trigger an eligibility re-check for any address. Community-driven recovery without admin keys. |
+| **Payout Failure Recovery** | If a selected recipient can't receive ETH (contract wallet, out of gas), they're marked ineligible and the next candidate is selected. Up to 130 attempts per cycle. |
+| **EOA-Only Enforcement** | `candidate.code.length > 0` check at selection time. Smart contracts, MEV bots, and flash loan contracts are automatically excluded. |
+
+</details>
+
+### Gas-Aware Autonomous Operation
+
+<details>
+<summary><b>4 gas-management systems that prevent stuck transactions</b></summary>
+
+| System | Gas Reserve | Purpose |
+|--------|-----------|---------|
+| Recipient selection | 350,000 gas | Stops trying if gas runs low — prevents out-of-gas reverts |
+| Allocation execution | 900,000 gas minimum | Won't start allocation if insufficient gas available |
+| Entry cleanup | 30,000 gas batch limit | Cleans old entries incrementally, never blocks a transaction |
+| Auto-resolve timeout | Checks per pool | Only processes timed-out allocations when gas permits |
+
+The contract **never reverts due to gas exhaustion** during autonomous operations. Every gas-intensive loop has a reserve check.
+
+</details>
+
+### Dual-Layer Trigger Architecture
+
+```
+Layer 1 — Trade Triggers (built into _update()):
+  Every buy/sell automatically checks all 3 pools and triggers if conditions met.
+  Works during active trading. Zero external dependency.
+
+Layer 2 — CRE Triggers (via runAutonomousCycle()):
+  Chainlink CRE calls every 2 minutes, regardless of trading activity.
+  Handles: pool checks, token→ETH swap, VRF funding, timeout resolution.
+  Works even with zero trading volume.
+
+Result: Two independent paths to the same outcome.
+        If one fails, the other guarantees execution.
+```
+
+> [!TIP]
+> **The core insight:** Every parameter in evmX is either **dynamic** (scales with state), **range-bound** (floor/cap), or **has a fallback** (reroute/recovery). There are no magic numbers that work at one market cap but break at another. The protocol self-adjusts from a $1K pool to a $10M+ pool without any human tuning — this is what makes it **truly autonomous**.
+
+---
+
 ## 🏗 Architecture
 
 <details>
