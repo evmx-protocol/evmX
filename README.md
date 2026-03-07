@@ -196,7 +196,7 @@ Chainlink CRE calls `runAutonomousCycle()` every 2 minutes, regardless of tradin
 | Active trading | Pools trigger automatically via transfers | Same — CRE is idle |
 | **No trades for 2+ hours** | Micro pool ready but stuck — no one calls it | **CRE triggers it** |
 | **No trades for 6+ hours** | Mid pool ready but stuck | **CRE triggers it** |
-| **No trades on Mega day 7** | Weekly jackpot sits unclaimed | **CRE triggers it** |
+| **No trades on Mega day 7** | Weekly reward cycle sits unclaimed | **CRE triggers it** |
 | **Token→ETH swap needed, no sells** | 120k tokens accumulate but no swap | **CRE runs swapAndDistribute()** |
 | **VRF needs funding, no swap** | pendingVrfEth accumulates, no funding | **CRE calls _attemptVrfFund() directly** |
 
@@ -343,7 +343,7 @@ After launch, **ownership is permanently renounced** and **LP tokens are burned*
 - **Anti-whale** — 4% max wallet, 1.5% max TX, whale exclusion from micro pool
 - **Smart contract exclusion** — Only EOA wallets can win rewards (`candidate.code.length > 0` → rejected). Bot contracts, MEV bots, and flash loan contracts are automatically excluded from winner selection
 - **Same-block trade protection** — Prevents buy-and-sell in the same block (anti-sandwich)
-- **MIN_TOKENS_FOR_REWARDS** — Must hold 10,000+ tokens to be eligible (bots never hold)
+- **MIN_TOKENS_FOR_REWARDS** — Must hold 100+ tokens to be eligible (dust filter — real threshold is ETH-value-based entry)
 - **24h Emergency Fallback** — Commit-reveal on-chain entropy if VRF fails
 - **VRF Stale Reroute** — Unfunded VRF ETH redistributes to pools after 7 days
 - **Permissionless reEnroll()** — Anyone can trigger eligibility re-check

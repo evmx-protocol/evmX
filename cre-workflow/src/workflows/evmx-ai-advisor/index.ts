@@ -247,7 +247,7 @@ ${poolSummary}
 Rules:
 - Micro Pool: 2-hour cycle, dynamic threshold, fast small rewards
 - Mid Pool: 6-hour cycle, dynamic threshold, medium rewards
-- Mega Pool: 7-day cycle, large weekly jackpot
+- Mega Pool: 7-day cycle, large weekly reward
 
 Provide a 2-3 sentence strategy recommendation: which pool offers the best opportunity right now and why.
 Consider fill percentage, odds, time remaining, and market conditions.
