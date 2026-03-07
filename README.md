@@ -112,9 +112,9 @@ User buys evmX → 3% tax fills reward pools → CRE monitors thresholds
 ## 🧠 Self-Regulating Protocol Intelligence
 
 > [!IMPORTANT]
-> evmX is **not a static token with fixed rules**. It is a mathematically self-calibrating system with **19 autonomous mechanisms** that adapt to market conditions, pool states, and network behavior in real time — no governance votes, no admin calls, no parameter updates. Every rule is enforced by math, not policy.
+> evmX is **not a static token with fixed rules**. It is a mathematically self-calibrating system with **20 autonomous mechanisms** that adapt to market conditions, pool states, and network behavior in real time — no governance votes, no admin calls, no parameter updates. Every rule is enforced by math, not policy.
 
-### Adaptive Economics — The Protocol Breathes
+### Adaptive Economics — The Protocol Breathes (3 mechanisms)
 
 <details>
 <summary><b>Dynamic Entry Requirements — barriers that scale with pool size</b></summary>

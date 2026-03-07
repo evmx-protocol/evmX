@@ -136,14 +136,14 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 - Mutation testing: all mutations caught
 - **Bot exclusion**: Smart contracts cannot win rewards (`code.length > 0` check) — MEV bots, flash loan contracts, and automated scripts are rejected by the VRF winner selection
 - **Same-block protection**: Buy-and-sell in the same block is blocked (anti-sandwich)
-- **MIN_TOKENS_FOR_REWARDS**: Must hold 10,000+ tokens to be eligible
+- **MIN_TOKENS_FOR_REWARDS**: Must hold 100+ tokens to be eligible (dust filter — real threshold is dynamic ETH-value-based entry)
 - Autonomy: Ownership renounced + LP burned
 
 **4:00 - 4:30 | Launch Plan**
-- "Hackathon prize → 100% allocated to Uniswap V2 liquidity on Base Mainnet"
+- "Hackathon prize → 60% allocated to Uniswap V2 liquidity on Base Mainnet, 40% for continued development"
 - "LP tokens permanently burned — no rug pull possible"
 - "Ownership renounced — unstoppable autonomous protocol"
-- "This isn't just a demo — it's a production-ready launch"
+- "19 self-regulating mechanisms — the protocol adapts to any market condition without human intervention"
 
 **4:30 - 5:00 | Conclusion**
 - Recap: 3 Chainlink services, 3-tier rewards, unconditional autonomy
@@ -167,7 +167,7 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 |-------|-------|
 | **Project Name** | evmX — Autonomous Community Reward Protocol |
 | **Track** | CRE & AI + Tenderly |
-| **Description** | Autonomous 3-tier reward ERC-20 on Base L2 with multi-layer trigger architecture. Uses **3 Chainlink services**: CRE (3 workflows — autonomous keeper, event monitor, AI advisor), VRF v2.5 (provably fair random winner selection), and Data Feed ETH/USD (real-time pricing + AI analytics). Full protocol deployed and tested on **Tenderly Virtual TestNet** (Base fork, 60 verified transactions, Public Explorer). Ownership renounced + LP burned = unconditionally autonomous. 174 tests (attacks, fuzz, invariant, economic stress), mutation-tested. **Launch Plan:** 100% of hackathon prize → Uniswap V2 liquidity on Base Mainnet, LP burned — live, unstoppable protocol from day one. |
+| **Description** | Autonomous 3-tier reward ERC-20 on Base L2 with **20 self-regulating mechanisms** (dynamic entry, Smart Ladder adaptive thresholds, anti-whale balancing, 5 self-healing failsafes, gas-aware operations, dual-layer triggers). Uses **3 Chainlink services**: CRE (3 workflows — autonomous keeper, event monitor, AI advisor), VRF v2.5 (provably fair random winner selection), and Data Feed ETH/USD (real-time pricing + AI analytics). Full protocol deployed and tested on **Tenderly Virtual TestNet** (Base fork, 60 verified transactions, Public Explorer). Ownership renounced + LP burned = unconditionally autonomous. 174 tests (attacks, fuzz, invariant, economic stress), mutation-tested. **Launch Plan:** 60% → Uniswap V2 liquidity (LP burned), 40% → continued development. Every rule enforced by math, not policy. |
 | **GitHub URL** | https://github.com/evmx-protocol/evmX |
 | **Demo Video** | https://youtu.be/hi5uvVxkVUA |
 | **Contract Address** | [0x4AfdC83DC87193f7915429c0eBb99d11A77408d1](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) (Base Sepolia) |
