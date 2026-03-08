@@ -1,5 +1,5 @@
 EVMX PROTOCOL — SOURCE-AVAILABLE LICENSE
-Version 1.0, March 2026
+Version 1.1, March 2026
 
 Copyright (c) 2026 evmX Protocol. All rights reserved.
 
@@ -27,7 +27,9 @@ TERMS AND CONDITIONS
    c) REFERENCE the source code in academic papers, articles,
       or technical discussions with proper attribution.
 
-   d) RUN the test suite locally for verification purposes.
+   d) COMPILE and RUN the test suite on a local, ephemeral
+      environment (e.g., Hardhat, Foundry/Anvil, local fork)
+      solely for testing or evaluation purposes.
 
    e) INTERACT with deployed instances of the Software on
       public blockchains as an end user.
@@ -37,10 +39,14 @@ TERMS AND CONDITIONS
    Without prior written permission from the Author, you may NOT:
 
    a) DEPLOY the Software or any substantial portion thereof
-      to any blockchain (mainnet, testnet, or private network).
+      to any public blockchain, public testnet, or shared/private
+      network accessible by third parties, except for local
+      ephemeral deployment solely for testing or evaluation as
+      permitted under Section 2.
 
-   b) COPY, REPRODUCE, or FORK the Software for the purpose of
-      creating a competing or derivative product or protocol.
+   b) COPY, REPRODUCE, FORK, or otherwise use the Software for
+      the purpose of creating, developing, deploying, or
+      distributing a competing or derivative product or protocol.
 
    c) MODIFY and REDISTRIBUTE the Software or any derivative works.
 
@@ -48,19 +54,16 @@ TERMS AND CONDITIONS
       not limited to selling, licensing, or offering the Software
       as a service.
 
-   e) INCORPORATE the Software or any substantial portion thereof
-      into another project, product, or protocol.
-
-   f) Remove, alter, or obscure this license notice or any
+   e) Remove, alter, or obscure this license notice or any
       copyright notices contained within the Software.
 
 4. HACKATHON AND EVALUATION EXCEPTION
 
    This Software is submitted as part of the Chainlink Convergence
    Hackathon 2026. Hackathon judges, sponsors, and organizers are
-   granted a limited, non-transferable right to review, evaluate,
-   test, and run the Software solely for the purpose of hackathon
-   judging and evaluation.
+   granted a limited, non-transferable right to review, compile,
+   test, run, and locally deploy the Software solely for hackathon
+   judging and evaluation purposes.
 
 5. ATTRIBUTION
 
@@ -84,13 +87,8 @@ TERMS AND CONDITIONS
    This license is effective until terminated. Your rights under
    this license will terminate automatically without notice if you
    fail to comply with any of its terms. Upon termination, you must
-   destroy all copies of the Software in your possession.
-
-8. GOVERNING LAW
-
-   This license shall be governed by and construed in accordance
-   with applicable intellectual property laws. Any disputes shall
-   be resolved in the jurisdiction of the Author's choosing.
+   cease all use of the Software and, to the extent reasonably
+   practicable, delete any copies in your possession or control.
 
 For licensing inquiries or commercial use permissions, contact:
 evmx.protocol@proton.me
