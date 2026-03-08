@@ -47,12 +47,12 @@
 ## 🔗 Chainlink Products Used
 
 > [!IMPORTANT]
-> evmX integrates **3 Chainlink services** as core, non-optional protocol infrastructure — not demos or wrappers.
+> evmX integrates **3 Chainlink services**: CRE for autonomous execution, VRF for winner selection, and Data Feeds for frontend pricing and analytics.
 
 | Product | Role in Protocol | Where |
 |---------|-----------------|-------|
-| 🔗 **Chainlink CRE** (3 Workflows) | Autonomous keeper layer — ensures reward cycle execution even with **zero trading volume**. Workflow #1 monitors pools + triggers cycle every 2 min. Workflow #2 streams `PoolAllocated` events. Workflow #3 is an AI Strategy Advisor (EVM + HTTP + LLM in one pipeline). | `cre-workflow/src/workflows/` |
-| 🎲 **Chainlink VRF v2.5** | Provably fair random winner selection — on-chain verifiable, manipulation-proof. Native ETH payment. 3-block confirmation. | `evmX.sol: fulfillRandomWords()` |
+| 🔗 **Chainlink CRE** (3 Workflows) | Second execution path — keeps reward cycle checks active during **zero-volume periods**. Workflow #1 monitors pools + triggers cycle every 2 min. Workflow #2 streams `PoolAllocated` events. Workflow #3 is an AI Strategy Advisor (EVM + HTTP + LLM in one pipeline). | `cre-workflow/src/workflows/` |
+| 🎲 **Chainlink VRF v2.5** | Provably fair random winner selection — on-chain verifiable, resistant to in-protocol manipulation. Native ETH payment. 3-block confirmation. | `evmX.sol: fulfillRandomWords()` |
 | 📈 **Chainlink Data Feed** (ETH/USD) | Powers all USD price displays in the frontend + feeds the AI analytics engine (pool trend predictions, protocol health score, entry timing recommendations). | `index.html: AggregatorV3Interface` |
 
 > [!NOTE]
@@ -61,7 +61,7 @@
 > Without CRE:  trade triggers only → pools freeze if no one trades for hours
 > With CRE:     redundant execution every 2 min → protocol runs independently of trading activity
 > ```
-> This is the core innovation: CRE makes evmX **autonomous under all expected operating conditions** — it operates whether there are 1,000 trades/hour or zero trades for a week.
+> CRE extends the protocol's autonomous design by maintaining execution cadence during inactivity — it operates whether there are 1,000 trades/hour or zero trades for a week.
 
 ---
 
@@ -99,14 +99,14 @@ By combining Chainlink CRE + VRF + Data Feeds with an immutable smart contract, 
 
 ## 🚨 The Problem
 
-Community reward tokens rely on **centralized keepers** to trigger reward distributions. This creates:
+Many community reward systems rely on **centralized keepers** to trigger reward distributions. This creates:
 - Single points of failure (keeper goes offline = no rewards)
 - Trust assumptions (keeper can front-run or delay)
 - Operational overhead (someone must maintain the bot)
 
 ## ✅ The Solution
 
-evmX replaces centralized keepers with **Chainlink CRE (Runtime Environment)** for fully autonomous, trustless reward orchestration:
+evmX replaces centralized keepers with **Chainlink CRE (Runtime Environment)** for autonomous, onchain reward orchestration without an active human operator:
 
 ```
 User buys evmX → 3% tax fills reward pools → CRE monitors thresholds
@@ -114,7 +114,7 @@ User buys evmX → 3% tax fills reward pools → CRE monitors thresholds
 → Data Feed shows real-time USD values → AI analytics predict optimal entry timing
 ```
 
-**No human intervention. No trust. Fully on-chain. Ownership renounced. LP burned.**
+**No active operator. No admin control loop. Ownership renounced. LP burned.**
 
 ---
 
@@ -179,7 +179,7 @@ The whale exclusion applies **both at entry AND at selection** — a holder who 
 ### Degraded-Mode Resilience — Every Path Has a Fallback
 
 <details>
-<summary><b>5 failsafe systems that keep the protocol running under any condition</b></summary>
+<summary><b>5 fallback systems designed for degraded operating conditions</b></summary>
 
 | Mechanism | Trigger | Action |
 |-----------|---------|--------|
@@ -242,7 +242,7 @@ Result: Two independent paths to the same outcome.
 ```
 
 > [!TIP]
-> **The core insight:** Every parameter in evmX is either **dynamic** (scales with state), **range-bound** (floor/cap), or **has a fallback** (reroute/recovery). There are no magic numbers that work at one market cap but break at another. The protocol is designed to self-adjust from a $1K pool to a $10M+ pool without any human tuning.
+> **The core insight:** Every parameter in evmX is either **dynamic** (scales with state), **range-bound** (floor/cap), or **has a fallback** (reroute/recovery). There are no magic numbers that work at one market cap but break at another. The protocol is designed to self-adjust across a wide range of pool sizes without manual retuning.
 
 ---
 
@@ -338,9 +338,7 @@ Chainlink CRE calls `runAutonomousCycle()` every 2 minutes, regardless of tradin
 | **VRF needs funding, no swap** | pendingVrfEth accumulates, no funding | **CRE calls _attemptVrfFund() directly** |
 
 > [!TIP]
-> **Design philosophy:** The contract should not depend on a single trigger mechanism. Layer 1 handles the common case (active trading). Layer 2 (CRE) provides reliable execution even with zero trading volume. Together, they make evmX **autonomous under all expected operating conditions** — it operates whether there are 1000 trades per hour or zero trades for a week.
-
-This is analogous to how Aave and Compound use Chainlink Keepers — their contracts can be triggered manually, but Keepers provide the reliable, decentralized automation layer that makes them production-grade.
+> **Design philosophy:** The contract should not depend on a single trigger mechanism. Layer 1 handles the common case (active trading). Layer 2 (CRE) maintains execution cadence during inactivity. Together, they keep the protocol operating whether there are 1000 trades per hour or zero trades for a week.
 
 <details>
 <summary><b>CRE Workflow #1: Autonomous Rewards — code</b></summary>
@@ -478,7 +476,7 @@ After launch, **ownership is permanently renounced** and **LP tokens are burned*
 - **Chainlink VRF v2.5** — Provably fair randomness (native ETH payment)
 - **CRE Automation** — No centralized keeper dependency
 - **Anti-whale** — 4% max wallet, 1.5% max TX, whale exclusion from micro pool
-- **Smart contract exclusion** — Only EOA wallets can win rewards (`candidate.code.length > 0` → rejected). Bot contracts, MEV bots, and flash loan contracts are automatically excluded from winner selection
+- **Smart contract exclusion** — Contract addresses are excluded from winner selection (`candidate.code.length > 0` → rejected). EOA-controlled automation is not fully preventable onchain.
 - **Same-block trade protection** — Prevents buy-and-sell in the same block (anti-sandwich)
 - **MIN_TOKENS_FOR_REWARDS** — Must hold 100+ tokens to be eligible (dust filter — real threshold is ETH-value-based entry)
 - **24h Emergency Fallback** — Commit-reveal on-chain entropy if VRF fails
