@@ -2,6 +2,7 @@
   "name": "evmX",
   "version": "1.0.0",
   "description": "evmX - Autonomous Community Reward Protocol ERC-20 with 3-tier incentive layer on Base L2",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "setup": "node scripts/setup.js",
     "compile": "npx hardhat compile",

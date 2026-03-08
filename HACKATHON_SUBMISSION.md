@@ -143,7 +143,7 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 - "Hackathon prize → 60% allocated to Uniswap V2 liquidity on Base Mainnet, 40% for continued development"
 - "LP tokens permanently burned — no rug pull possible"
 - "Ownership renounced — unstoppable autonomous protocol"
-- "19 self-regulating mechanisms — the protocol adapts to any market condition without human intervention"
+- "20 self-regulating mechanisms — the protocol adapts to any market condition without human intervention"
 
 **4:30 - 5:00 | Conclusion**
 - Recap: 3 Chainlink services, 3-tier rewards, unconditional autonomy
