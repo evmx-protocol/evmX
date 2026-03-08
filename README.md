@@ -423,7 +423,7 @@ The frontend reads the Chainlink ETH/USD price feed directly via `AggregatorV3In
 
 ---
 
-## 🎰 Token Mechanics
+## ⚙️ Token Mechanics
 
 <details>
 <summary><b>3-Tier Reward System</b></summary>
