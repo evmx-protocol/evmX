@@ -83,6 +83,8 @@ The Tenderly Virtual TestNet runs the **full production protocol** on a real Bas
 
 ## 💡 Why This Matters
 
+evmX is built around a simple reality: in crypto, trading drives attention, liquidity, and incentives. Instead of resisting that, evmX turns buying, holding, and profit-taking into a structured reward cycle with autonomous execution and verifiable randomness.
+
 Most DeFi protocols rely on admin keys, upgrade proxies, or centralized keepers — any of which can be shut down. evmX is designed to eliminate all three.
 
 By combining Chainlink CRE + VRF + Data Feeds with an immutable smart contract, evmX achieves **full post-launch autonomy**:
