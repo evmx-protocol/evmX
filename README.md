@@ -1,7 +1,7 @@
 # evmX — Autonomous Community Reward Protocol
 
-> **The first ERC-20 protocol designed to run forever without any human intervention.**
-> After ownership renounce and LP burn, no one — not even the creator — can stop, pause, modify, or control it.
+> **An ERC-20 on Base designed to operate indefinitely without human intervention.**
+> After ownership renounce and LP burn, no single party — including the deployer — can alter, pause, or stop the protocol.
 
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.28-363636)](https://soliditylang.org/)
 [![Base L2](https://img.shields.io/badge/Network-Base%20L2-0052FF)](https://base.org/)
@@ -13,6 +13,15 @@
 **🏆 Convergence Hackathon 2026** | Tracks: **CRE & AI** + **Tenderly Virtual TestNets**
 
 📹 [**Demo Video**](https://youtu.be/hi5uvVxkVUA) | 🔍 [**Tenderly Explorer**](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) | 📄 [**BaseScan**](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1)
+
+### At a Glance
+
+| | |
+|---|---|
+| **What** | 1,435-line autonomous reward protocol — 3-tier reward pools funded by buy/sell tax, random winners selected via Chainlink VRF |
+| **How** | Dual-trigger execution: trade-triggered (every buy/sell) + CRE-triggered (every 2 min) — two independent paths to the same outcome |
+| **Proof** | 174 tests (attack, fuzz, invariant, economic stress, fork) · Base Sepolia deployed · Tenderly VNet 60 tx lifecycle · 6-phase security assessment |
+| **Post-launch** | Ownership renounced, LP burned, no proxy, no admin keys — the contract is the only authority |
 
 ---
 
@@ -42,7 +51,7 @@
 
 | Product | Role in Protocol | Where |
 |---------|-----------------|-------|
-| 🔗 **Chainlink CRE** (3 Workflows) | Autonomous keeper layer — guarantees reward cycle execution even with **zero trading volume**. Workflow #1 monitors pools + triggers cycle every 2 min. Workflow #2 streams `PoolAllocated` events. Workflow #3 is an AI Strategy Advisor (EVM + HTTP + LLM in one pipeline). | `cre-workflow/src/workflows/` |
+| 🔗 **Chainlink CRE** (3 Workflows) | Autonomous keeper layer — ensures reward cycle execution even with **zero trading volume**. Workflow #1 monitors pools + triggers cycle every 2 min. Workflow #2 streams `PoolAllocated` events. Workflow #3 is an AI Strategy Advisor (EVM + HTTP + LLM in one pipeline). | `cre-workflow/src/workflows/` |
 | 🎲 **Chainlink VRF v2.5** | Provably fair random winner selection — on-chain verifiable, manipulation-proof. Native ETH payment. 3-block confirmation. | `evmX.sol: fulfillRandomWords()` |
 | 📈 **Chainlink Data Feed** (ETH/USD) | Powers all USD price displays in the frontend + feeds the AI analytics engine (pool trend predictions, protocol health score, entry timing recommendations). | `index.html: AggregatorV3Interface` |
 
@@ -50,9 +59,9 @@
 > **Why CRE is the critical layer:**
 > ```
 > Without CRE:  trade triggers only → pools freeze if no one trades for hours
-> With CRE:     guaranteed execution every 2 min → protocol runs FOREVER, zero trades or not
+> With CRE:     redundant execution every 2 min → protocol runs independently of trading activity
 > ```
-> This is the core innovation: CRE makes evmX **unconditionally autonomous** — it runs whether there are 1,000 trades/hour or zero trades for a week.
+> This is the core innovation: CRE makes evmX **autonomous under all expected operating conditions** — it operates whether there are 1,000 trades/hour or zero trades for a week.
 
 ---
 
@@ -74,17 +83,17 @@ The Tenderly Virtual TestNet runs the **full production protocol** on a real Bas
 
 ## 💡 Why This Matters
 
-Every DeFi protocol claims to be "decentralized" — but almost all of them have admin keys, upgrade proxies, or centralized keepers that can be shut down. **evmX proves this doesn't have to be the case.**
+Most DeFi protocols rely on admin keys, upgrade proxies, or centralized keepers — any of which can be shut down. evmX is designed to eliminate all three.
 
-By combining Chainlink CRE + VRF + Data Feeds with an immutable smart contract, evmX achieves what we call **Unconditional Autonomy**:
+By combining Chainlink CRE + VRF + Data Feeds with an immutable smart contract, evmX achieves **full post-launch autonomy**:
 
 | | Traditional DeFi | evmX |
 |---|---|---|
 | Admin key | ✅ Owner can pause/modify | ❌ **Ownership renounced — no admin exists** |
 | Upgrade path | ✅ Proxy can change logic | ❌ **No proxy — code is final** |
 | Keeper dependency | ✅ Bot must run 24/7 | ❌ **CRE + trade triggers — dual-layer redundancy** |
-| Liquidity risk | ✅ Owner can pull LP | ❌ **LP tokens burned — locked forever** |
-| If creator disappears | Protocol dies | **Protocol runs forever** |
+| Liquidity risk | ✅ Owner can pull LP | ❌ **LP tokens burned — permanently locked** |
+| If creator disappears | Protocol degrades or dies | **Protocol continues operating autonomously** |
 
 ---
 
@@ -167,7 +176,7 @@ The whale exclusion applies **both at entry AND at selection** — a holder who 
 
 </details>
 
-### Self-Healing Mechanisms — Nothing Breaks, Nothing Is Lost
+### Degraded-Mode Resilience — Every Path Has a Fallback
 
 <details>
 <summary><b>5 failsafe systems that keep the protocol running under any condition</b></summary>
@@ -180,7 +189,7 @@ The whale exclusion applies **both at entry AND at selection** — a holder who 
 | **Marketing Wallet Fallback** | Marketing wallet rejects ETH | Funds redirect to Mega Pool — nothing is lost |
 | **Self-Healing Accounting** | Unexpected ETH arrives at contract | `syncETHAccounting()` captures untracked ETH into Mega Pool |
 
-**Every ETH path has a fallback.** There is no state where funds can be stuck, lost, or inaccessible.
+**Every internal ETH path includes a fallback or reroute mechanism.** The protocol is designed so that no ETH remains stuck within the contract's own logic.
 
 </details>
 
@@ -209,10 +218,10 @@ The whale exclusion applies **both at entry AND at selection** — a holder who 
 |--------|-----------|---------|
 | Recipient selection | 350,000 gas | Stops trying if gas runs low — prevents out-of-gas reverts |
 | Allocation execution | 900,000 gas minimum | Won't start allocation if insufficient gas available |
-| Entry cleanup | 30,000 gas batch limit | Cleans old entries incrementally, never blocks a transaction |
+| Entry cleanup | 30,000 gas batch limit | Cleans old entries incrementally — designed to avoid blocking transactions |
 | Auto-resolve timeout | Checks per pool | Only processes timed-out allocations when gas permits |
 
-The contract **never reverts due to gas exhaustion** during autonomous operations. Every gas-intensive loop has a reserve check.
+The contract is **designed to avoid reverts from gas exhaustion** during autonomous operations. Every gas-intensive loop includes a reserve check before proceeding.
 
 </details>
 
@@ -229,11 +238,11 @@ Layer 2 — CRE Triggers (via runAutonomousCycle()):
   Works even with zero trading volume.
 
 Result: Two independent paths to the same outcome.
-        If one fails, the other guarantees execution.
+        If one is unavailable, the other provides execution.
 ```
 
 > [!TIP]
-> **The core insight:** Every parameter in evmX is either **dynamic** (scales with state), **range-bound** (floor/cap), or **has a fallback** (reroute/recovery). There are no magic numbers that work at one market cap but break at another. The protocol self-adjusts from a $1K pool to a $10M+ pool without any human tuning — this is what makes it **truly autonomous**.
+> **The core insight:** Every parameter in evmX is either **dynamic** (scales with state), **range-bound** (floor/cap), or **has a fallback** (reroute/recovery). There are no magic numbers that work at one market cap but break at another. The protocol is designed to self-adjust from a $1K pool to a $10M+ pool without any human tuning.
 
 ---
 
@@ -329,7 +338,7 @@ Chainlink CRE calls `runAutonomousCycle()` every 2 minutes, regardless of tradin
 | **VRF needs funding, no swap** | pendingVrfEth accumulates, no funding | **CRE calls _attemptVrfFund() directly** |
 
 > [!TIP]
-> **Design philosophy:** The contract should never depend on a single trigger mechanism. Layer 1 handles the common case (active trading). Layer 2 (CRE) guarantees execution under ALL conditions — including zero trading volume. Together, they make evmX **unconditionally autonomous**: it runs whether there are 1000 trades per hour or zero trades for a week.
+> **Design philosophy:** The contract should not depend on a single trigger mechanism. Layer 1 handles the common case (active trading). Layer 2 (CRE) provides reliable execution even with zero trading volume. Together, they make evmX **autonomous under all expected operating conditions** — it operates whether there are 1000 trades per hour or zero trades for a week.
 
 This is analogous to how Aave and Compound use Chainlink Keepers — their contracts can be triggered manually, but Keepers provide the reliable, decentralized automation layer that makes them production-grade.
 
@@ -452,17 +461,17 @@ Entries are **only** granted from actual buys (not transfers or re-enrollment):
 
 ### Fully Autonomous — No Admin Keys
 
-After launch, **ownership is permanently renounced** and **LP tokens are burned**. The protocol runs 100% autonomously with zero human intervention:
+After launch, **ownership is permanently renounced** and **LP tokens are burned**. The protocol is designed to operate autonomously with zero human intervention:
 
-| Guarantee | Description |
-|-----------|-------------|
-| **Ownership Renounced** | `renounceOwnership()` permanently locks all admin functions. No one can modify taxes, thresholds, or any parameter. Irreversible. |
-| **LP Burned** | Uniswap V2 LP tokens are sent to dead address (`0x...dead`). Liquidity is permanently locked — no rug pull possible. |
-| **CRE Automated** | Chainlink CRE guarantees execution even with zero trading volume — swap, VRF funding, and pool triggers run 24/7 without any human operator. |
-| **VRF Provably Fair** | Chainlink VRF v2.5 provides cryptographically verifiable randomness. No one can predict or manipulate winner selection. |
+| Property | Description |
+|----------|-------------|
+| **Ownership Renounced** | `renounceOwnership()` permanently locks all admin functions. No party can modify taxes, thresholds, or any parameter. Irreversible. |
+| **LP Burned** | Uniswap V2 LP tokens sent to dead address (`0x...dead`). Liquidity permanently locked. |
+| **CRE Automated** | Chainlink CRE provides reliable execution even with zero trading volume — swap, VRF funding, and pool triggers operate without any human operator. |
+| **VRF Provably Fair** | Chainlink VRF v2.5 provides cryptographically verifiable randomness. Winner selection cannot be predicted or influenced by any party within the protocol. |
 
 > [!CAUTION]
-> **After renounce + LP burn, evmX becomes a self-sustaining, unstoppable protocol.** No entity — not even the deployer — can change any parameter, drain funds, or stop the reward cycles. The code runs forever.
+> **After renounce + LP burn, no single party — including the deployer — can change any parameter, drain funds, or stop the reward cycles.** The protocol is designed to continue operating as long as the underlying infrastructure (Base L2, Chainlink VRF, Uniswap V2) remains available.
 
 ### Safety Features
 
@@ -610,7 +619,6 @@ evmX/
 │
 ├── cre-workflow/                   # Chainlink CRE Integration
 │   ├── project.yaml                # CRE project configuration
-│   ├── secrets.yaml                # Secrets (simulation only)
 │   ├── package.json                # CRE SDK dependencies
 │   ├── tsconfig.json               # TypeScript configuration
 │   └── src/workflows/
@@ -671,13 +679,13 @@ evmX is not just a hackathon demo — it's a **production-ready protocol** with 
 
 ### Phase 2: Mainnet Launch (Post-Hackathon)
 - [ ] **Hackathon prize funds launch** — 60% allocated to Uniswap V2 liquidity on Base Mainnet, 40% reserved for continued development (frontend, audit, CRE deployment)
-- [ ] LP tokens permanently burned (no rug pull possible)
+- [ ] LP tokens permanently burned — liquidity locked
 - [ ] Ownership renounced immediately after launch
 - [ ] CRE Workflows deployed to production (Base Mainnet)
 - [ ] VRF subscription funded for continuous operation
 
 ### Phase 3: Autonomous Operation
-- [ ] Protocol runs 100% autonomously — no human intervention
+- [ ] Protocol operates autonomously — no human intervention required
 - [ ] Community growth driven by reward mechanics
 - [ ] CRE ensures 24/7 pool monitoring and execution
 - [ ] Marketing wallet funds used for community initiatives
