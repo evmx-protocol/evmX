@@ -1,21 +1,96 @@
-MIT License
+EVMX PROTOCOL — SOURCE-AVAILABLE LICENSE
+Version 1.0, March 2026
 
-Copyright (c) 2026 evmX Protocol
+Copyright (c) 2026 evmX Protocol. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+TERMS AND CONDITIONS
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. DEFINITIONS
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+   "Software" means the evmX smart contracts, scripts, tests, workflows,
+   and all associated source code in this repository.
+
+   "Author" means the original creator(s) of the evmX Protocol.
+
+   "Commercial Use" means any use intended for or directed toward
+   commercial advantage or monetary compensation.
+
+2. PERMITTED USES
+
+   Subject to the terms of this license, you are permitted to:
+
+   a) VIEW and READ the source code for educational, research,
+      or evaluation purposes.
+
+   b) AUDIT the source code for security analysis or review.
+
+   c) REFERENCE the source code in academic papers, articles,
+      or technical discussions with proper attribution.
+
+   d) RUN the test suite locally for verification purposes.
+
+   e) INTERACT with deployed instances of the Software on
+      public blockchains as an end user.
+
+3. PROHIBITED USES
+
+   Without prior written permission from the Author, you may NOT:
+
+   a) DEPLOY the Software or any substantial portion thereof
+      to any blockchain (mainnet, testnet, or private network).
+
+   b) COPY, REPRODUCE, or FORK the Software for the purpose of
+      creating a competing or derivative product or protocol.
+
+   c) MODIFY and REDISTRIBUTE the Software or any derivative works.
+
+   d) Use the Software for any COMMERCIAL PURPOSE, including but
+      not limited to selling, licensing, or offering the Software
+      as a service.
+
+   e) INCORPORATE the Software or any substantial portion thereof
+      into another project, product, or protocol.
+
+   f) Remove, alter, or obscure this license notice or any
+      copyright notices contained within the Software.
+
+4. HACKATHON AND EVALUATION EXCEPTION
+
+   This Software is submitted as part of the Chainlink Convergence
+   Hackathon 2026. Hackathon judges, sponsors, and organizers are
+   granted a limited, non-transferable right to review, evaluate,
+   test, and run the Software solely for the purpose of hackathon
+   judging and evaluation.
+
+5. ATTRIBUTION
+
+   Any permitted reference to or citation of this Software must
+   include clear attribution to "evmX Protocol" and a link to the
+   original repository.
+
+6. NO WARRANTY
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+   OTHER DEALINGS IN THE SOFTWARE.
+
+7. TERMINATION
+
+   This license is effective until terminated. Your rights under
+   this license will terminate automatically without notice if you
+   fail to comply with any of its terms. Upon termination, you must
+   destroy all copies of the Software in your possession.
+
+8. GOVERNING LAW
+
+   This license shall be governed by and construed in accordance
+   with applicable intellectual property laws. Any disputes shall
+   be resolved in the jurisdiction of the Author's choosing.
+
+For licensing inquiries or commercial use permissions, contact:
+evmx.protocol@proton.me

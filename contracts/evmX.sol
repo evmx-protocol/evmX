@@ -1,4 +1,5 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
+// Source-Available — See LICENSE for terms
 pragma solidity ^0.8.28;
 
 /**

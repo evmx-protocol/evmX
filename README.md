@@ -8,7 +8,7 @@
 [![Chainlink](https://img.shields.io/badge/Chainlink-CRE%20%2B%20VRF%20%2B%20Data%20Feed-375BD2)](https://docs.chain.link/cre)
 [![Tenderly](https://img.shields.io/badge/Tenderly-Virtual%20TestNet-6F4CFF)](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions)
 [![Tests](https://img.shields.io/badge/Tests-174%20passing-brightgreen)](#-test-suite)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+[![License](https://img.shields.io/badge/License-Source--Available-red)](LICENSE)
 
 **🏆 Convergence Hackathon 2026** | Tracks: **CRE & AI** + **Tenderly Virtual TestNets**
 
@@ -738,7 +738,17 @@ npm run deploy:base
 
 ## License
 
-MIT License
+**Source-Available — All Rights Reserved**
+
+| Permission | Status |
+|-----------|--------|
+| View & read the code | Yes |
+| Modify the code | No |
+| Deploy to any chain | No |
+| Commercial use | No |
+| Any use without written permission | No |
+
+See [LICENSE](LICENSE) for full terms.
 
 ---
 
