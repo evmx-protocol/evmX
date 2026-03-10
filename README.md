@@ -209,6 +209,16 @@ CRE Cron (5min) --> EVMClient.callContract() --> HTTPClient (CoinGecko)
 | Base Mainnet | `0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70` |
 | Base Sepolia | `0x4aDC67D868764F6022B3cD50e6dB3c7aaBc36578` |
 
+### Files Using Chainlink
+
+| File | Chainlink Service | Usage |
+|------|-------------------|-------|
+| [`contracts/evmX.sol`](contracts/evmX.sol) | VRF v2.5 | `requestRandomWords()`, `fulfillRandomWords()`, emergency fallback, stale reroute |
+| [`cre-workflow/src/workflows/evmx-autonomous-rewards/index.ts`](cre-workflow/src/workflows/evmx-autonomous-rewards/index.ts) | CRE | Cron-triggered pool monitoring + cycle execution |
+| [`cre-workflow/src/workflows/evmx-event-monitor/index.ts`](cre-workflow/src/workflows/evmx-event-monitor/index.ts) | CRE | EVM Log Trigger on `PoolAllocated` events |
+| [`cre-workflow/src/workflows/evmx-ai-advisor/index.ts`](cre-workflow/src/workflows/evmx-ai-advisor/index.ts) | CRE | EVM read + HTTP + ConfidentialHTTP (OpenAI) pipeline |
+| [`index.html`](index.html) | Data Feed | ETH/USD `AggregatorV3Interface` for real-time USD pricing |
+
 ---
 
 ## Tenderly Virtual TestNet
