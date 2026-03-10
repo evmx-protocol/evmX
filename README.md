@@ -1,4 +1,4 @@
-# evmX — Autonomous Three-Speed Reward Protocol
+# evmX — Autonomous Multi-Cycle Reward Protocol
 
 > **An ERC-20 on Base with three reward cycles running at different speeds, where buying builds participation, holding preserves position, and execution requires no operator.**
 
