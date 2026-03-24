@@ -28,7 +28,7 @@
 | | |
 |---|---|
 | **What** | 1,435-line ERC-20 with 3 reward pools at different speeds (2h / 6h / 7d), funded by buy/sell tax, winners selected via Chainlink VRF |
-| **Dynamics** | Randomness decides who wins. Timing, entry building, and holding discipline determine how well you're positioned when it fires. |
+| **Positioning Logic** | Randomness determines winner selection. Entry timing, cumulative buy commitment, and holding discipline determine participant exposure when a cycle executes. |
 | **Execution** | Dual-trigger: every trade checks pool conditions automatically + Chainlink CRE calls every 2 min as backup |
 | **Post-launch** | Ownership renounced, LP burned, no proxy, no admin keys |
 
