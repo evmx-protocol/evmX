@@ -13,6 +13,22 @@
 
 [**Demo Video**](https://youtu.be/hi5uvVxkVUA) | [**Tenderly Explorer**](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) | [**BaseScan**](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1)
 
+---
+
+## Protocol Interface
+
+The dashboard is not a cosmetic wrapper around the contract. It is the protocol interface layer that makes the three-cycle system legible in real time — surfacing pool state, entry pressure, crowding, readiness, and execution context so the system can be understood as a live operational protocol rather than a static token page.
+
+![evmX Protocol Dashboard — pool state, operator rail, and execution readiness](docs/readme/dashboard-hero.png)
+*Three pool lanes with live balances, fill gauges, participation counts, entry costs, and cycle readiness. The operator rail (right) surfaces execution state, connected position, and pool eligibility at a glance.*
+
+For a protocol with three overlapping cycles at different speeds, reading the system matters. The interface exposes fill trajectory, participation density, and trigger proximity — the factors that shape positioning decisions.
+
+![Pool telemetry and reactor pressure gauges](docs/readme/pool-telemetry-reactors.png)
+*Pool Telemetry (left) charts 24-hour fill trajectory across all three pools. Pool Reactors (right) show composite pressure scores combining fill %, timer progress, crowd density, win probability, entry cost, and expected value per pool.*
+
+---
+
 ### At a Glance
 
 | | |
@@ -26,6 +42,7 @@
 
 ## Table of Contents
 
+- [Protocol Interface](#protocol-interface)
 - [The Game](#the-game)
 - [How Entry Works](#how-entry-works)
 - [The Reflexive Loop](#the-reflexive-loop)

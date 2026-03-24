@@ -1,0 +1,1004 @@
+@import "tailwindcss";
+
+@theme {
+  /* ═══ VOID BASE — deep blue-black cosmic field ═══ */
+  --color-void: #030108;
+  --color-stage: #07050F;
+  --color-pit: #06040C;
+  --color-surface: #0C0816;
+  --color-dock: #0A0612;
+  --color-raised: #120C1E;
+  --color-ghost: #1A1230;
+
+  /* ═══ TEXT HIERARCHY — WCAG 4.5:1+ on dark bg, warm rose tones ═══ */
+  --color-text-primary: #E8D8E8;   /* L0: warm off-white — hero values, 12:1+ contrast */
+  --color-text-label: #D0B0C8;     /* L2: light mauve — visible labels, 6:1+ */
+  --color-text-dim: #B898B0;       /* L3: medium rose — field labels, 5:1+ */
+  --color-text-muted: #A088A0;     /* L4: muted plum — meta text, 4:1+ */
+  --color-text-ghost: #887898;     /* L5: deep lavender — ambient, 3:1+ */
+  --color-text-explain: #C0A0B8;   /* L3.5: readable rose — explanatory, 5.5:1+ */
+
+  /* ═══ POOL ENERGY — Micro(magenta) Mid(violet) Mega(fire red) ═══ */
+  --color-micro: #A02068;          /* deep magenta-rose */
+  --color-mid: #7020A0;            /* deep dark violet */
+  --color-mega: #B01828;           /* deep crimson fire */
+  --color-ok: #5888C0;             /* cool steel-blue — quiet OK state */
+  --color-danger: #C83878;         /* deep rose — danger, not screaming */
+  --color-warn: #B860A0;           /* muted orchid — warning */
+  --color-accent: #9068E0;         /* restrained violet — headings, not overpowering */
+  --color-accent2: #6848B0;        /* deep violet — secondary, quiet */
+
+  /* ═══ FONTS — Oxanium display + Chakra Petch UI ═══ */
+  --font-ui: 'Chakra Petch', -apple-system, sans-serif;          /* ALL UI text — angular, technical, readable */
+  --font-sans: 'Chakra Petch', -apple-system, sans-serif;        /* headings */
+  --font-mono: 'IBM Plex Mono', 'Share Tech Mono', monospace;    /* data values only */
+  --font-display: 'Oxanium', 'Orbitron', sans-serif;             /* hero display — squared, angular */
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Chakra Petch', -apple-system, sans-serif; }
+  html { scroll-behavior: smooth; background: #020308; }
+
+  body {
+    background: transparent;
+    color: var(--color-text-primary);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 700;
+    color: var(--color-text-label);
+    text-rendering: geometricPrecision;
+    -webkit-text-stroke: 0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Background handled by React img + overlay in App.tsx */
+
+  ::selection { background: rgba(139,108,224,.3); color: #fff; }
+  /* Cosmic scrollbar — thin, styled, blends with theme */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: rgba(6,4,14,0.4); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(144,104,224,0.25), rgba(110,138,232,0.2)); border-radius: 3px; border: 1px solid rgba(144,104,224,0.08); }
+  ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, rgba(144,104,224,0.45), rgba(110,138,232,0.35)); }
+  ::-webkit-scrollbar-corner { background: transparent; }
+  /* Firefox */
+  * { scrollbar-width: thin; scrollbar-color: rgba(144,104,224,0.2) rgba(6,4,14,0.3); }
+}
+
+/* Global text — Chakra Petch, FORCED larger sizes via double-specificity */
+:root .text-xs, .text-xs { font-size: 0.9rem !important; line-height: 1.45 !important; font-weight: 800 !important; font-family: 'Chakra Petch', sans-serif !important; }
+:root .text-sm, .text-sm { font-size: 1rem !important; line-height: 1.5 !important; font-weight: 800 !important; font-family: 'Chakra Petch', sans-serif !important; }
+:root .text-base, .text-base { font-size: 1.0625rem !important; font-weight: 800 !important; font-family: 'Chakra Petch', sans-serif !important; line-height: 1.5 !important; }
+:root .text-lg, .text-lg { font-size: 1.1875rem !important; font-weight: 800 !important; line-height: 1.4 !important; font-family: 'Chakra Petch', sans-serif !important; }
+:root .text-xl, .text-xl { font-size: 1.3125rem !important; font-weight: 700 !important; font-family: 'Chakra Petch', sans-serif !important; }
+:root .text-2xl, .text-2xl { font-weight: 800 !important; }
+:root .text-3xl, .text-3xl { font-weight: 800 !important; }
+:root .text-4xl, .text-4xl { font-weight: 900 !important; }
+
+/* ── TYPOGRAPHY ROLE CLASSES ── */
+
+/* Display — ONLY for hero headings, major pool names, rare callouts */
+.font-display { font-family: var(--font-display) !important; }
+
+/* Heading — semi-display for section titles */
+.font-heading { font-family: var(--font-sans) !important; font-weight: 700; }
+
+/* UI body — readable, clean, for all analytical/dense text */
+.font-ui { font-family: var(--font-ui) !important; }
+
+/* Data — mono for numbers, EV, stats, technical values */
+.font-data { font-family: var(--font-mono) !important; font-variant-numeric: tabular-nums; }
+
+/* Labels — periwinkle, medium-weight, technical */
+.text-label { color: var(--color-text-label); font-weight: 600; font-family: var(--font-ui); letter-spacing: 0.01em; }
+
+/* Support — steel, quiet but readable */
+.text-support { color: var(--color-text-muted); font-weight: 600; font-family: var(--font-ui); }
+
+/* Explanatory — blue-lavender, sentence text */
+.text-explain {
+  color: var(--color-text-explain);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+/* ── FIELD-BASED STRUCTURE (no boxes, no cards) ── */
+
+/* Recessed zone — subtle darkened field, NOT a visible card */
+.field-recess {
+  background: rgba(3, 1, 10, 0.45);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+/* Deeper recess — for inner content wells */
+.field-well {
+  background: rgba(2, 1, 8, 0.4);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+/* Track — a recessed horizontal lane for data rows */
+.field-track {
+  background: rgba(5, 2, 14, 0.15);
+  border-radius: 4px;
+  padding: 6px 12px;
+}
+
+/* Veil — ultra-soft structural presence, barely visible */
+.field-veil {
+  background: rgba(4, 2, 12, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+/* Channel — inner separator without visible line */
+.field-channel {
+  border-top: 1px solid rgba(155, 107, 255, 0.06);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+/* Anchor strip — subtle horizontal track/rail */
+.field-strip {
+  background: linear-gradient(90deg, rgba(155,107,255,0.03) 0%, rgba(155,107,255,0.06) 50%, rgba(155,107,255,0.03) 100%);
+  border-radius: 3px;
+  padding: 4px 10px;
+}
+
+/* ═══ HIERARCHY TIERS ═══ */
+
+/* Tier E — metadata, badges, helper, ambient */
+.tier-e { opacity: 0.5 !important; font-size: 0.8125rem !important; font-weight: 500 !important; }
+
+/* Tier F — system micro, near-invisible */
+.tier-f { opacity: 0.35 !important; font-size: 0.75rem !important; font-weight: 400 !important; }
+
+/* Demoted heading — section title that lost primary status */
+.heading-demoted { font-size: 0.9375rem !important; font-weight: 600 !important; letter-spacing: 0.1em !important; opacity: 0.7 !important; }
+
+/* Panel L4 — ambient panels, nearly invisible structure */
+.panel-ambient {
+  background: rgba(4, 2, 14, 0.15) !important;
+  border: none !important;
+}
+.panel-ambient * { --tw-text-opacity: 0.7; }
+
+/* ═══ PREMIUM NUMERIC MATERIAL SYSTEM ═══ */
+
+/* Primary hero number — boosted pearlescent gradient */
+.num-hero {
+  background: linear-gradient(135deg, #E0D8F0 0%, #C8B0E8 30%, #D8C0F0 50%, #E0C0E8 70%, #D0B8E8 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: num-shimmer 8s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(144,104,224,0.1));
+}
+
+/* Secondary stat counter — cooler violet gradient */
+.num-stat {
+  background: linear-gradient(135deg, #B8AADE 0%, #9B82E0 40%, #C4A8F0 70%, #A890E0 100%);
+  background-size: 180% 180%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: num-shimmer 8s ease-in-out infinite reverse;
+  filter: drop-shadow(0 0 4px rgba(155,130,224,0.12));
+}
+
+/* Tertiary accent number — muted energy */
+.num-accent {
+  background: linear-gradient(90deg, #A88AEE, #C4A0F0, #A88AEE);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: num-drift 10s linear infinite;
+}
+
+@keyframes num-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes num-drift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Active node — glowing participation dot */
+.node-active {
+  box-shadow: 0 0 4px rgba(168,138,238,0.4), 0 0 8px rgba(168,138,238,0.15);
+  animation: node-pulse 3s ease-in-out infinite;
+}
+
+@keyframes node-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(168,138,238,0.4), 0 0 8px rgba(168,138,238,0.15); }
+  50% { box-shadow: 0 0 6px rgba(168,138,238,0.5), 0 0 12px rgba(168,138,238,0.2); }
+}
+
+/* Panel backing — no visible frames */
+.panel-back {
+  position: relative;
+}
+/* Operator rail — barely visible veil */
+.panel-back-strong {
+  position: relative;
+  background: rgba(5, 3, 11, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.font-display { font-family: 'Oxanium', 'Orbitron', sans-serif !important; }
+
+@keyframes nebula-drift {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-49%, -50.5%) scale(1.02); }
+  100% { transform: translate(-50.5%, -49%) scale(1.01); }
+}
+
+/* Multi-layer parallax for cosmos background */
+@keyframes cosmos-drift-1 {
+  0% { transform: scale(1.05) translate(0%, 0%) rotate(0deg); }
+  25% { transform: scale(1.08) translate(-1.5%, 0.8%) rotate(0.4deg); }
+  50% { transform: scale(1.06) translate(1%, -1.2%) rotate(-0.3deg); }
+  75% { transform: scale(1.09) translate(-0.5%, 1%) rotate(0.2deg); }
+  100% { transform: scale(1.05) translate(1.2%, -0.5%) rotate(-0.15deg); }
+}
+
+@keyframes cosmos-drift-2 {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  33% { transform: translate(-50.8%, -49.5%) scale(1.03) rotate(-0.5deg); }
+  66% { transform: translate(-49.2%, -50.8%) scale(1.01) rotate(0.3deg); }
+  100% { transform: translate(-50.5%, -49.2%) scale(1.025) rotate(-0.2deg); }
+}
+
+@keyframes cosmos-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+/* Ultra-premium multi-layer background animations — transform only, GPU-friendly */
+@keyframes bg-drift-base {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  33% { transform: translate(-49.7%, -50.2%) scale(1.005) rotate(0.1deg); }
+  66% { transform: translate(-50.2%, -49.8%) scale(1.01) rotate(-0.05deg); }
+  100% { transform: translate(-49.9%, -50.1%) scale(1.007) rotate(0.08deg); }
+}
+
+@keyframes bg-drift-nebula {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  25% { transform: translate(-50.4%, -49.7%) scale(1.015) rotate(-0.15deg); }
+  50% { transform: translate(-49.6%, -50.3%) scale(1.008) rotate(0.1deg); }
+  75% { transform: translate(-50.2%, -49.9%) scale(1.02) rotate(-0.08deg); }
+  100% { transform: translate(-49.8%, -50.2%) scale(1.012) rotate(0.05deg); }
+}
+
+/* Background breathing — slow luminosity inhale/exhale */
+@keyframes nebula-breathe {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.65; }
+  100% { opacity: 0.35; }
+}
+
+/* Rare diagonal shimmer sweep */
+@keyframes shimmer-sweep {
+  0% { background-position: 0% 0%; }
+  40% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  90% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+@keyframes tape {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes neon-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes mega-pulse-glow {
+  0%, 100% { text-shadow: 0 0 2px rgba(212,74,175,0.25); }
+  50% { text-shadow: 0 0 3px rgba(212,74,175,0.3), 0 0 5px rgba(212,74,175,0.08); }
+}
+
+@keyframes mega-ring-pulse {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 3px rgba(212,74,175,0.15)); }
+  50% { filter: brightness(1.05) drop-shadow(0 0 5px rgba(212,74,175,0.2)); }
+}
+
+@keyframes glow-breathe {
+  0%, 100% { box-shadow: 0 0 5px rgba(139,108,224,.06); }
+  50% { box-shadow: 0 0 8px rgba(139,108,224,.1); }
+}
+
+@keyframes electric-flow {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes plasma-flow {
+  0% { background-position: 0% 0; }
+  25% { background-position: 100% 0; }
+  50% { background-position: 200% 0; }
+  75% { background-position: 300% 0; }
+  100% { background-position: 400% 0; }
+}
+
+@keyframes lightning-pulse {
+  0%, 100% { filter: brightness(1); }
+  10% { filter: brightness(1.8); }
+  20% { filter: brightness(1); }
+  30% { filter: brightness(1.4); }
+  40% { filter: brightness(1); }
+}
+
+@keyframes data-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.7; }
+  94% { opacity: 1; }
+  96% { opacity: 0.8; }
+  97% { opacity: 1; }
+}
+
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes electric-text {
+  0%, 100% { text-shadow: 0 0 1px currentColor; }
+  50% { text-shadow: 0 0 2px currentColor, 0 0 4px rgba(139,108,224,.1); }
+}
+
+/* Pool synchronized pulse — applied to CONTAINER, affects ALL text inside */
+@keyframes pool-micro-pulse {
+  0%, 100% { text-shadow: none; color: #C05888; }
+  50% { text-shadow: 0 0 4px rgba(232,80,160,0.15); color: #E070A8; }
+}
+@keyframes pool-mid-pulse {
+  0%, 100% { text-shadow: none; color: #8050B0; }
+  50% { text-shadow: 0 0 4px rgba(160,80,224,0.15); color: #A068D0; }
+}
+@keyframes pool-mega-pulse {
+  0%, 100% { text-shadow: none; color: #C03040; }
+  50% { text-shadow: 0 0 4px rgba(240,56,72,0.15); color: #E04858; }
+}
+/* Pro trick: dark halo behind ALL text for readability on busy cosmic bg */
+/* #1 technique used by game UIs, sci-fi dashboards, and HUD overlays */
+.lane-aura-micro *, .lane-aura-mid *, .lane-aura-mega *,
+.field-recess *, .op-device *, .op-module * {
+  text-shadow: 0 0 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.35) !important;
+}
+
+/* Pool lane aura — visible neon glow around all text, slow drift */
+@keyframes lane-aura-drift {
+  0% { filter: drop-shadow(0 0 2px var(--lane-glow)) drop-shadow(0 0 5px var(--lane-glow)); }
+  50% { filter: drop-shadow(0 0 3px var(--lane-glow)) drop-shadow(0 0 8px var(--lane-glow)); }
+  100% { filter: drop-shadow(0 0 2px var(--lane-glow)) drop-shadow(0 0 5px var(--lane-glow)); }
+}
+.lane-aura-micro { --lane-glow: rgba(232,80,160,0.2); animation: lane-aura-drift 10s ease-in-out infinite; }
+.lane-aura-mid { --lane-glow: rgba(160,80,224,0.2); animation: lane-aura-drift 10s ease-in-out infinite; }
+.lane-aura-mega { --lane-glow: rgba(240,56,72,0.2); animation: lane-aura-drift 10s ease-in-out infinite; }
+
+/* Apply to container — inherits to ALL children text */
+.pool-glow-micro, .pool-glow-micro * { animation: pool-micro-pulse 4s ease-in-out infinite !important; }
+.pool-glow-mid, .pool-glow-mid * { animation: pool-mid-pulse 4s ease-in-out infinite !important; }
+.pool-glow-mega, .pool-glow-mega * { animation: pool-mega-pulse 4s ease-in-out infinite !important; }
+/* Keep old individual classes too */
+.pool-pulse-micro { animation: pool-micro-pulse 4s ease-in-out infinite !important; }
+.pool-pulse-mid { animation: pool-mid-pulse 4s ease-in-out infinite !important; }
+.pool-pulse-mega { animation: pool-mega-pulse 4s ease-in-out infinite !important; }
+
+/* ═══ OPERATOR DEVICE — Sci-Fi Control Slab ═══ */
+
+/* Spine — column background behind sticky device */
+.op-spine {
+  background: rgba(6,4,16,0.2);
+  border-radius: 16px;
+}
+
+/* ── THE DEVICE — glowing glass cockpit slab ── */
+.op-device {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(5,10,25,0.45);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1.5px solid rgba(0,220,255,0.2);
+  box-shadow:
+    0 0 50px rgba(0,200,255,0.1),
+    0 0 100px rgba(0,200,255,0.04),
+    0 0 150px rgba(200,0,255,0.02),
+    0 4px 30px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(0,240,255,0.12),
+    inset 0 -1px 0 rgba(200,0,255,0.06),
+    inset 0 0 80px rgba(0,200,255,0.03);
+}
+
+/* Glass face — strong internal bloom */
+.op-device::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse 90% 40% at 50% 0%, rgba(0,200,255,0.07), transparent 50%),
+    radial-gradient(ellipse 70% 30% at 50% 100%, rgba(200,0,255,0.05), transparent 40%),
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,150,255,0.015), transparent 60%),
+    linear-gradient(180deg, rgba(0,40,80,0.12) 0%, transparent 15%, transparent 85%, rgba(30,0,50,0.08) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Top reflection — bright neon cyan streak */
+.op-device::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 3%; right: 3%;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(0,220,255,0.3) 15%,
+    rgba(0,240,255,0.5) 35%,
+    rgba(200,255,255,0.25) 50%,
+    rgba(0,240,255,0.5) 65%,
+    rgba(0,220,255,0.3) 85%,
+    transparent
+  );
+  box-shadow: 0 0 10px rgba(0,220,255,0.15), 0 2px 20px rgba(0,200,255,0.08);
+  z-index: 5;
+}
+
+/* ── PROJECTION GRID — AI living layer under glass ── */
+@keyframes op-grid-drift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(20px); }
+}
+@keyframes op-proj-scan {
+  0% { top: -2px; opacity: 0; }
+  10% { opacity: 0.3; }
+  90% { opacity: 0.3; }
+  100% { top: 100%; opacity: 0; }
+}
+.op-projection {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Grid field — visible holographic grid */
+.op-projection-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: op-grid-drift 25s linear infinite;
+  opacity: 0.5;
+}
+/* Scan band — visible sweep */
+.op-projection-scan {
+  position: absolute;
+  left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(180deg,
+    transparent,
+    rgba(0,220,255,0.04) 30%,
+    rgba(0,220,255,0.07) 50%,
+    rgba(0,220,255,0.04) 70%,
+    transparent
+  );
+  animation: op-proj-scan 8s linear infinite;
+}
+/* Side energy channels — cyan left, magenta right */
+.op-side-channel-l, .op-side-channel-r {
+  position: absolute;
+  top: 40px; bottom: 20px;
+  width: 2px;
+  z-index: 2;
+  pointer-events: none;
+}
+.op-side-channel-l {
+  left: 0;
+  background: linear-gradient(180deg, transparent 5%, rgba(0,220,255,0.15) 20%, rgba(0,180,255,0.08) 50%, rgba(0,220,255,0.12) 80%, transparent 95%);
+}
+.op-side-channel-r {
+  right: 0;
+  background: linear-gradient(180deg, transparent 5%, rgba(200,0,255,0.1) 20%, rgba(180,0,220,0.06) 50%, rgba(200,0,255,0.08) 80%, transparent 95%);
+}
+
+/* ── Ambient scan line — drifts down the rail ── */
+@keyframes op-scanline {
+  0% { top: -4px; opacity: 0; }
+  5% { opacity: 0.4; }
+  95% { opacity: 0.4; }
+  100% { top: 100%; opacity: 0; }
+}
+.op-scanline {
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 5%, rgba(88,136,192,0.15) 30%, rgba(144,104,224,0.2) 50%, rgba(88,136,192,0.15) 70%, transparent 95%);
+  animation: op-scanline 12s linear infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ── Vertical energy seams — left/right edges ── */
+@keyframes op-seam-pulse {
+  0%, 100% { opacity: 0.08; }
+  50% { opacity: 0.18; }
+}
+.op-seam-left, .op-seam-right {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  z-index: 3;
+  pointer-events: none;
+  animation: op-seam-pulse 6s ease-in-out infinite;
+}
+.op-seam-left {
+  left: 0;
+  background: linear-gradient(180deg, transparent 5%, rgba(88,136,192,0.12) 20%, rgba(144,104,224,0.08) 80%, transparent 95%);
+}
+.op-seam-right {
+  right: 0;
+  background: linear-gradient(180deg, transparent 5%, rgba(144,104,224,0.1) 20%, rgba(88,136,192,0.06) 80%, transparent 95%);
+  animation-delay: -3s;
+}
+
+/* Rail inner — the sticky content area */
+.op-inner {
+  background: rgba(6,4,16,0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(80,140,220,0.1);
+  border-radius: 14px;
+  position: relative;
+  box-shadow:
+    0 0 30px rgba(60,120,200,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    inset 0 0 40px rgba(60,120,200,0.01);
+}
+
+/* ── Command bay — glowing control surface ── */
+.op-command-bay {
+  position: relative;
+  background: linear-gradient(180deg, rgba(0,15,35,0.5), rgba(2,8,20,0.3));
+  border-bottom: 1px solid rgba(0,200,255,0.1);
+  box-shadow: inset 0 0 40px rgba(0,180,255,0.02);
+}
+.op-command-bay::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 5%; right: 5%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0,200,255,0.25), rgba(0,240,255,0.35), rgba(200,0,255,0.2), rgba(0,200,255,0.25), transparent);
+  border-radius: 1px;
+  box-shadow: 0 0 8px rgba(0,220,255,0.15);
+}
+
+/* ── CTA ARMED — multi-layer energy system ── */
+@keyframes cta-core {
+  0%, 100% { box-shadow: 0 0 25px rgba(0,200,255,0.2), 0 0 60px rgba(0,200,255,0.08), inset 0 0 30px rgba(0,200,255,0.06); border-color: rgba(0,200,255,0.3); }
+  50% { box-shadow: 0 0 40px rgba(0,220,255,0.3), 0 0 80px rgba(0,200,255,0.12), inset 0 0 50px rgba(0,200,255,0.1); border-color: rgba(0,240,255,0.5); }
+}
+@keyframes cta-sweep {
+  0% { transform: translateX(-100%); opacity: 0; }
+  30% { opacity: 0.08; }
+  70% { opacity: 0.08; }
+  100% { transform: translateX(250%); opacity: 0; }
+}
+@keyframes cta-edge-charge {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes pipeline-energy {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ── CTA ARMED — intense cyan command core ── */
+.op-cta-armed {
+  background: linear-gradient(135deg, rgba(0,60,140,0.5), rgba(0,80,180,0.45), rgba(0,60,140,0.4)) !important;
+  border: 1px solid rgba(0,200,255,0.35) !important;
+  animation: cta-core 3s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 0 30px rgba(0,200,255,0.2),
+    0 0 60px rgba(0,200,255,0.08),
+    inset 0 0 40px rgba(0,200,255,0.08),
+    inset 0 1px 0 rgba(0,240,255,0.15),
+    inset 0 -1px 0 rgba(0,0,0,0.3);
+}
+/* Sweep light — horizontal energy pass */
+.op-cta-armed::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  animation: cta-sweep 4s ease-in-out infinite;
+  pointer-events: none;
+}
+/* Top + bottom edge charge — intense cyan */
+.op-cta-armed::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 5%, rgba(0,220,255,0.5) 20%, rgba(0,255,255,0.7) 50%, rgba(0,220,255,0.5) 80%, transparent 95%);
+  background-size: 200% 100%;
+  animation: cta-edge-charge 3s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(0,240,255,0.3);
+}
+
+.op-cta-idle {
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+}
+.op-cta-blocked {
+  background: rgba(20,8,15,0.5) !important;
+  border: 1px solid rgba(200,56,120,0.06) !important;
+  box-shadow: inset 0 0 15px rgba(200,56,120,0.02);
+}
+
+/* ── MODE SWITCH — active mode energy ── */
+@keyframes op-mode-glow {
+  0%, 100% { box-shadow: 0 0 6px rgba(144,104,224,0.04); }
+  50% { box-shadow: 0 0 12px rgba(144,104,224,0.08); }
+}
+/* ── MODE TABS — cockpit selectors ── */
+.op-modes {
+  background: rgba(0,2,10,0.7);
+  border: 1px solid rgba(0,180,255,0.06);
+  border-radius: 10px;
+  padding: 3px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.3);
+}
+.op-mode-active {
+  background: linear-gradient(180deg, rgba(0,180,255,0.08), rgba(0,140,220,0.04));
+  border: 1px solid rgba(0,200,255,0.15);
+  border-radius: 8px;
+  position: relative;
+  box-shadow:
+    0 0 12px rgba(0,200,255,0.06),
+    inset 0 1px 0 rgba(0,220,255,0.06),
+    inset 0 0 15px rgba(0,180,255,0.03);
+}
+.op-mode-idle {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  opacity: 0.45;
+  transition: opacity 0.3s, background 0.3s;
+}
+.op-mode-idle:hover {
+  opacity: 0.75;
+  background: rgba(0,180,255,0.03);
+}
+
+/* ── PIPELINE — mechanical sequence ── */
+@keyframes op-pipe-armed-pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(0,200,255,0.12), inset 0 0 8px rgba(0,200,255,0.05); border-color: rgba(0,200,255,0.25); }
+  50% { box-shadow: 0 0 18px rgba(0,220,255,0.22), inset 0 0 12px rgba(0,200,255,0.08); border-color: rgba(0,240,255,0.4); }
+}
+@keyframes op-pipe-signal {
+  0% { left: 0; opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.6; }
+  100% { left: 100%; opacity: 0; }
+}
+.op-pipe-step {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 900;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.op-pipe-armed {
+  background: linear-gradient(135deg, rgba(0,80,160,0.15), rgba(0,100,180,0.1));
+  border: 1px solid rgba(0,200,255,0.3);
+  color: #00D0FF;
+  animation: op-pipe-armed-pulse 3s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(0,200,255,0.1), inset 0 0 8px rgba(0,200,255,0.06);
+  text-shadow: 0 0 8px rgba(0,220,255,0.5);
+}
+.op-pipe-idle {
+  background: rgba(2,4,14,0.5);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: #1A2040;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+.op-pipe-connector-live {
+  height: 2px;
+  position: relative;
+  background: rgba(88,136,192,0.06);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.op-pipe-connector-live::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(0,220,255,0.5), rgba(0,255,255,0.4), transparent);
+  animation: op-pipe-signal 2s linear infinite;
+}
+.op-pipe-connector-idle {
+  height: 1px;
+  background: rgba(255,255,255,0.025);
+}
+
+/* ── CONDITION CAPSULES — stateful modules ── */
+@keyframes op-cond-ok-pulse {
+  0%, 100% { border-left-color: rgba(0,200,255,0.3); }
+  50% { border-left-color: rgba(0,240,255,0.6); }
+}
+@keyframes op-cond-pending-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+.op-cond-ok {
+  background: linear-gradient(90deg, rgba(0,180,255,0.06), rgba(0,180,255,0.01));
+  border-left: 3px solid rgba(0,220,255,0.4);
+  border-radius: 0 6px 6px 0;
+  animation: op-cond-ok-pulse 4s ease-in-out infinite;
+  box-shadow: inset 5px 0 15px rgba(0,200,255,0.04);
+}
+.op-cond-fail {
+  background: linear-gradient(90deg, rgba(255,0,100,0.05), rgba(255,0,100,0.01));
+  border-left: 3px solid rgba(255,0,120,0.3);
+  border-radius: 0 6px 6px 0;
+  box-shadow: inset 5px 0 15px rgba(255,0,100,0.03);
+}
+.op-cond-pending {
+  background: linear-gradient(90deg, rgba(255,180,0,0.04), rgba(255,180,0,0.01));
+  border-left: 3px solid rgba(255,200,0,0.3);
+  border-radius: 0 6px 6px 0;
+  animation: op-cond-pending-pulse 2s ease-in-out infinite;
+  box-shadow: inset 5px 0 15px rgba(255,200,0,0.03);
+}
+
+/* ── SECTION DIVIDER — energy line ── */
+@keyframes op-divider-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.op-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 5%, rgba(0,200,255,0.12) 20%, rgba(200,0,255,0.15) 50%, rgba(0,200,255,0.12) 80%, transparent 95%);
+  background-size: 200% 100%;
+  animation: op-divider-flow 8s linear infinite;
+  margin: 10px 0;
+  box-shadow: 0 0 8px rgba(0,200,255,0.06);
+}
+
+/* ── POOL POSITION LANES — tracked mechanical rows ── */
+@keyframes op-lane-ready-pulse {
+  0%, 100% { border-color: rgba(0,200,255,0.15); }
+  50% { border-color: rgba(0,240,255,0.35); }
+}
+.op-pool-lane {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: inset 0 0 12px rgba(0,0,0,0.2);
+}
+.op-pool-lane-ready {
+  animation: op-lane-ready-pulse 4s ease-in-out infinite;
+  box-shadow: inset 0 0 15px rgba(88,136,192,0.03), 0 0 8px rgba(88,136,192,0.04);
+}
+/* Left color rail — energy beam */
+.op-lane-rail {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 3px;
+  transition: opacity 0.4s;
+  box-shadow: 2px 0 8px var(--lane-color, rgba(88,136,192,0.15));
+}
+
+/* ── ENTRY SLOT BARS — fill animation ── */
+@keyframes op-slot-fill {
+  0%, 100% { filter: brightness(0.9); }
+  50% { filter: brightness(1.15); }
+}
+.op-slot-filled {
+  animation: op-slot-fill 3s ease-in-out infinite;
+}
+.op-slot-empty {
+  background: rgba(255,255,255,0.02);
+}
+
+/* Scrollable content */
+.op-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(144,104,224,0.15) transparent;
+}
+.op-scroll::-webkit-scrollbar { width: 4px; }
+.op-scroll::-webkit-scrollbar-track { background: transparent; }
+.op-scroll::-webkit-scrollbar-thumb { background: rgba(144,104,224,0.15); border-radius: 2px; }
+
+/* ── BRIEFING — recessed diagnostic surface ── */
+.op-briefing {
+  background: linear-gradient(135deg, rgba(0,15,35,0.3), rgba(0,8,20,0.2));
+  border: 1px solid rgba(0,200,255,0.06);
+  border-left: 3px solid rgba(0,200,255,0.2);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 12px;
+  box-shadow: inset 5px 0 15px rgba(0,200,255,0.03), inset 0 0 20px rgba(0,0,0,0.2);
+}
+
+/* ── EMBEDDED MODULE — inset bay for content sections ── */
+.op-module {
+  background: rgba(2,4,15,0.35);
+  border: 1px solid rgba(0,200,255,0.06);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(0,200,255,0.03), inset 0 0 20px rgba(0,0,0,0.2);
+  position: relative;
+}
+.op-module::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,200,255,0.1), transparent);
+}
+
+
+/* Content corridor removed — no darkening overlay */
+
+/* ═══ HUD FRAME SYSTEM — sci-fi panel elements ═══ */
+
+/* HUD frame — cut corner box with cyan glow borders */
+.hud-frame {
+  position: relative;
+  background: rgba(0,8,20,0.5);
+  clip-path: polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.hud-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 8px, 8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px));
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(0,220,255,0.3), rgba(0,180,255,0.15), rgba(0,220,255,0.3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* HUD frame with stronger glow for active elements */
+.hud-frame-active::before {
+  background: linear-gradient(135deg, rgba(0,240,255,0.5), rgba(0,200,255,0.3), rgba(0,240,255,0.5));
+  filter: drop-shadow(0 0 4px rgba(0,220,255,0.2));
+}
+
+/* HUD progress bar — thick, glowing, sci-fi style */
+@keyframes hud-bar-sweep {
+  0% { left: -30%; }
+  100% { left: 130%; }
+}
+.hud-bar {
+  height: 8px;
+  background: rgba(0,20,40,0.6);
+  border: 1px solid rgba(0,200,255,0.15);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.hud-bar-fill {
+  height: 100%;
+  border-radius: 1px;
+  position: relative;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hud-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; width: 30%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: hud-bar-sweep 2s ease-in-out infinite;
+}
+
+/* HUD label — small angular tag */
+.hud-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+}
+.hud-label-cyan {
+  background: rgba(0,200,255,0.12);
+  color: #00D8FF;
+  border: 1px solid rgba(0,220,255,0.2);
+  text-shadow: 0 0 6px rgba(0,200,255,0.4);
+}
+.hud-label-magenta {
+  background: rgba(255,0,140,0.1);
+  color: #FF40A0;
+  border: 1px solid rgba(255,0,140,0.2);
+  text-shadow: 0 0 6px rgba(255,0,140,0.3);
+}
+.hud-label-green {
+  background: rgba(0,255,140,0.08);
+  color: #00E890;
+  border: 1px solid rgba(0,255,140,0.2);
+  text-shadow: 0 0 6px rgba(0,255,140,0.3);
+}
+
+/* HUD gauge ring — thick stroke, visible glow */
+@keyframes hud-gauge-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px var(--gauge-color, rgba(0,200,255,0.3))); }
+  50% { filter: drop-shadow(0 0 10px var(--gauge-color, rgba(0,200,255,0.5))); }
+}
+
+/* HUD section header — with decorative lines */
+.hud-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.hud-section-header::before,
+.hud-section-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+}
+.hud-section-header::before {
+  background: linear-gradient(90deg, rgba(0,200,255,0.25), transparent);
+}
+.hud-section-header::after {
+  background: linear-gradient(90deg, transparent, rgba(0,200,255,0.25));
+}
+
+/* Pool ring arc pulse — outer and inner, synchronized */
+@keyframes ring-arc-pulse {
+  0%, 100% { stroke-opacity: 0.5; }
+  50% { stroke-opacity: 1; }
+}
+@keyframes ring-arc-pulse-inv {
+  0%, 100% { stroke-opacity: 1; }
+  50% { stroke-opacity: 0.5; }
+}
+
+/* ── REDUCED MOTION — respect user preference ── */
+@media (prefers-reduced-motion: reduce) {
+  .op-scanline, .op-cta-armed::before, .op-cta-armed::after,
+  .op-pipe-connector-live::after { animation: none !important; }
+  .op-cta-armed, .op-pipe-armed, .op-cond-ok, .op-cond-pending,
+  .op-mode-active, .op-pool-lane-ready, .op-slot-filled,
+  .op-seam-left, .op-seam-right { animation: none !important; }
+}

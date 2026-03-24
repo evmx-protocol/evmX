@@ -191,6 +191,7 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 - [x] Submission form completed
 - [x] README has all badges and documentation
 - [x] All 174 tests pass in CI
+- [x] Protocol interface screenshots available in README for reviewer orientation
 
 ---
 
