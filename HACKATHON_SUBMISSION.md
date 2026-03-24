@@ -68,7 +68,7 @@ npm run verify:sepolia -- CONTRACT_ADDRESS "MARKETING_WALLET" VRF_SUBSCRIPTION_I
 ```
 
 ### 2.7 Update Frontend
-Edit `index.html` → Change `CONTRACT_ADDRESS` to the deployed address.
+Edit `frontend/src/config/contracts.ts` → Update `evmX` address to the deployed contract.
 
 ---
 
@@ -117,7 +117,7 @@ After deploy, update `cre-workflow/src/workflows/evmx-autonomous-rewards/config.
 - Highlight: multi-layer trigger design (trades + CRE)
 
 **1:30 - 2:30 | Live Demo**
-- Show the frontend dashboard (index.html)
+- Show the protocol dashboard (`frontend/`)
 - Connect wallet to Base Sepolia
 - Show pool states (Micro, Mid, Mega) with **live USD prices from Chainlink Data Feed**
 - Show **AI Protocol Intelligence** panel (predictions, trends, health score)

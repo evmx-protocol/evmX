@@ -1,6 +1,6 @@
 # evmX — Autonomous Multi-Cycle Reward Protocol
 
-> **An ERC-20 on Base with three reward cycles running at different speeds, where buying builds participation, holding preserves position, and execution requires no operator.**
+> **Three reward pools running at different speeds on Base L2. Buying builds participation, holding preserves position, Chainlink VRF picks the winner. No operator required.**
 
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.28-363636)](https://soliditylang.org/)
 [![Base L2](https://img.shields.io/badge/Network-Base%20L2-0052FF)](https://base.org/)
@@ -13,37 +13,60 @@
 
 [**Demo Video**](https://youtu.be/hi5uvVxkVUA) | [**Tenderly Explorer**](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) | [**BaseScan**](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1)
 
----
+### Current Status
 
-## Protocol Interface
-
-The dashboard is not a cosmetic wrapper around the contract. It is the protocol interface layer that makes the three-cycle system legible in real time — surfacing pool state, entry pressure, crowding, readiness, and execution context so the system can be understood as a live operational protocol rather than a static token page.
-
-![evmX Protocol Dashboard — pool state, operator rail, and execution readiness](docs/readme/dashboard-hero.png)
-*Three pool lanes with live balances, fill gauges, participation counts, entry costs, and cycle readiness. The operator rail (right) surfaces execution state, connected position, and pool eligibility at a glance.*
-
-For a protocol with three overlapping cycles at different speeds, reading the system matters. The interface exposes fill trajectory, participation density, and trigger proximity — the factors that shape positioning decisions.
-
-![Pool telemetry and reactor pressure gauges](docs/readme/pool-telemetry-reactors.png)
-*Pool Telemetry (left) charts 24-hour fill trajectory across all three pools. Pool Reactors (right) show composite pressure scores combining fill %, timer progress, crowd density, win probability, entry cost, and expected value per pool.*
-
----
+| | |
+|---|---|
+| **Network** | Base Sepolia testnet — [`0x4Afd...8d1`](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) |
+| **Contract** | Deployed and verified on testnet — 174 tests passing |
+| **Chainlink** | VRF v2.5 active · 3 CRE workflows configured · ETH/USD Data Feed |
+| **Frontend** | React/TypeScript dashboard in `frontend/` — connected to Sepolia deployment |
+| **Phase** | Pre-launch · mainnet deployment planned after hackathon evaluation |
 
 ### At a Glance
 
 | | |
 |---|---|
-| **What** | 1,435-line reward protocol with 3 pools running at different speeds (2h / 6h / 7d), funded by buy/sell tax, winners selected via Chainlink VRF |
+| **What** | 1,435-line ERC-20 with 3 reward pools at different speeds (2h / 6h / 7d), funded by buy/sell tax, winners selected via Chainlink VRF |
 | **The game** | Randomness decides who wins. Timing, entry building, and holding discipline determine how well you're positioned when it fires. |
-| **Execution** | Dual-trigger: every trade checks pool conditions automatically + Chainlink CRE calls every 2 min as redundancy |
+| **Execution** | Dual-trigger: every trade checks pool conditions automatically + Chainlink CRE calls every 2 min as backup |
 | **Post-launch** | Ownership renounced, LP burned, no proxy, no admin keys |
+
+---
+
+## Protocol Interface
+
+The dashboard makes the three-cycle system legible in real time — surfacing pool state, entry pressure, crowding, readiness, and execution context so the protocol reads as a live operational system rather than a static token page.
+
+![evmX Dashboard — pool state, operator rail, execution readiness](docs/readme/dashboard-hero.png)
+*Three pool lanes with balances, fill gauges, participation counts, entry costs, and cycle readiness. The operator rail (right) shows execution state, position, and eligibility.*
+
+With three overlapping cycles at different speeds, reading the system matters. The interface exposes fill trajectory, participation density, and trigger proximity — the factors that shape positioning decisions.
+
+![Pool telemetry and reactor pressure gauges](docs/readme/pool-telemetry-reactors.png)
+*Pool Telemetry tracks fill trajectory across all three pools. Pool Reactors show composite pressure scores — fill, timer, crowd density, win probability, and expected value.*
+
+> Screenshots reflect the current build connected to the Base Sepolia test deployment. Displayed values are from that environment at capture time.
+
+---
+
+## How to Review This Repository
+
+| Start here | What you'll find |
+|------------|-----------------|
+| **This README** | Protocol design, mechanics, proof points |
+| [`contracts/evmX.sol`](contracts/evmX.sol) | Production smart contract — 1,435 lines |
+| [`cre-workflow/`](cre-workflow/) | 3 Chainlink CRE workflows (TypeScript) |
+| [`test/`](test/) | 174 tests — Foundry + Hardhat |
+| [`frontend/`](frontend/) | React/TypeScript protocol dashboard |
+| [Tenderly Explorer](https://dashboard.tenderly.co/explorer/vnet/374547f2-47c6-4087-a785-507101cd004e/transactions) | 60-transaction lifecycle demo — public, verified |
+| [BaseScan](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) | Live Base Sepolia deployment |
 
 ---
 
 ## Table of Contents
 
-- [Protocol Interface](#protocol-interface)
-- [The Game](#the-game)
+- [Three-Cycle Architecture](#three-cycle-architecture)
 - [How Entry Works](#how-entry-works)
 - [The Reflexive Loop](#the-reflexive-loop)
 - [Autonomous Execution](#autonomous-execution)
@@ -55,55 +78,54 @@ For a protocol with three overlapping cycles at different speeds, reading the sy
 - [Security](#security)
 - [Quick Start](#quick-start)
 - [Project Structure](#project-structure)
-- [Roadmap](#roadmap)
 - [Deployment](#deployment)
-- [Tech Stack](#tech-stack)
+- [Roadmap](#roadmap)
 
 ---
 
-## The Game
+## Three-Cycle Architecture
 
-evmX runs three reward pools at different speeds. Each creates a different participation tempo and a different kind of decision-making around the same token.
+evmX runs three reward pools at different speeds. Each creates a different participation tempo and a different kind of decision around the same token.
 
 | Pool | Cycle | Funded By | Character |
 |------|-------|-----------|-----------|
-| **Micro** | 2-hour Smart Ladder | 1% buy tax | Fast tactical cycle. Short windows. Timing pressure. Threshold range 0.01–100 ETH — doubles on fast fill, halves on timeout. |
-| **Mid** | 6-hour Smart Ladder | 1.5% buy tax | Medium-speed cycle. More time to read pool state and compare entry cost against crowding. Threshold range 0.05–500 ETH. |
-| **Mega** | Fixed 7-day cycle | 1.9% sell tax | Weekly cycle. Larger pot, longer positioning horizon. Primarily fed by sell-side tax over the full week. |
+| **Micro** | 2-hour Smart Ladder | 1% buy tax | Fast tactical cycle. Short windows. Timing pressure. Threshold 0.01–100 ETH — doubles on fast fill, halves on timeout. |
+| **Mid** | 6-hour Smart Ladder | 1.5% buy tax | Medium cycle. More time to read pool state and weigh entry cost against crowding. Threshold 0.05–500 ETH. |
+| **Mega** | Fixed 7-day cycle | 1.9% sell tax | Weekly cycle. Larger pot, longer positioning horizon. Fed by sell-side tax over the full week. |
 
-These are not three prize buckets. They are three participation tempos around one token — each rewarding a different kind of attention.
+These are not three prize buckets. They are three participation tempos around one token — each with distinct timing pressure and positioning dynamics.
 
-**The key distinction:**
-- **Chainlink VRF decides WHO wins.** Provably fair, cryptographically verifiable. No party within the protocol can predict or influence the selection.
-- **Strategy decides WHEN and HOW WELL you're positioned.** Entry timing, cycle awareness, cumulative buy commitment, holding discipline — these are analyzable and speculable.
+**The structural distinction:**
+- **Chainlink VRF determines the winner.** Provably fair, cryptographically verifiable. No party can predict or influence selection.
+- **Positioning determines exposure.** Entry timing, cycle awareness, cumulative commitment, and holding discipline are the analyzable variables.
 
-The winner is random. The setup is not.
+Winner selection is random. Positioning is not.
 
 ---
 
 ## How Entry Works
 
-Eligibility and entries are separate concepts. Eligibility determines whether you're in the participant set for a cycle. Entries determine how many times your address appears in the draw.
+Eligibility and entries are separate concepts. Eligibility puts you in the participant set. Entries determine how many times your address appears in the draw.
 
 ### Eligibility
 
-A wallet becomes eligible for a pool's current cycle when its token holdings meet the dynamic entry requirement for that pool. This check happens during buys and can also be triggered via `reEnroll(address)`, which is permissionless — anyone can call it for any address.
+A wallet becomes eligible when its token holdings meet the dynamic entry requirement for that pool. This check runs during buys and can also be triggered via `reEnroll(address)`, which is permissionless.
 
 ### Entries (Buy-to-Play)
 
-Entries come **only from actual buys** on Uniswap. Not from transfers, not from re-enrollment. Once eligible, each buy accumulates toward entry thresholds:
+Entries come **only from actual buys** on Uniswap — not transfers, not re-enrollment. Each buy accumulates toward entry thresholds:
 
 | Entry | Requirement |
 |-------|------------|
 | 1st | Any qualifying buy (while eligible) |
-| 2nd | Cumulative buy value reaches 1x the pool's entry requirement |
-| 3rd (max) | Cumulative buy value reaches 2x the pool's entry requirement |
+| 2nd | Cumulative buy value reaches 1× the pool's entry requirement |
+| 3rd (max) | Cumulative buy value reaches 2× the pool's entry requirement |
 
-Maximum 3 entries per cycle per pool. More entries = better odds in the draw.
+Maximum 3 entries per cycle per pool. More entries = better odds.
 
 ### Dynamic Entry Requirements
 
-Each pool's entry requirement = **0.7% of the current pool balance**, bounded by per-pool floors and caps:
+Each pool's entry requirement = **0.7% of pool balance**, bounded by floors and caps:
 
 | Pool | Floor | Cap |
 |------|-------|-----|
@@ -111,32 +133,32 @@ Each pool's entry requirement = **0.7% of the current pool balance**, bounded by
 | **Mid** | 0.0025 ETH | 0.25 ETH |
 | **Mega** | 0.0035 ETH | 1 ETH |
 
-Early in a cycle, when the pool balance is small, the entry cost is lower. As the pool accumulates, the cost rises.
+Early in a cycle the entry cost is lower. As the pool accumulates, the cost rises.
 
 ### Holding and Revocation
 
-At entry time, the contract calculates each user's **required token hold** from Uniswap reserves at that moment. This pegs the hold requirement to the ETH value at entry — price movements afterward don't retroactively change what you need to hold.
+At entry time, the contract calculates each user's **required token hold** from Uniswap reserves. This pegs the hold requirement to ETH value at entry — price movements afterward don't retroactively change it.
 
-- **Selling revokes participation** for the current active cycles across all three pools. If a pool has a pending allocation request, the next cycle is also affected.
-- **Transferring below required hold** triggers automatic revocation for the affected pool and cycle.
-- **Whale exclusion**: holders above 3% of total supply are excluded from the Micro pool — checked both at entry and at winner selection.
+- **Selling revokes participation** across all three pools for current active cycles. If a pool has a pending VRF request, the next cycle is also affected.
+- **Transferring below required hold** triggers automatic revocation for that pool and cycle.
+- **Whale exclusion**: holders above 3% of supply are excluded from Micro — checked at entry and at winner selection.
 
 ---
 
 ## The Reflexive Loop
 
-The protocol creates feedback between trading activity, pool growth, and participation:
+The protocol creates feedback between trading, pool growth, and participation:
 
 ```
-Buy/sell activity --> taxes feed reward pools --> growing pools attract attention
-    --> attention attracts new participants --> new volume feeds pools further
+Buy/sell activity → taxes feed pools → growing pools attract attention
+    → new participants → new volume feeds pools further
 ```
 
-Simultaneously:
-- **Holding incentives reduce sell pressure.** Selling revokes eligibility for active cycles — participants with position in a near-triggering pool have a reason to hold.
-- **Pool size affects entry barriers.** Larger pools require larger buys to enter, naturally filtering low-commitment participation during high-activity periods.
+Two reinforcing dynamics:
+- **Holding incentive.** Selling revokes eligibility — participants positioned in a near-triggering pool have reason to hold.
+- **Scaling entry barriers.** Larger pools require larger buys to enter, filtering low-commitment participation during high-activity periods.
 
-This is a reflexive system, not a guarantee. Whether the feedback loop sustains depends on real participation and real volume. The design creates conditions for reinforcement — it does not force any particular outcome.
+This is a reflexive system, not a guarantee. Whether the loop sustains depends on real participation and real volume. The design creates conditions for reinforcement — it does not force outcomes.
 
 ---
 
@@ -144,21 +166,21 @@ This is a reflexive system, not a guarantee. Whether the feedback loop sustains 
 
 After launch, ownership is permanently renounced and LP tokens are burned. No admin keys, no proxy, no upgrade path. The protocol runs on two independent trigger layers:
 
-**Layer 1 — Trade triggers** (built into `_update()`): every buy/sell automatically checks all 3 pools and triggers allocations if conditions are met. Active trading keeps the protocol running with zero external dependency.
+**Layer 1 — Trade triggers** (built into `_update()`): every buy/sell checks all 3 pools and triggers allocations when conditions are met. Active trading keeps the protocol running with zero external dependency.
 
-**Layer 2 — CRE triggers** (via `runAutonomousCycle()`): Chainlink CRE calls every 2 minutes regardless of trading activity. This covers the cases trade triggers cannot — idle periods where a pool is ready but no one is trading.
+**Layer 2 — CRE triggers** (via `runAutonomousCycle()`): Chainlink CRE calls every 2 minutes regardless of trading. This covers idle periods where a pool is ready but no one is trading.
 
 | Scenario | Without CRE | With CRE |
 |----------|:-----------:|:--------:|
 | Active trading | Pools trigger via trade flow | Same — CRE is idle |
-| No trades for 2+ hours | Micro pool ready but no trigger | CRE triggers it |
+| No trades for 2+ hours | Micro pool stuck | CRE triggers it |
 | No trades for 6+ hours | Mid pool stuck | CRE triggers it |
 | No trades on Mega day 7 | Weekly reward sits idle | CRE triggers it |
-| Token swap needed, no sells | Tokens accumulate, no conversion | CRE runs swap |
+| Token swap needed, no sells | Tokens accumulate | CRE runs swap |
 
 | | Traditional DeFi | evmX |
 |---|---|---|
-| Admin key | Owner can pause/modify | Ownership renounced — no admin |
+| Admin key | Owner can pause/modify | Ownership renounced |
 | Upgrade path | Proxy can change logic | No proxy — code is final |
 | Keeper dependency | Bot must run 24/7 | CRE + trade triggers |
 | Liquidity risk | Owner can pull LP | LP tokens burned |
@@ -170,15 +192,15 @@ After launch, ownership is permanently renounced and LP tokens are burned. No ad
 
 ## Chainlink Integration
 
-evmX integrates **3 Chainlink services**: CRE for autonomous execution, VRF for winner selection, Data Feeds for pricing.
+evmX uses **3 Chainlink services**: CRE for autonomous execution, VRF for winner selection, Data Feeds for pricing.
 
 | Service | Role | Location |
 |---------|------|----------|
-| **CRE Workflow #1** | Pool monitoring + cycle triggering (cron every 2 min) | `cre-workflow/src/workflows/evmx-autonomous-rewards/` |
-| **CRE Workflow #2** | Event monitoring — processes `PoolAllocated` events via EVM Log Trigger | `cre-workflow/src/workflows/evmx-event-monitor/` |
-| **CRE Workflow #3** | Strategy advisor — EVM read + CoinGecko HTTP + OpenAI LLM in one pipeline, with local fallback scoring | `cre-workflow/src/workflows/evmx-ai-advisor/` |
-| **VRF v2.5** | Provably fair random winner selection — native ETH payment, 3-block confirmations | `evmX.sol: fulfillRandomWords()` |
-| **Data Feed (ETH/USD)** | Real-time USD pricing for frontend pool displays and analytics | `index.html: AggregatorV3Interface` |
+| **CRE Workflow #1** | Pool monitoring + cycle triggering (cron every 2 min) | `cre-workflow/.../evmx-autonomous-rewards/` |
+| **CRE Workflow #2** | Event monitoring — `PoolAllocated` events via EVM Log Trigger | `cre-workflow/.../evmx-event-monitor/` |
+| **CRE Workflow #3** | Strategy advisor — EVM read + CoinGecko + OpenAI LLM pipeline, local fallback | `cre-workflow/.../evmx-ai-advisor/` |
+| **VRF v2.5** | Provably fair winner selection — native ETH, 3-block confirmations | `evmX.sol: fulfillRandomWords()` |
+| **Data Feed** | ETH/USD pricing for frontend displays and analytics | `frontend/src/hooks/usePriceFeed.ts` |
 
 <details>
 <summary><b>CRE Workflow #1: Autonomous Rewards — code</b></summary>
@@ -215,26 +237,28 @@ Combines 3 data sources in a single CRE pipeline:
 4. **Fallback** — Local scoring algorithm (odds 40%, fill 30%, size 30%) if LLM is unavailable
 
 ```
-CRE Cron (5min) --> EVMClient.callContract() --> HTTPClient (CoinGecko)
-                --> ConfidentialHTTPClient (OpenAI) --> Strategy Report
+CRE Cron (5min) → EVMClient.callContract() → HTTPClient (CoinGecko)
+                → ConfidentialHTTPClient (OpenAI) → Strategy Report
 ```
 
 </details>
 
-| Network | ETH/USD Price Feed |
-|---------|-------------------|
+### Price Feed Addresses
+
+| Network | ETH/USD Feed |
+|---------|-------------|
 | Base Mainnet | `0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70` |
 | Base Sepolia | `0x4aDC67D868764F6022B3cD50e6dB3c7aaBc36578` |
 
 ### Files Using Chainlink
 
-| File | Chainlink Service | Usage |
-|------|-------------------|-------|
+| File | Service | Usage |
+|------|---------|-------|
 | [`contracts/evmX.sol`](contracts/evmX.sol) | VRF v2.5 | `requestRandomWords()`, `fulfillRandomWords()`, emergency fallback, stale reroute |
-| [`cre-workflow/src/workflows/evmx-autonomous-rewards/index.ts`](cre-workflow/src/workflows/evmx-autonomous-rewards/index.ts) | CRE | Cron-triggered pool monitoring + cycle execution |
-| [`cre-workflow/src/workflows/evmx-event-monitor/index.ts`](cre-workflow/src/workflows/evmx-event-monitor/index.ts) | CRE | EVM Log Trigger on `PoolAllocated` events |
-| [`cre-workflow/src/workflows/evmx-ai-advisor/index.ts`](cre-workflow/src/workflows/evmx-ai-advisor/index.ts) | CRE | EVM read + HTTP + ConfidentialHTTP (OpenAI) pipeline |
-| [`index.html`](index.html) | Data Feed | ETH/USD `AggregatorV3Interface` for real-time USD pricing |
+| [`evmx-autonomous-rewards/index.ts`](cre-workflow/src/workflows/evmx-autonomous-rewards/index.ts) | CRE | Cron-triggered pool monitoring + cycle execution |
+| [`evmx-event-monitor/index.ts`](cre-workflow/src/workflows/evmx-event-monitor/index.ts) | CRE | EVM Log Trigger on `PoolAllocated` events |
+| [`evmx-ai-advisor/index.ts`](cre-workflow/src/workflows/evmx-ai-advisor/index.ts) | CRE | EVM read + HTTP + ConfidentialHTTP (OpenAI) pipeline |
+| [`usePriceFeed.ts`](frontend/src/hooks/usePriceFeed.ts) | Data Feed | ETH/USD `AggregatorV3Interface` for real-time pricing |
 
 ---
 
@@ -247,9 +271,9 @@ CRE Cron (5min) --> EVMClient.callContract() --> HTTPClient (CoinGecko)
 | **Network** | Base mainnet fork (Chain ID 8453) |
 | **Contract** | `0x06eABc6937C02B073e568695Ca2526D10B23c68E` (verified) |
 | **Base Sepolia** | [`0x4AfdC83DC87193f7915429c0eBb99d11A77408d1`](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) |
-| **Transactions** | 60 — all successful (deploy, liquidity, swaps, sells, pool accumulation, autonomous cycles, re-enrollment) |
+| **Transactions** | 60 — deploy, liquidity, swaps, sells, pool accumulation, autonomous cycles, re-enrollment |
 
-Full production protocol on a real Base mainnet fork — same Uniswap V2 Router, same WETH, same VRF Coordinator as mainnet. Every transaction is publicly inspectable with full state traces.
+Full protocol on a real Base mainnet fork — same Uniswap V2 Router, same WETH, same VRF Coordinator as mainnet. Every transaction is publicly inspectable with full state traces.
 
 ---
 
@@ -262,11 +286,11 @@ Full production protocol on a real Base mainnet fork — same Uniswap V2 Router,
 
 | Pool | Cycle | Threshold | Entry Requirement | Tax Source |
 |------|-------|-----------|-------------------|------------|
-| **Micro** | 2h timer / Smart Ladder | 0.01–100 ETH | 0.7% of pool (floor 0.001, cap 0.05 ETH) | 1% buy tax |
-| **Mid** | 6h timer / Smart Ladder | 0.05–500 ETH | 0.7% of pool (floor 0.0025, cap 0.25 ETH) | 1.5% buy tax |
-| **Mega** | Fixed 7-day cycle | — | 0.7% of pool (floor 0.0035, cap 1 ETH) | 1.9% sell tax |
+| **Micro** | 2h / Smart Ladder | 0.01–100 ETH | 0.7% of pool (floor 0.001, cap 0.05 ETH) | 1% buy |
+| **Mid** | 6h / Smart Ladder | 0.05–500 ETH | 0.7% of pool (floor 0.0025, cap 0.25 ETH) | 1.5% buy |
+| **Mega** | Fixed 7-day | — | 0.7% of pool (floor 0.0035, cap 1 ETH) | 1.9% sell |
 
-Additional constraints: 4% max wallet, 1.5% max TX.
+Additional constraints: 4% max wallet, 1.5% max transaction.
 
 ---
 
@@ -275,14 +299,14 @@ Additional constraints: 4% max wallet, 1.5% max TX.
 <details>
 <summary><b>Smart Ladder — thresholds that adjust based on demand</b></summary>
 
-Pool trigger thresholds are not fixed. They adjust within defined ranges based on fill velocity:
+Pool trigger thresholds adjust within defined ranges based on fill velocity:
 
 | Condition | Action |
 |-----------|--------|
 | Pool fills before timer expires | Threshold doubles (up to max) |
 | Timer expires before pool fills | Threshold halves (down to min) |
 
-During high volume, pools accumulate larger rewards before triggering. During quiet periods, rewards fire faster at smaller amounts. The protocol finds its own equilibrium.
+High volume → larger rewards before triggering. Quiet periods → faster triggers at smaller amounts. The protocol finds its own equilibrium.
 
 </details>
 
@@ -292,9 +316,9 @@ During high volume, pools accumulate larger rewards before triggering. During qu
 | Mechanism | Trigger | Action |
 |-----------|---------|--------|
 | **VRF Emergency Fallback** | VRF unresponsive for 24h | Commit-reveal on-chain entropy with 5-block delay |
-| **VRF Stale Reroute** | VRF subscription unfunded for 7 days | Pending VRF ETH redistributes to reward pools |
+| **VRF Stale Reroute** | Subscription unfunded 7 days | Pending ETH redistributes to reward pools |
 | **VRF Funding Cap** | Subscription reaches 2 ETH | Excess flows back to pools |
-| **Marketing Wallet Fallback** | Marketing wallet rejects ETH | Funds redirect to Mega Pool |
+| **Marketing Wallet Fallback** | Wallet rejects ETH | Funds redirect to Mega Pool |
 | **Self-Healing Accounting** | Unexpected ETH arrives | `syncETHAccounting()` captures into Mega Pool |
 
 </details>
@@ -315,11 +339,11 @@ During high volume, pools accumulate larger rewards before triggering. During qu
 
 | Mechanism | How It Works |
 |-----------|-------------|
-| **Per-User Token Hold** | Minimum hold calculated from Uniswap reserves at entry time — adapts to price at moment of entry |
-| **Transfer Balance Check** | Dropping below required hold triggers automatic revocation for affected pool/cycle |
+| **Per-User Token Hold** | Minimum hold from Uniswap reserves at entry time — adapts to price at moment of entry |
+| **Transfer Balance Check** | Dropping below required hold triggers automatic revocation |
 | **Permissionless Re-enrollment** | `reEnroll(address)` — anyone can trigger eligibility re-check for any address |
-| **Payout Failure Recovery** | If selected recipient can't receive ETH, next candidate is tried (up to 130 attempts) |
-| **EOA Check at Selection** | `candidate.code.length > 0` — contract addresses are excluded at winner selection time |
+| **Payout Failure Recovery** | If recipient can't receive ETH, next candidate is tried (up to 130 attempts) |
+| **EOA Check at Selection** | `candidate.code.length > 0` — contract addresses excluded at selection |
 
 </details>
 
@@ -329,15 +353,15 @@ During high volume, pools accumulate larger rewards before triggering. During qu
 
 ### 174 Tests — Dual Framework
 
-| Category | Tests | Framework | What it verifies |
-|----------|------:|-----------|-----------------|
+| Category | Tests | Framework | Coverage |
+|----------|------:|-----------|---------|
 | **Attack Simulations** | 12 | Foundry | Reentrancy, flash loan, sandwich, MEV, gas grief, VRF manipulation |
 | **Fuzz Testing** | 14 | Foundry | Random inputs (1000 runs each), boundary conditions |
 | **Core Invariants** | 11 | Foundry | Supply conservation, ETH solvency, cycle validity |
 | **Post-Renounce** | 2 | Foundry | Owner = address(0), marketing immutable |
-| **Formal Properties** | 41 | Foundry | 12 stateful invariants + 29 property unit tests |
+| **Formal Properties** | 41 | Foundry | 12 stateful invariants + 29 property tests |
 | **Edge Cases** | 26 | Foundry | 6 edge invariants + 20 boundary tests |
-| **Economic Stress** | 15 | Foundry | 90% crash, 10x pump, mega cycle, liquidity drain |
+| **Economic Stress** | 15 | Foundry | 90% crash, 10× pump, mega cycle, liquidity drain |
 | **Hardhat Local** | 28 | Hardhat | Unit tests, gas benchmarks, 50-bot stress test |
 | **Base Mainnet Fork** | 25 | Hardhat | Real Uniswap V2, real WETH, real Base state |
 | **Total** | **174** | | |
@@ -345,11 +369,11 @@ During high volume, pools accumulate larger rewards before triggering. During qu
 <details>
 <summary><b>Mutation Testing</b></summary>
 
-| Mutation | What broke | Tests that caught it |
-|----------|-----------|---------------------|
+| Mutation | What broke | Caught by |
+|----------|-----------|----------|
 | Remove `buyAmountETH > 0` guard | Transfer/reEnroll grants entries | P38, G21, fuzz_reEnroll |
-| `MAX_ENTRIES_PER_CYCLE` 3 to 255 | Unlimited entries per cycle | P40, fuzz_buyToPlay |
-| `EMERGENCY_COMMIT_DELAY` 5 to 0 | No commit-reveal delay | P42 |
+| `MAX_ENTRIES_PER_CYCLE` 3 → 255 | Unlimited entries | P40, fuzz_buyToPlay |
+| `EMERGENCY_COMMIT_DELAY` 5 → 0 | No commit-reveal delay | P42 |
 
 </details>
 
@@ -421,7 +445,7 @@ evmX/
 │   └── mocks/                      # Mock contracts for testing
 ├── cre-workflow/
 │   └── src/workflows/
-│       ├── evmx-autonomous-rewards/  # Workflow #1: Pool monitoring + cycle trigger
+│       ├── evmx-autonomous-rewards/  # Workflow #1: Pool monitoring + trigger
 │       ├── evmx-event-monitor/       # Workflow #2: Event processing
 │       └── evmx-ai-advisor/         # Workflow #3: Strategy advisor
 ├── test/
@@ -432,8 +456,16 @@ evmX/
 │   │   └── state_machine/          #   15 economic stress tests
 │   ├── LaunchStress.test.js        # 28 Hardhat local tests
 │   └── evmX_BaseFork.test.js       # 25 Base mainnet fork tests
+├── frontend/                       # React/TypeScript protocol dashboard
+│   ├── src/
+│   │   ├── App.tsx                 # Main dashboard layout
+│   │   ├── components/protocol/    # Pool lanes, operator rail, AI advisor
+│   │   ├── components/system/      # Canvas background, gauges, bars
+│   │   ├── hooks/                  # Contract data, wallet, VRF, trades
+│   │   ├── lib/                    # Types, ABI, utils
+│   │   └── config/                 # Chain + contract addresses
+│   └── index.html
 ├── scripts/                        # Setup, deploy, demo scripts
-├── index.html                      # Frontend dashboard
 ├── hardhat.config.js
 ├── foundry.toml
 └── package.json
@@ -443,44 +475,53 @@ evmX/
 
 ---
 
-## Roadmap
-
-### Phase 1: Hackathon (Current)
-- [x] Smart contract finalized (1,435 lines, 174 tests)
-- [x] Deployed to Base Sepolia with Chainlink VRF v2.5
-- [x] 3 CRE Workflows (Autonomous Rewards + Event Monitor + AI Strategy Advisor)
-- [x] Frontend dApp
-- [x] 6-phase security assessment
-- [x] Tenderly Virtual TestNet — 60 tx lifecycle demo (verified, public explorer)
-
-### Phase 2: Mainnet Launch
-- [ ] Hackathon prize funds launch — 60% to Uniswap V2 liquidity (LP burned), 40% for continued development
-- [ ] Ownership renounced immediately after launch
-- [ ] CRE Workflows deployed to production
-- [ ] VRF subscription funded
-
-### Phase 3: Autonomous Operation
-- [ ] Protocol operates without human intervention
-- [ ] CRE ensures 24/7 execution
-- [ ] Community growth driven by reward mechanics
-
----
-
 ## Deployment
 
 ```bash
 npm run deploy:tenderly    # Tenderly VNet + auto-verify
 npm run demo:tenderly      # Full lifecycle demo
 npm run deploy:sepolia     # Base Sepolia testnet
-npm run deploy:base        # Base Mainnet
+npm run deploy:base        # Base Mainnet (post-launch)
 ```
+
+**Current deployment** — Base Sepolia:
+
+| Parameter | Value |
+|-----------|-------|
+| Chain ID | 84532 |
+| Contract | [`0x4AfdC83DC87193f7915429c0eBb99d11A77408d1`](https://sepolia.basescan.org/address/0x4AfdC83DC87193f7915429c0eBb99d11A77408d1) |
+| Compiler | Solidity 0.8.28, via IR, 50 optimizer runs |
+
+**Target mainnet** — Base L2:
 
 | Parameter | Value |
 |-----------|-------|
 | Chain ID | 8453 |
 | Uniswap V2 Router | `0x4752ba5DBc23f44D87826276BF6Fd6b1C372aD24` |
 | VRF Coordinator | `0xd5D517aBE5cF79B7e95eC98dB0f0277788aFF634` |
-| Compiler | Solidity 0.8.28, via IR, 50 optimizer runs |
+
+---
+
+## Roadmap
+
+### Phase 1: Hackathon (Current)
+- [x] Smart contract finalized — 1,435 lines, 174 tests
+- [x] Deployed to Base Sepolia with Chainlink VRF v2.5
+- [x] 3 CRE Workflows — Autonomous Rewards + Event Monitor + AI Advisor
+- [x] React/TypeScript protocol dashboard
+- [x] 6-phase security assessment
+- [x] Tenderly Virtual TestNet — 60 tx lifecycle demo
+
+### Phase 2: Mainnet Launch
+- [ ] 60% to Uniswap V2 liquidity (LP burned), 40% for development
+- [ ] Ownership renounced immediately after launch
+- [ ] CRE Workflows deployed to production
+- [ ] VRF subscription funded
+
+### Phase 3: Autonomous Operation
+- [ ] Protocol runs without human intervention
+- [ ] CRE ensures 24/7 execution coverage
+- [ ] Community growth driven by reward mechanics
 
 ---
 
@@ -493,29 +534,27 @@ npm run deploy:base        # Base Mainnet
 | Randomness | Chainlink VRF v2.5 (native ETH) |
 | Execution | Chainlink CRE |
 | Price Data | Chainlink Data Feed (ETH/USD) |
-| Frontend | Vanilla JS, ethers.js v6, Pure CSS |
-| Network | Base L2 (Chain ID: 8453) |
+| Frontend | React 19, TypeScript, ethers.js v6, Tailwind CSS, Recharts |
+| Network | Base L2 (Sepolia testnet / mainnet target) |
 | Testing | Tenderly Virtual TestNet (Base fork) |
 | DEX | Uniswap V2 |
 
 ---
 
-## License
+## Source Availability
 
-**Source-Available — All Rights Reserved**
+This repository is source-available under the included [LICENSE](LICENSE) for review, audit, and evaluation — including hackathon judging. A transition to an open-source license is planned after mainnet launch. Until that change is made, the current LICENSE governs all use rights.
 
 | Permission | Status |
 |-----------|--------|
-| View & read the code | Yes |
-| Modify the code | No |
-| Deploy to any chain | No |
-| Commercial use | No |
-| Any use without written permission | No |
+| View, read, audit | ✓ Permitted |
+| Compile and run tests locally | ✓ Permitted |
+| Hackathon evaluation | ✓ Permitted |
+| Deploy, fork, or redistribute | ✗ Requires written permission |
+| Commercial use | ✗ Requires written permission |
 
 See [LICENSE](LICENSE) for full terms.
 
 ---
 
 **evmX** — Built with Chainlink CRE + VRF + Data Feeds on Base L2
-
-*This software is provided "as is" without warranty of any kind. evmX has undergone a 6-phase internal security assessment with 174 automated tests including mutation testing, but no assessment guarantees zero bugs. Smart contracts are immutable once deployed. Users interact with decentralized protocols at their own risk.*
