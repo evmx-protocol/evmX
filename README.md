@@ -38,12 +38,12 @@
 
 The dashboard makes the three-cycle system legible in real time — surfacing pool state, entry pressure, crowding, readiness, and execution context so the protocol reads as a live operational system rather than a static token page.
 
-![evmX Dashboard — pool state, operator rail, execution readiness](docs/readme/dashboard-hero.png)
+![evmX Dashboard — pool state, operator rail, execution readiness](https://raw.githubusercontent.com/evmx-protocol/evmX/main/docs/readme/dashboard-hero.png)
 *Three pool lanes with balances, fill gauges, participation counts, entry costs, and cycle readiness. The operator rail (right) shows execution state, position, and eligibility.*
 
 With three overlapping cycles at different speeds, reading the system matters. The interface exposes fill trajectory, participation density, and trigger proximity — the factors that shape positioning decisions.
 
-![Pool telemetry and reactor pressure gauges](docs/readme/pool-telemetry-reactors.png)
+![Pool telemetry and reactor pressure gauges](https://raw.githubusercontent.com/evmx-protocol/evmX/main/docs/readme/pool-telemetry-reactors.png)
 *Pool Telemetry tracks fill trajectory across all three pools. Pool Reactors show composite pressure scores — fill, timer, crowd density, win probability, and expected value.*
 
 > Screenshots reflect the current build connected to the Base Sepolia test deployment. Displayed values are from that environment at capture time.
